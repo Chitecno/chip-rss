@@ -54,7 +54,7 @@ export function createFuentes(onChange: () => void): HTMLElement {
       <label class="add-feed__label" for="feed-url">&gt; pegá la dirección de un medio o de su feed</label>
       <div class="inline-form">
         <input id="feed-url" class="text-input" type="text" inputmode="url" autocomplete="off"
-          autocapitalize="off" spellcheck="false" placeholder="pagina12.com.ar" />
+          autocapitalize="off" spellcheck="false" placeholder="https://…" />
         <button type="submit" class="term-button">[ agregar ]</button>
       </div>
     </form>

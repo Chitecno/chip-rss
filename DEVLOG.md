@@ -124,3 +124,28 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - Elegir qué presentación queda y llevarla a la pantalla de leer.
 - Comparar coberturas: ver lado a lado cómo cuenta la misma historia cada medio.
 - Bajarle el peso a las notas de plantilla (clima, horóscopo, resultados).
+
+---
+
+## 2026-10-19 · La rutina aparte y las historias por tema
+
+### Qué hicimos
+
+- **La rutina va aparte.** Hay notas que todos los medios publican igual todos los días: clima, dólar, horóscopo, quinielas, tablas de posiciones, agenda de TV, efemérides, tapas de los diarios. No son malas, pero no son "la noticia". Ahora el laboratorio las saca de la tapa y las pone en una caja, "la rutina del día", con una línea por tema. La lista de palabras que cuentan como rutina está a la vista.
+- **Historias dentro de una etiqueta.** En el laboratorio se puede elegir `#tecnología` (o cualquier etiqueta) y el agrupado y los temas del día se calculan solo con esas fuentes. Así se ve qué historias levantaron varios medios de tecnología a la vez.
+- Como los medios chicos publican menos que los diarios, cuando las fuentes elegidas publican poco la ventana de tiempo se agranda sola: una historia puede tardar días en llegar a varios de ellos.
+- Probamos con nueve medios de tecnología en castellano: Xataka, Genbeta, Hipertextual, Computer Hoy, Applesfera, MuyComputer, WWWhat's new, Wired en Español y El País. Salieron historias de verdad compartidas: el evento de Apple del 28 de octubre (cuatro medios), el Tesla Roadster 2 y el plan del iPhone Duo.
+- Subimos el proyecto a un repositorio de git, con su historial.
+
+### Qué aprendimos
+
+- **Las reglas de rutina tienen que ser estrictas.** La primera versión mandaba a rutina cualquier nota con la palabra "clima", incluida una sobre el cambio climático. Ahora busca frases de servicio ("clima hoy en", "pronóstico del tiempo", "dólar hoy", "jornada financiera"). Preferimos que se escape algo de rutina a esconder una noticia.
+- No todo lo que tiene "dólar" en el título es rutina: "Espert, a un paso de ser procesado por los 200 mil dólares" es noticia. Y el riesgo país en máximos del año también: varios medios lo cubren y se agrupa como historia.
+- **El agrupado por palabras no cruza idiomas.** Una nota en inglés y su versión en castellano no se juntan. Para eso haría falta un modelo que entienda significado.
+- A veces junta notas que solo comparten una frase ("número de teléfono"). Con pocas fuentes conviene subir un poco el umbral de parecido.
+
+### Lo que sigue
+
+- Subir el repositorio a GitHub, público.
+- Elegir la presentación que queda y llevarla a la pantalla de leer.
+- Comparar coberturas: ver lado a lado cómo cuenta cada medio la misma historia.

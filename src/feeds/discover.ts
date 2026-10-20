@@ -50,7 +50,17 @@ export async function discoverFeed(raw: string, onStep?: (msg: string) => void):
     .map((a) => resolveUrl(a.getAttribute('href') ?? '', page.finalUrl))
     .filter((href) => href.startsWith(origin) && /rss|feed|atom/i.test(new URL(href).pathname))
     .slice(0, MAX_LINKED);
-  const candidates = [...new Set([...announced, ...COMMON_PATHS.map((p) => origin + p), ...linked])];
+  // Si pegaste una sección (tn.com.ar/tecno), primero buscamos el feed de esa sección y no el del
+  // sitio entero: el que anuncia la página suele ser el general.
+  const section = new URL(page.finalUrl).pathname.split('/').filter(Boolean)[0];
+  const sectionFeeds = section
+    ? [
+        `${origin}/arc/outboundfeeds/rss/category/${section}/?outputType=xml`,
+        `${origin}/${section}/feed/`,
+        `${origin}/category/${section}/feed/`,
+      ]
+    : [];
+  const candidates = [...new Set([...sectionFeeds, ...announced, ...COMMON_PATHS.map((p) => origin + p), ...linked])];
 
   for (const candidate of candidates) {
     onStep?.(`probando ${candidate}`);

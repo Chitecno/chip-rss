@@ -26,9 +26,9 @@ const HOUR = 3600_000;
  * Temas del día: palabras de los títulos de las últimas 24 horas que aparecen en varias
  * fuentes y que antes no aparecían tanto. "Gobierno" está siempre; "Chubut" hoy es noticia.
  */
-export function topicsOfTheDay(articles: Article[], now: number, limit = 30): Topic[] {
-  const recent = articles.filter((a) => now - a.published <= 24 * HOUR);
-  const older = articles.filter((a) => now - a.published > 24 * HOUR);
+export function topicsOfTheDay(articles: Article[], now: number, hours = 24, limit = 30): Topic[] {
+  const recent = articles.filter((a) => now - a.published <= hours * HOUR);
+  const older = articles.filter((a) => now - a.published > hours * HOUR);
 
   const recentFeeds = new Map<string, Set<string>>();
   const recentCount = new Map<string, number>();
