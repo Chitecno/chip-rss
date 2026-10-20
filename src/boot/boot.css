@@ -1,0 +1,98 @@
+.boot {
+  max-width: 1100px;
+}
+
+.boot__log {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  color: var(--ink);
+  min-height: 11lh;
+}
+
+.boot__enter {
+  margin-top: var(--space-1);
+}
+
+/* --- Banner ANSI Shadow --- */
+.banner {
+  position: relative;
+  margin-top: var(--space-4);
+  /* Ajusta el tamaño para que el banner entre a lo ancho, con un tope de 16px. */
+  --available: calc(100vw - 2 * var(--pad-x));
+  font-size: min(16px, calc(var(--available) / (var(--cols) * 0.6)));
+}
+
+.banner pre {
+  font-family: var(--font-ascii);
+  font-size: inherit;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: pre;
+}
+
+.glitch__main {
+  position: relative;
+  color: var(--accent);
+}
+
+.glitch__a,
+.glitch__b {
+  position: absolute;
+  inset: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Separación de canales: rosa a la izquierda, cian a la derecha. */
+.glitch__a {
+  color: var(--glitch-a);
+  transform: translateX(calc(-1 * var(--glitch-split)));
+  animation: glitch-slice-a 3.2s steps(1) infinite;
+}
+
+.glitch__b {
+  color: var(--glitch-b);
+  opacity: 0.55;
+  transform: translateX(var(--glitch-split));
+  animation: glitch-slice-b 4.1s steps(1) infinite;
+}
+
+/* Tiras corridas: de vez en cuando una franja horizontal se desplaza. */
+@keyframes glitch-slice-a {
+  0%,
+  86%,
+  100% {
+    clip-path: none;
+    transform: translateX(calc(-1 * var(--glitch-split)));
+  }
+  88% {
+    clip-path: inset(20% 0 55% 0);
+    transform: translateX(calc(-1 * var(--glitch-slice)));
+  }
+  92% {
+    clip-path: inset(60% 0 10% 0);
+    transform: translateX(var(--glitch-slice));
+  }
+}
+
+@keyframes glitch-slice-b {
+  0%,
+  90%,
+  100% {
+    clip-path: none;
+    transform: translateX(var(--glitch-split));
+  }
+  93% {
+    clip-path: inset(40% 0 35% 0);
+    transform: translateX(calc(var(--glitch-slice) * 0.6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch__a,
+  .glitch__b {
+    animation: none;
+  }
+}

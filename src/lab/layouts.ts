@@ -1,0 +1,187 @@
+import type { Article } from '../db/db';
+import { asciiPlaceholder } from '../ui/ascii-placeholder';
+import { el, longDate, shortDate } from '../ui/dom';
+import { renderBanner } from '../boot/banner';
+import type { Ranked } from './relevance';
+import { READER_NAME } from '../config';
+
+export type LayoutName = 'tapa' | 'revista' | 'teletipo' | 'grilla';
+
+export const LAYOUTS: { id: LayoutName; label: string }[] = [
+  { id: 'tapa', label: 'tapa de diario' },
+  { id: 'revista', label: 'revista' },
+  { id: 'teletipo', label: 'teletipo' },
+  { id: 'grilla', label: 'grilla' },
+];
+
+export type LayoutContext = { feedTitle: (id: string) => string; showReasons: boolean };
+
+/** La nota que encabeza la historia: la que tiene foto y más texto. */
+function lead(story: Ranked): Article {
+  return [...story.articles].sort(
+    (a, b) => Number(Boolean(b.image)) - Number(Boolean(a.image)) || b.summary.length - a.summary.length,
+  )[0];
+}
+
+function image(article: Article, className: string): HTMLElement {
+  const box = el('a', className);
+  box.href = `#/nota/${article.id}`;
+  box.tabIndex = -1;
+  box.setAttribute('aria-hidden', 'true');
+  if (article.image) {
+    const img = el('img');
+    img.alt = '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = article.image;
+    img.addEventListener('error', () => box.replaceChildren(asciiPlaceholder(article.id)), { once: true });
+    box.append(img);
+  } else {
+    box.append(asciiPlaceholder(article.id));
+  }
+  return box;
+}
+
+function headline(article: Article, tag: 'h2' | 'h3' | 'h4', className: string): HTMLElement {
+  const h = el(tag, className);
+  const a = el('a', undefined, article.title);
+  a.href = `#/nota/${article.id}`;
+  h.append(a);
+  return h;
+}
+
+/** "Página/12 · Chequeado · Infobae" y, si hay varias, la marca rosa con cuántas fuentes. */
+function sources(story: Ranked, ctx: LayoutContext): HTMLElement {
+  const line = el('p', 'lab-sources web-small');
+  if (story.feedIds.size > 1) line.append(el('span', 'lab-count', `${story.feedIds.size} fuentes`), ' ');
+  const names = [...story.feedIds].map(ctx.feedTitle).join(' · ');
+  line.append(`${names} · ${shortDate.format(story.newest)}`);
+  return line;
+}
+
+function reasons(story: Ranked, ctx: LayoutContext): HTMLElement | '' {
+  if (!ctx.showReasons) return '';
+  return el('p', 'lab-reasons web-small', `por qué: ${story.reasons.join(' · ')}`);
+}
+
+/** Si la historia tiene varias versiones, una lista desplegable para leer cada una. */
+function versions(story: Ranked, ctx: LayoutContext): HTMLElement | '' {
+  if (story.articles.length < 2) return '';
+  const box = el('details', 'lab-versions web-small');
+  box.append(el('summary', undefined, `[ ver las ${story.articles.length} versiones ]`));
+  const list = el('ul');
+  for (const a of story.articles) {
+    const li = el('li');
+    li.append(el('span', 'muted', `${ctx.feedTitle(a.feedId)}: `));
+    const link = el('a', undefined, a.title);
+    link.href = `#/nota/${a.id}`;
+    li.append(link);
+    list.append(li);
+  }
+  box.append(list);
+  return box;
+}
+
+function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 's', withImage: boolean): HTMLElement {
+  const a = lead(story);
+  const block = el('article', `lab-story lab-story--${size}`);
+  if (withImage) block.append(image(a, 'lab-media'));
+  block.append(headline(a, size === 'xl' ? 'h2' : size === 's' ? 'h4' : 'h3', 'lab-title'));
+  if (size !== 's' && a.summary) block.append(el('p', 'lab-summary', a.summary));
+  block.append(sources(story, ctx));
+  const r = reasons(story, ctx);
+  if (r) block.append(r);
+  const v = versions(story, ctx);
+  if (v) block.append(v);
+  return block;
+}
+
+/** Tapa de diario: cabezal, apertura grande, columna lateral, segunda línea y breves. */
+function tapa(stories: Ranked[], ctx: LayoutContext): HTMLElement {
+  const page = el('div', 'tapa');
+  const masthead = el('header', 'tapa__masthead');
+  masthead.append(renderBanner(READER_NAME, window.innerWidth < 640));
+  masthead.append(el('p', 'tapa__date web-small', `${longDate.format(Date.now())} · ${stories.length} historias`));
+  page.append(masthead);
+
+  const [first, ...rest] = stories;
+  if (!first) return page;
+  const top = el('div', 'tapa__top');
+  top.append(storyBlock(first, ctx, 'xl', true));
+  const side = el('div', 'tapa__side');
+  for (const s of rest.slice(0, 3)) side.append(storyBlock(s, ctx, 'm', true));
+  top.append(side);
+  page.append(top);
+
+  const second = el('div', 'tapa__second');
+  for (const s of rest.slice(3, 9)) second.append(storyBlock(s, ctx, 'm', false));
+  page.append(second);
+
+  if (rest.length > 9) {
+    page.append(el('h2', 'section-title', 'breves'));
+    const briefs = el('div', 'tapa__briefs');
+    for (const s of rest.slice(9, 39)) briefs.append(storyBlock(s, ctx, 's', false));
+    page.append(briefs);
+  }
+  return page;
+}
+
+/** Revista: fotos grandes, una historia por bloque, alternando lados. */
+function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
+  const page = el('div', 'revista');
+  const withPhoto = stories.filter((s) => s.articles.some((a) => a.image));
+  const [cover, ...rest] = withPhoto;
+  if (cover) {
+    const c = el('div', 'revista__cover');
+    c.append(storyBlock(cover, ctx, 'xl', true));
+    page.append(c);
+  }
+  rest.slice(0, 12).forEach((s, i) => {
+    const row = el('div', `revista__row${i % 2 ? ' revista__row--flip' : ''}`);
+    row.append(storyBlock(s, ctx, 'l', true));
+    page.append(row);
+  });
+  const others = stories.filter((s) => !withPhoto.slice(0, 13).includes(s)).slice(0, 20);
+  if (others.length) {
+    page.append(el('h2', 'section-title', 'más'));
+    const more = el('div', 'tapa__briefs');
+    for (const s of others) more.append(storyBlock(s, ctx, 's', false));
+    page.append(more);
+  }
+  return page;
+}
+
+/** Teletipo: una línea por historia, como un cable de agencia. */
+function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
+  const list = el('ol', 'teletipo');
+  const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  for (const s of stories.slice(0, 120)) {
+    const a = lead(s);
+    const li = el('li', 'teletipo__row');
+    li.append(el('span', 'teletipo__time muted', time.format(s.newest)));
+    li.append(el('span', 'teletipo__source', [...s.feedIds].map(ctx.feedTitle)[0]?.slice(0, 18) ?? ''));
+    const link = el('a', 'teletipo__title', a.title);
+    link.href = `#/nota/${a.id}`;
+    li.append(link);
+    if (s.feedIds.size > 1) li.append(el('span', 'lab-count', `${s.feedIds.size} fuentes`));
+    if (ctx.showReasons) li.append(el('span', 'teletipo__why web-small', s.reasons.join(' · ')));
+    const v = versions(s, ctx);
+    if (v) li.append(v);
+    list.append(li);
+  }
+  return list;
+}
+
+/** La grilla de siempre, pero por historias. */
+function grilla(stories: Ranked[], ctx: LayoutContext): HTMLElement {
+  const grid = el('div', 'timeline__list');
+  for (const s of stories.slice(0, 90)) grid.append(storyBlock(s, ctx, 'm', true));
+  return grid;
+}
+
+export function renderLayout(name: LayoutName, stories: Ranked[], ctx: LayoutContext): HTMLElement {
+  if (name === 'revista') return revista(stories, ctx);
+  if (name === 'teletipo') return teletipo(stories, ctx);
+  if (name === 'grilla') return grilla(stories, ctx);
+  return tapa(stories, ctx);
+}

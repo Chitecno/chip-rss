@@ -1,0 +1,106 @@
+/* La nota abierta: una columna angosta para leer cómodo. */
+.views > .nota {
+  max-width: 70ch;
+  gap: var(--space-2);
+}
+
+.nota__back {
+  justify-self: start;
+  padding: 0;
+}
+
+.nota__meta {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.nota__title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .nota__title {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.nota__status {
+  margin: 0;
+  color: var(--ink-muted);
+}
+.nota__status[data-kind='error'] {
+  color: var(--pink-chat);
+}
+
+.nota__body {
+  font-size: 17px;
+  line-height: 28px;
+  overflow-wrap: anywhere;
+}
+
+.nota__body p {
+  margin: 0 0 var(--space-2);
+}
+
+.nota__body img,
+.nota__hero {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--space-2) 0;
+  padding: var(--space-1);
+  border: 2px dotted var(--hash);
+}
+
+.nota__body a,
+.nota__original a {
+  color: var(--accent);
+}
+
+.nota__original a {
+  font-weight: 700;
+}
+
+.nota__body h2,
+.nota__body h3,
+.nota__body h4 {
+  margin: var(--space-3) 0 var(--space-1);
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--accent);
+}
+
+.nota__body blockquote {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-2);
+  border-left: 4px solid var(--band);
+}
+
+.nota__body figure {
+  margin: 0;
+}
+.nota__body figcaption {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+.nota__body pre,
+.nota__body code {
+  white-space: pre-wrap;
+}
+
+.nota__body table {
+  display: block;
+  overflow-x: auto;
+}
+
+.nota__body ul,
+.nota__body ol {
+  padding-left: var(--space-3);
+}

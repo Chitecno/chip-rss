@@ -1,0 +1,348 @@
+.app {
+  max-width: 1100px;
+}
+
+.views > * {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.views .band {
+  margin-block: 0;
+}
+
+.app__sign {
+  margin-top: var(--space-5);
+}
+
+.section-title {
+  margin: var(--space-2) 0 0;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.section-title::before {
+  content: '// ';
+}
+
+.status {
+  min-height: 18px;
+  margin: 0;
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+.status[data-kind='error'] {
+  color: var(--pink-chat);
+}
+
+/* --- Menú --- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  border-bottom: 2px dotted var(--hash);
+}
+
+.topbar__brand {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+}
+
+.topbar__nav {
+  display: flex;
+  gap: var(--space-3);
+}
+.topbar__nav a {
+  color: var(--ink-muted);
+  font-weight: 700;
+  text-decoration: none;
+}
+.topbar__nav a:hover {
+  color: var(--ink);
+}
+.topbar__nav a[aria-current='page'] {
+  color: var(--accent);
+}
+.topbar__nav a[aria-current='page']::before {
+  content: '> ';
+}
+
+.topbar__menu {
+  display: none;
+  padding: 0;
+}
+
+/* En el celu el menú se abre como una lista de terminal. */
+@media (max-width: 719px) {
+  .topbar__menu {
+    display: inline;
+  }
+  .topbar__nav {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-2) 0 var(--space-1);
+  }
+  .topbar__nav.is-open {
+    display: flex;
+  }
+  .topbar__nav a:not([aria-current='page'])::before {
+    content: '  ';
+    white-space: pre;
+  }
+}
+
+/* --- Filtros del timeline --- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+}
+.chip {
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0 4px;
+  color: var(--ink-muted);
+  font-weight: 700;
+  text-decoration: none;
+}
+.chip:hover {
+  color: var(--ink);
+}
+.chip[aria-current='true'] {
+  background: var(--accent);
+  color: var(--ground);
+}
+
+.leer__status {
+  min-height: 18px;
+  margin: 0;
+}
+
+.leer__empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+}
+.leer__empty p {
+  margin: 0;
+}
+.leer__empty:empty {
+  display: none;
+}
+
+a.term-button {
+  text-decoration: none;
+}
+
+/* --- Campos de texto --- */
+.text-input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: var(--space-1) 0;
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--accent);
+}
+.text-input::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.6;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  flex: 1 1 auto;
+}
+
+.add-feed__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.term-button:disabled {
+  color: var(--ink-muted);
+  cursor: progress;
+}
+
+/* --- Fuentes --- */
+.fuentes__list,
+.tags__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fuente {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-2) 0;
+  border-bottom: 1px dotted var(--hash);
+}
+
+.fuente__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-2);
+}
+
+.fuente__name {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.fuente__tags,
+.fuente__error {
+  margin: 0;
+  color: var(--ink-muted);
+}
+.fuente__error {
+  color: var(--pink-chat);
+}
+
+.fuente__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+}
+.fuente__actions .term-button {
+  padding: 0;
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+.fuente__actions .term-button:hover {
+  color: var(--ink);
+}
+
+.toggle {
+  padding: 0;
+  color: var(--ink-muted);
+}
+.toggle[aria-pressed='true'] {
+  color: var(--accent);
+}
+
+.fuente__editor {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  padding: var(--space-1) 0 var(--space-1) var(--space-2);
+  border: 0;
+  border-left: 4px solid var(--band);
+}
+.fuente__editor legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+.check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px dotted var(--hash);
+}
+
+/* --- Timeline --- */
+.timeline__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4) var(--space-3);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Foto con borde punteado, como el PhotoFrame del sistema de diseño. */
+.card__media {
+  aspect-ratio: 16 / 9;
+  padding: var(--space-1);
+  border: 2px dotted var(--hash);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+}
+.card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ascii-placeholder {
+  font-family: var(--font-ascii);
+  /* 48 columnas que ocupan todo el ancho de la caja (cada carácter mide ~0.6em). */
+  font-size: calc(100cqw / 48 / 0.6);
+  line-height: 1;
+  color: var(--ink-muted);
+  white-space: pre;
+}
+
+.card__meta {
+  margin: var(--space-1) 0 0;
+  color: var(--ink-muted);
+}
+
+.card__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+}
+.card__title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.card__title a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.card__summary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

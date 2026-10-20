@@ -1,0 +1,180 @@
+/* Base común a todos los temas. Los colores salen de src/themes/. */
+:root {
+  --font-mono: 'Anonymous Pro', ui-monospace, Menlo, Consolas, monospace;
+  /* Los títulos ANSI Shadow necesitan una fuente con caracteres de caja (█ ╗ ╝) parejos. */
+  --font-ascii: 'DejaVu Sans Mono', Menlo, Consolas, 'Courier New', monospace;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 48px;
+  --space-5: 96px;
+
+  /* Glitch en web: la mitad de los valores de pieza 1080. */
+  --glitch-split: 3px;
+  --glitch-slice: 12px;
+
+  /* Paso del marco de #: un # cada 24px. */
+  --hash-step: 24px;
+  --pad-x: var(--space-4);
+  --pad-y: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --pad-x: 40px;
+    --pad-y: 40px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 24px;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Títulos que reciben el foco al cambiar de pantalla: sin recuadro, no son botones. */
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+pre {
+  margin: 0;
+}
+
+.web-title {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.web-small {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+/* --- Marco de # (HashFrame) --- */
+.hash-frame {
+  position: relative;
+  min-height: 100dvh;
+  padding: var(--pad-y) var(--pad-x);
+  overflow: hidden;
+}
+
+.hash-frame__top,
+.hash-frame__bottom,
+.hash-frame__left,
+.hash-frame__right {
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--hash);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hash-frame__top,
+.hash-frame__bottom {
+  left: 0;
+  right: 0;
+  height: var(--hash-step);
+  line-height: var(--hash-step);
+  /* Anonymous Pro mide ~0.5em de ancho: 7px + 17px = 24px por # */
+  letter-spacing: 17px;
+}
+.hash-frame__top {
+  top: 0;
+}
+.hash-frame__bottom {
+  bottom: 0;
+}
+
+.hash-frame__left,
+.hash-frame__right {
+  top: var(--hash-step);
+  bottom: var(--hash-step);
+  width: var(--hash-step);
+  line-height: var(--hash-step);
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+  letter-spacing: 10px;
+}
+.hash-frame__left {
+  left: 0;
+}
+.hash-frame__right {
+  right: 0;
+}
+
+.hash-frame__inner {
+  position: relative;
+}
+
+/* --- Franja rosa (Band): al ras del borde, pisando la columna de # --- */
+.band {
+  display: block;
+  margin: var(--space-3) 0 var(--space-3) calc(-1 * var(--pad-x));
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--pad-x);
+  background: var(--band);
+  color: var(--ink-on-band);
+  font-weight: 700;
+}
+
+/* --- Botón con pinta de terminal --- */
+.term-button {
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent);
+  background: transparent;
+  border: 0;
+  padding: var(--space-1) 0;
+  cursor: pointer;
+}
+.term-button:hover {
+  color: var(--ink);
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+}
