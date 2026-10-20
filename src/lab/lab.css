@@ -353,3 +353,42 @@
     justify-self: start;
   }
 }
+
+/* --- La rutina del día --- */
+.lab-routine:empty {
+  display: none;
+}
+.lab-routine__list {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+.lab-routine__list > li {
+  flex: 1 1 100%;
+}
+.lab-routine summary,
+.lab-routine-words summary {
+  cursor: pointer;
+  color: var(--accent);
+  list-style: none;
+}
+.lab-routine summary::-webkit-details-marker,
+.lab-routine-words summary::-webkit-details-marker {
+  display: none;
+}
+.lab-routine summary::before {
+  content: '> ';
+}
+.lab-routine__items,
+.lab-routine-words ul {
+  margin: var(--space-1) 0 var(--space-1);
+  padding-left: var(--space-2);
+  border-left: 2px dotted var(--hash);
+  list-style: none;
+}
+.lab-routine__items a {
+  color: var(--ink);
+}

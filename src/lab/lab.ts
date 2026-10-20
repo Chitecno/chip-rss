@@ -1,12 +1,21 @@
-import { listArticles, listFeeds, type Article, type Feed } from '../db/db';
+import { listArticles, listFeeds, listTags, type Article, type Feed, type Tag } from '../db/db';
 import { el, plural } from '../ui/dom';
 import { LAYOUTS, renderLayout, type LayoutName } from './layouts';
 import { DEFAULT_WEIGHTS, rankStories, topicsOfTheDay, type Topic, type Weights } from './relevance';
+import { ROUTINE, splitRoutine, type RoutineGroup } from './routine';
 import { groupStories, type GroupOptions, type Story } from './stories';
 import { tokenize } from './text';
 import './lab.css';
 
-type Settings = GroupOptions & { layout: LayoutName; weights: Weights; showReasons: boolean };
+type Settings = GroupOptions & {
+  layout: LayoutName;
+  weights: Weights;
+  showReasons: boolean;
+  /** 'todo', 'principales' o el id de una etiqueta. */
+  filter: string;
+  /** Clima, dólar, horóscopo y compañía van a una caja aparte. */
+  routineApart: boolean;
+};
 
 const DEFAULTS: Settings = {
   layout: 'tapa',
@@ -14,9 +23,16 @@ const DEFAULTS: Settings = {
   windowHours: 48,
   weights: DEFAULT_WEIGHTS,
   showReasons: true,
+  filter: 'todo',
+  routineApart: true,
 };
 
 const STORAGE_KEY = 'chip-rss:lab';
+const HOUR = 3600_000;
+// Si las fuentes elegidas publican menos que esto por día (como los medios de tecnología),
+// la ventana se agranda: una historia puede tardar días en aparecer en varios de ellos.
+const LOW_VOLUME_PER_DAY = 40;
+const WIDE_WINDOW_HOURS = 96;
 
 // Los ajustes del laboratorio se recuerdan en este navegador. Si no se puede, se usan los de siempre.
 function loadSettings(): Settings {
@@ -62,6 +78,16 @@ function range(label: string, hint: string, value: number, min: number, max: num
   return row;
 }
 
+function checkbox(label: string, checked: boolean, onChange: (v: boolean) => void): HTMLElement {
+  const row = el('label', 'check');
+  const box = el('input');
+  box.type = 'checkbox';
+  box.checked = checked;
+  box.addEventListener('change', () => onChange(box.checked));
+  row.append(box, document.createTextNode(` ${label}`));
+  return row;
+}
+
 /** Laboratorio: probar formas de agrupar, ordenar y mostrar sin tocar la portada. */
 export function createLab(): HTMLElement {
   const view = el('section', 'lab');
@@ -76,6 +102,8 @@ export function createLab(): HTMLElement {
     'Pruebas para agrupar las notas que cuentan lo mismo, ordenarlas por relevancia y mostrarlas de otras formas. La pantalla de leer no cambia.',
   );
 
+  const sourceNav = el('nav', 'chips');
+  sourceNav.setAttribute('aria-label', 'Qué fuentes mirar');
   const layoutNav = el('nav', 'chips');
   layoutNav.setAttribute('aria-label', 'Presentación');
 
@@ -85,33 +113,102 @@ export function createLab(): HTMLElement {
   controls.append(controlsBody);
 
   const stats = el('p', 'band');
+  const note = el('p', 'web-small muted');
   const cloudTitle = el('h2', 'section-title', 'temas del día');
   const cloud = el('div', 'lab-cloud');
   const filterLine = el('p', 'web-small');
+  const routineBox = el('section', 'lab-routine');
   const output = el('div', 'lab-output');
-  view.append(h1, intro, layoutNav, controls, stats, cloudTitle, cloud, filterLine, output);
+  view.append(h1, intro, sourceNav, layoutNav, controls, stats, note, cloudTitle, cloud, filterLine, routineBox, output);
 
   let feeds: Feed[] = [];
-  let articles: Article[] = [];
+  let tags: Tag[] = [];
+  let allArticles: Article[] = [];
+
+  // Lo que se recalcula cuando cambian las fuentes elegidas o la rutina.
+  let selection: {
+    key: string;
+    feeds: Feed[];
+    news: Article[];
+    routine: RoutineGroup[];
+    topics: Topic[];
+    windowHours: number;
+    label: string;
+  } | null = null;
   let grouped: { key: string; stories: Story[] } | null = null;
-  let topics: Topic[] = [];
 
   const feedTitle = (id: string) => feeds.find((f) => f.id === id)?.title ?? '';
 
+  function select() {
+    const key = `${settings.filter}|${settings.routineApart}`;
+    if (selection?.key === key) return selection;
+    const tag = tags.find((t) => t.id === settings.filter);
+    const chosen =
+      settings.filter === 'principales'
+        ? feeds.filter((f) => f.principal)
+        : tag
+          ? feeds.filter((f) => f.tagIds.includes(tag.id))
+          : feeds;
+    const ids = new Set(chosen.map((f) => f.id));
+    const articles = allArticles.filter((a) => ids.has(a.feedId));
+    const { news, routine } = settings.routineApart ? splitRoutine(articles) : { news: articles, routine: [] };
+
+    const now = Date.now();
+    const perDay = articles.filter((a) => now - a.published <= 24 * HOUR).length;
+    const lowVolume = perDay < LOW_VOLUME_PER_DAY;
+    selection = {
+      key,
+      feeds: chosen,
+      news,
+      routine,
+      topics: topicsOfTheDay(news, now, lowVolume ? 48 : 24),
+      windowHours: lowVolume ? Math.max(settings.windowHours, WIDE_WINDOW_HOURS) : settings.windowHours,
+      label: settings.filter === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todas las fuentes',
+    };
+    grouped = null;
+    return selection;
+  }
+
+  function invalidate() {
+    selection = null;
+    grouped = null;
+    termFilter = null;
+  }
+
+  function chip(label: string, active: boolean, onClick: () => void): HTMLButtonElement {
+    const b = el('button', 'chip', label);
+    b.type = 'button';
+    if (active) b.setAttribute('aria-current', 'true');
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function renderSourceNav() {
+    const pick = (filter: string) => () => {
+      settings.filter = filter;
+      saveSettings(settings);
+      invalidate();
+      renderSourceNav();
+      renderCloud();
+      draw();
+    };
+    sourceNav.replaceChildren(
+      chip('todo', settings.filter === 'todo', pick('todo')),
+      chip('* principales', settings.filter === 'principales', pick('principales')),
+      ...tags.map((t) => chip(`#${t.name}`, settings.filter === t.id, pick(t.id))),
+    );
+  }
+
   function renderLayoutNav() {
     layoutNav.replaceChildren(
-      ...LAYOUTS.map((l) => {
-        const b = el('button', 'chip', l.label);
-        b.type = 'button';
-        if (l.id === settings.layout) b.setAttribute('aria-current', 'true');
-        b.addEventListener('click', () => {
+      ...LAYOUTS.map((l) =>
+        chip(l.label, l.id === settings.layout, () => {
           settings.layout = l.id;
           saveSettings(settings);
           renderLayoutNav();
           draw();
-        });
-        return b;
-      }),
+        }),
+      ),
     );
   }
 
@@ -134,30 +231,38 @@ export function createLab(): HTMLElement {
       range('ventana', 'horas máximas entre notas de una misma historia', settings.windowHours, 12, 96, 12, (v) => {
         settings.windowHours = v;
         saveSettings(settings);
+        selection = null;
+        draw();
+      }),
+      checkbox('mostrar por qué está cada historia', settings.showReasons, (v) => {
+        settings.showReasons = v;
+        saveSettings(settings);
+        draw();
+      }),
+      checkbox('poner la rutina aparte (clima, dólar, horóscopo…)', settings.routineApart, (v) => {
+        settings.routineApart = v;
+        saveSettings(settings);
+        invalidate();
+        renderCloud();
         draw();
       }),
     );
-    const reasonsToggle = el('label', 'check');
-    const box = el('input');
-    box.type = 'checkbox';
-    box.checked = settings.showReasons;
-    box.addEventListener('change', () => {
-      settings.showReasons = box.checked;
-      saveSettings(settings);
-      draw();
-    });
-    reasonsToggle.append(box, document.createTextNode(' mostrar por qué está cada historia'));
-    controlsBody.append(reasonsToggle);
+    const words = el('details', 'lab-routine-words web-small');
+    words.append(el('summary', 'muted', '[ qué cuenta como rutina ]'));
+    const list = el('ul');
+    for (const k of ROUTINE) list.append(el('li', 'muted', `${k.label}: ${k.words.join(', ')}`));
+    words.append(list);
+    controlsBody.append(words);
   }
 
   function renderCloud() {
+    const { topics } = select();
     const max = Math.max(1, ...topics.map((t) => t.weight));
     cloud.replaceChildren(
       ...topics.map((t) => {
         const b = el('button', 'lab-word', t.label);
         b.type = 'button';
-        const level = Math.min(4, 1 + Math.floor((t.weight / max) * 4));
-        b.dataset.level = String(level);
+        b.dataset.level = String(Math.min(4, 1 + Math.floor((t.weight / max) * 4)));
         b.title = plural(t.feeds, 'fuente', 'fuentes');
         if (termFilter?.stem === t.stem) b.setAttribute('aria-pressed', 'true');
         b.addEventListener('click', () => {
@@ -168,14 +273,43 @@ export function createLab(): HTMLElement {
         return b;
       }),
     );
-    if (topics.length === 0) cloud.append(el('p', 'muted web-small', 'Hace falta que varias fuentes publiquen en las últimas 24 horas.'));
+    if (topics.length === 0) {
+      cloud.append(el('p', 'muted web-small', 'Hace falta que varias de estas fuentes publiquen en los últimos días.'));
+    }
+  }
+
+  function renderRoutine(routine: RoutineGroup[]) {
+    routineBox.replaceChildren();
+    if (routine.length === 0) return;
+    routineBox.append(el('h2', 'section-title', 'la rutina del día'));
+    const list = el('ul', 'lab-routine__list');
+    for (const g of routine) {
+      const item = el('li');
+      const box = el('details');
+      box.append(el('summary', undefined, `${g.kind.label} · ${plural(g.articles.length, 'nota', 'notas')}`));
+      const inner = el('ul', 'lab-routine__items web-small');
+      for (const a of g.articles.slice(0, 30)) {
+        const li = el('li');
+        li.append(el('span', 'muted', `${feedTitle(a.feedId)}: `));
+        const link = el('a', undefined, a.title);
+        link.href = `#/nota/${a.id}`;
+        li.append(link);
+        inner.append(li);
+      }
+      box.append(inner);
+      item.append(box);
+      list.append(item);
+    }
+    routineBox.append(list);
   }
 
   function draw() {
-    const key = `${settings.threshold}|${settings.windowHours}`;
-    if (!grouped || grouped.key !== key) grouped = { key, stories: groupStories(articles, settings).stories };
-    const now = Date.now();
-    let ranked = rankStories(grouped.stories, feeds, topics, settings.weights, now);
+    const sel = select();
+    const groupKey = `${sel.key}|${settings.threshold}|${sel.windowHours}`;
+    if (!grouped || grouped.key !== groupKey) {
+      grouped = { key: groupKey, stories: groupStories(sel.news, { ...settings, windowHours: sel.windowHours }).stories };
+    }
+    let ranked = rankStories(grouped.stories, feeds, sel.topics, settings.weights, Date.now());
 
     filterLine.replaceChildren();
     if (termFilter) {
@@ -193,14 +327,28 @@ export function createLab(): HTMLElement {
     }
 
     const multi = grouped.stories.filter((s) => s.feedIds.size > 1).length;
-    stats.textContent = `${plural(articles.length, 'nota', 'notas')} → ${plural(grouped.stories.length, 'historia', 'historias')} · ${plural(multi, 'con varias fuentes', 'con varias fuentes')}`;
+    const routineCount = sel.routine.reduce((n, g) => n + g.articles.length, 0);
+    stats.textContent =
+      `${sel.label} · ${plural(sel.news.length + routineCount, 'nota', 'notas')} → ` +
+      `${plural(grouped.stories.length, 'historia', 'historias')} · ${multi} con varias fuentes` +
+      (routineCount ? ` · ${routineCount} de rutina aparte` : '');
+    note.textContent =
+      sel.windowHours > settings.windowHours
+        ? `Estas fuentes publican poco: la ventana se agrandó a ${sel.windowHours} horas.`
+        : '';
+    if (sel.feeds.length === 0) note.textContent = 'Ninguna fuente tiene esta etiqueta todavía.';
+
+    renderRoutine(sel.routine);
     output.replaceChildren(renderLayout(settings.layout, ranked, { feedTitle, showReasons: settings.showReasons }));
   }
 
   void (async () => {
     stats.textContent = 'armando historias…';
-    [feeds, articles] = await Promise.all([listFeeds(), listArticles(undefined, 800)]);
-    topics = topicsOfTheDay(articles, Date.now());
+    [feeds, tags, allArticles] = await Promise.all([listFeeds(), listTags(), listArticles(undefined, 1200)]);
+    if (settings.filter !== 'todo' && settings.filter !== 'principales' && !tags.some((t) => t.id === settings.filter)) {
+      settings.filter = 'todo';
+    }
+    renderSourceNav();
     renderLayoutNav();
     renderControls();
     renderCloud();
