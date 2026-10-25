@@ -44,6 +44,10 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 4. **Afinar el diario en papel.**
 5. **Nombre definitivo.**
 
+## Para revisar
+
+- **La nota completa traída del sitio.** Hoy, cuando el feed trae solo un resumen y abrís la nota, la app pide la página al sitio del medio, saca el texto principal y lo guarda. Eso va más allá de lo que el medio publica en su feed y le saca la visita. Hay que decidir si queda así, si se elige por fuente o si la nota muestra solo lo que trae el feed.
+
 ## Más adelante
 
 - Sincronizar entre dispositivos sin un servidor que vigile (un archivo en tu propio Drive, un código de emparejamiento…).
