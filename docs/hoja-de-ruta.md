@@ -21,8 +21,9 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 
 | | Qué | Estado |
 | --- | --- | --- |
-| ⬜ | Proxy en un Cloudflare Worker | Hoy el proxy vive en la computadora: sin él, la app publicada no puede leer feeds. |
-| ⬜ | Publicación en chiptecno.ar | Depende del proxy. Hasta entonces, la app no se puede usar en el celu. |
+| 🟡 | Proxy en un Cloudflare Worker | El código está listo y probado (`worker/`). Falta crear la cuenta de Cloudflare y publicarlo. |
+| 🟡 | Publicación en GitHub Pages | Configurada: cada vez que algo entra a main, la app se publica sola. Falta activarla en GitHub y cargar la dirección del proxy. |
+| ⬜ | Dirección en chiptecno.ar | Después de GitHub Pages, se puede apuntar una dirección de chiptecno.ar. |
 | ✅ | Código público en GitHub | Este repositorio. |
 
 ## El sello Chip Tecno
@@ -39,7 +40,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 ## Lo que sigue, en orden
 
 1. **Confirmar la instalación y el modo sin conexión** en Chrome.
-2. **Proxy en Cloudflare y publicación en chiptecno.ar.**
+2. **Publicar:** crear la cuenta de Cloudflare, subir el proxy, activar GitHub Pages. Después, la dirección en chiptecno.ar.
 3. **Ajustes:** nombre del lector, temas, color de acento y tipografía.
 4. **Afinar el diario en papel.**
 5. **Nombre definitivo.**

@@ -15,7 +15,11 @@ El proxy tiene reglas para que nadie pueda usarlo para otra cosa:
 - solo va a direcciones públicas de internet, nunca a la red de tu casa, ni siquiera si un sitio lo redirige ahí;
 - lee hasta 5 MB y espera hasta 10 segundos.
 
-Hoy el proxy funciona dentro del servidor local de la app. Para publicarla, va a pasar a un Cloudflare Worker, un servicio gratuito.
+Mientras la app se usa en la compu, el proxy funciona dentro de su servidor local. Para la app publicada, el mismo proxy corre en un Cloudflare Worker, un servicio gratuito (está en la carpeta `worker`). Ahí suma una regla más: solo atiende pedidos que vienen de la app, por su dirección de origen.
+
+## Publicación
+
+La app es un conjunto de archivos que se pueden publicar en cualquier lado. Cada vez que algo entra a main, GitHub la arma y la publica sola en GitHub Pages. Solo se publica lo que está en main: la última versión probada.
 
 ## Cómo encuentra los feeds
 

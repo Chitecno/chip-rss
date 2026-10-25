@@ -209,3 +209,20 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Una función puede estar y no verse.** La marca de varias fuentes seguía en el código, pero con medios de tecnología había una sola historia compartida, y quedaba en el puesto 125. Los formatos mostraban solo las primeras, así que nunca aparecía.
 - Filtrar antes de agrupar esconde coincidencias. Hay que agrupar con todo y filtrar después.
 - **Leer desde un lector le saca visitas al sitio.** El feed lo publica el medio a propósito, pero cuando la nota se lee en la app no se cargan sus estadísticas ni su publicidad. Y cuando el feed trae solo un resumen y la app va a buscar la nota completa, va más allá de lo que el medio decidió compartir. Queda como decisión pendiente.
+
+---
+
+## 2026-10-25 · Más fácil de abrir, y lista para publicar
+
+### Qué hicimos
+
+- **Un ícono en el escritorio** que prende la app y la abre en el navegador con doble clic. Sin PowerShell.
+- **El proxy para publicar:** el mismo intermediario que trae los feeds, pero para correr en Cloudflare, gratis. Solo atiende pedidos que vienen de la app.
+- **Publicación automática:** cada vez que algo entra a main, GitHub arma la app y la publica en GitHub Pages.
+- Lo probamos de punta a punta en la compu: la app armada pidió los feeds al proxy nuevo, sin errores.
+
+### Qué aprendimos
+
+- **Una app web se puede publicar casi en cualquier lado,** porque son archivos. Lo único que necesita un servidor es el intermediario que trae los feeds.
+- **Un proxy público tiene que tener reglas,** si no, cualquiera lo puede usar para lo que quiera. El nuestro solo responde a la app, solo lee, y nunca entra a redes internas.
+- **El modo sin conexión funciona,** y hasta demasiado: el navegador siguió mostrando la versión vieja guardada hasta que se actualizó. Es lo esperado en una app instalable, y conviene saberlo al probar.
