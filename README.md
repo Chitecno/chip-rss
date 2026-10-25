@@ -1,35 +1,73 @@
 # chip-rss
 
-Lector de feeds RSS gratuito, local-first y con estética terminal. Sin cuentas, sin vigilancia: tus fuentes y tus datos viven en tu equipo.
+Lector de feeds RSS gratuito, local-first y con estética terminal. Un proyecto de [Chip Tecno](https://chiptecno.ar).
 
-Un proyecto de [Chip Tecno](https://chiptecno.ar).
+> Nombre provisorio. La app está en desarrollo: todavía no está publicada y se usa desde el código, en la propia computadora.
 
-> Nombre provisorio.
+## Por qué existe
 
-## Correrlo en tu compu
+RSS como herramienta contra la desinformación: cada persona elige y cura sus fuentes, en vez de que un algoritmo elija por ella. La app es también una postura: sin cuentas, sin vigilancia, con datos portables.
 
-Necesitás [Node.js](https://nodejs.org) (versión LTS).
+## Qué hace
+
+- **Agregar fuentes pegando la dirección de un medio.** La app busca sola su feed, también el de una sección (por ejemplo, la de tecnología de un diario) o el de un canal de YouTube.
+- **Fuentes principales y secundarias, y etiquetas** para agrupar. El timeline se filtra por etiqueta o por principales.
+- **Tarjetas con la foto real** de cada nota cuando el feed la trae. Si no la trae, un dibujo ASCII.
+- **Leer la nota completa dentro de la app,** sin salir al sitio. Queda guardada para leerla sin conexión.
+- **Laboratorio:** una pantalla para probar otras formas de ordenar y mostrar las noticias:
+  - agrupar en una sola historia las notas que cuentan lo mismo;
+  - ordenar por una relevancia que se explica y se ajusta a mano;
+  - ver los temas del día y separar la rutina (clima, dólar, horóscopo…);
+  - mostrarlo todo como tapa de diario, revista o teletipo.
+- **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
+
+## Cómo probarla
+
+Necesitás una computadora con [Node.js](https://nodejs.org) (versión LTS) y [Git](https://git-scm.com).
 
 ```bash
+git clone https://github.com/Chitecno/chip-rss.git
+cd chip-rss
 npm install
-npm run dev
+npm run app
 ```
 
-Para armar la versión publicable: `npm run build` (queda en `dist/`).
+Después abrí `http://localhost:4173` en Chrome. En Windows, si PowerShell no deja correr `npm`, usá `npm.cmd`.
 
-## Estructura
+La [guía de uso](docs/guia-de-uso.md) explica cada paso sin dar nada por sabido.
+
+## Documentación
+
+- [Guía de uso](docs/guia-de-uso.md): instalarla, abrirla y usarla, paso a paso.
+- [Cómo funciona](docs/como-funciona.md): las ideas detrás de la app y los problemas que resolvimos.
+- [Hoja de ruta](docs/hoja-de-ruta.md): qué está hecho y qué falta para la primera versión.
+- [Cómo trabajamos](docs/como-trabajamos.md): qué es cada cosa en GitHub (commit, main, pull request…).
+- [DEVLOG](DEVLOG.md): la bitácora pública del proceso.
+
+## Estructura del proyecto
 
 ```
 src/
   boot/      pantalla de arranque y banner ASCII
-  themes/    temas de color (chip tecno, y más adelante fósforo, ámbar, papel)
-  ui/        pantallas y piezas de la interfaz
+  themes/    temas de color
+  ui/        pantallas: leer, fuentes, nota, menú
   feeds/     buscar, leer y entender feeds
+  reader/    traer y limpiar la nota completa
+  lab/       laboratorio: historias, relevancia, rutina, presentaciones
   db/        guardado local (IndexedDB)
-  opml/      exportar e importar tus fuentes
-dev/         proxy local para leer feeds de otros sitios mientras desarrollamos
-worker/      el mismo proxy para producción (Cloudflare Worker, pendiente)
+dev/         proxy local para leer feeds de otros sitios
 public/      íconos de la app
+docs/        documentación
 ```
 
-El proceso de construcción está contado en [DEVLOG.md](DEVLOG.md).
+## Hecho con
+
+Vite y TypeScript, sin framework. La app es una PWA, es decir, una página web que se instala como aplicación. También usa:
+- [idb](https://github.com/jakearchibald/idb) para el guardado local;
+- [Readability](https://github.com/mozilla/readability) y [DOMPurify](https://github.com/cure53/DOMPurify) para leer y limpiar las notas;
+- [figlet](https://github.com/patorjk/figlet.js) para el banner ASCII;
+- la tipografía [Anonymous Pro](https://fonts.google.com/specimen/Anonymous+Pro).
+
+## Licencia
+
+Todavía sin definir.

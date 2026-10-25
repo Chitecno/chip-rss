@@ -6,3 +6,7 @@ dev-dist/
 Thumbs.db
 .claude/settings.local.json
 .claude/launch.json
+
+# Bitácora interna en Word: queda solo en la compu, nunca se sube
+docs/*.docx
+~$*
