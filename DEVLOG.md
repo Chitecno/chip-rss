@@ -149,3 +149,63 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - Subir el repositorio a GitHub, público.
 - Elegir la presentación que queda y llevarla a la pantalla de leer.
 - Comparar coberturas: ver lado a lado cómo cuenta cada medio la misma historia.
+
+---
+
+## 2026-10-25 · Formatos para leer y un diario en papel
+
+### Qué hicimos
+
+- **La pantalla de leer ahora tiene formatos:** timeline (la lista de siempre), diario, revista y teletipo. Los filtros de fuentes siguen andando en todos y el formato elegido queda guardado.
+- En diario, revista y teletipo las notas se agrupan en historias y la rutina va aparte, con los mismos ajustes que se mueven en el laboratorio.
+- **Rediseñamos el diario para que parezca impreso.** Antes se parecía demasiado a la revista. Ahora es una hoja clara sobre el fondo negro de la app:
+  - cabezal con el nombre en ASCII y dos "orejas" a los costados, con los temas del día y la rutina;
+  - folio con la fecha de la edición;
+  - apertura con título grande, foto y texto en dos columnas con letra capital;
+  - columna lateral y filas separadas por filetes;
+  - secciones por etiqueta y breves en tres columnas.
+- **Sumamos el tema papel:** fondo claro y tinta negra. Por ahora lo usa el diario; más adelante va a poder elegirse para toda la app.
+- Ordenamos la documentación: un README como portada del repositorio y una carpeta `docs` con la guía de uso, cómo funciona, la hoja de ruta y cómo trabajamos con GitHub.
+
+### Qué aprendimos
+
+- **Lo que hace que algo parezca un diario no son las fotos grandes sino la estructura:** columnas angostas, filetes finos entre ellas, títulos que cruzan columnas, una volanta chiquita arriba del título y una letra capital al empezar el texto.
+- **Las fotos parecen impresas sin tocarlas:** en blanco y negro, con más contraste y una trama de puntos encima.
+- Un mismo juego de colores puede vivir en toda la app o en una sola pieza. El tema papel está armado así: la hoja del diario lo usa sin cambiar el resto.
+- Los títulos muy largos se comen la página en la apertura: van un poco más chicos.
+
+---
+
+## 2026-10-25 · Respaldo de fuentes y orden en el proyecto
+
+### Qué hicimos
+
+- **Exportar e importar las fuentes**, en Ajustes. El archivo es un OPML, el formato que entienden casi todos los lectores de RSS. Lleva las fuentes con el nombre que les pusiste, si son principales o secundarias, todas las etiquetas y el formato de lectura elegido. Al importar, se restaura todo y se vuelven a bajar las notas.
+- **El menú de fuentes** (todo, principales, etiquetas) pasó a estar adentro de cada formato. En el diario es la barra de secciones, debajo del cabezal.
+- **"Acerca de"** es ahora una descripción básica: qué es la app, cómo se usa y qué pasa con tus datos.
+- **Sacamos el laboratorio de la app.** Era una pantalla de pruebas y quedó guardada en su propia rama. Lo que servía, como agrupar historias o separar la rutina, ya es parte de leer.
+- **Ordenamos cómo trabajamos.** `main` queda solo con la última versión probada. El trabajo de todos los días va en una rama `desarrollo`, y las pruebas en ramas aparte.
+
+### Qué aprendimos
+
+- **Un OPML puede llevar más de lo que dice el estándar sin romper nada.** Lo propio de chip-rss va en atributos con un prefijo propio (`chip:`). Los otros lectores los ignoran, y chip-rss los usa para restaurar todo como estaba.
+- Con archivos de otros lectores, las carpetas se convierten en etiquetas. Como esos archivos no dicen qué fuentes son principales, se respeta lo que ya estaba.
+- Probamos el viaje de ida y vuelta: exportar de un navegador e importar en otro vacío. Volvieron las 9 fuentes con sus nombres, principales, etiquetas y formato.
+- Probar ideas directo en la app la ensucia. Para eso están las ramas: se prueba aparte y entra solo lo que funciona.
+
+---
+
+## 2026-10-25 · Varias fuentes, a la vista y en páginas
+
+### Qué hicimos
+
+- **La marca de cuántas fuentes cuentan lo mismo está en todos los formatos,** también en el timeline, con links a las otras versiones. Sumamos un filtro, **varias fuentes**, para ver solo esas historias.
+- **Las historias se arman con todas las fuentes,** aunque haya una etiqueta elegida. Si una nota de `#tecnología` también la cuenta una fuente que no tiene esa etiqueta, la historia muestra las dos.
+- **Las historias compartidas de la última semana van primero.**
+- **Todo el contenido, en páginas.** Ningún formato recorta: lo que no entra va a la página siguiente. En el diario, desde la página 2 el cabezal es chico, como en las páginas interiores de un diario.
+
+### Qué aprendimos
+
+- **Una función puede estar y no verse.** La marca de varias fuentes seguía en el código, pero con medios de tecnología había una sola historia compartida, y quedaba en el puesto 125. Los formatos mostraban solo las primeras, así que nunca aparecía.
+- Filtrar antes de agrupar esconde coincidencias. Hay que agrupar con todo y filtrar después.
+- **Leer desde un lector le saca visitas al sitio.** El feed lo publica el medio a propósito, pero cuando la nota se lee en la app no se cargan sus estadísticas ni su publicidad. Y cuando el feed trae solo un resumen y la app va a buscar la nota completa, va más allá de lo que el medio decidió compartir. Queda como decisión pendiente.

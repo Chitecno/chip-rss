@@ -1,0 +1,368 @@
+/* --- Diario en papel --- */
+.diario {
+  padding: var(--space-4);
+  border: 0;
+}
+.diario a {
+  color: inherit;
+  text-decoration: none;
+}
+.diario a:hover {
+  text-decoration: underline;
+}
+
+/* Cabezal: orejas a los costados y el nombre en el medio. */
+.diario__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 6px double var(--ink);
+}
+.diario__plate {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+}
+.diario .banner {
+  margin: 0;
+  --available: min(52vw, 640px);
+}
+.diario .glitch__a,
+.diario .glitch__b {
+  display: none;
+}
+.diario .glitch__main {
+  color: var(--ink);
+}
+
+.diario__ear {
+  max-width: 220px;
+  padding: var(--space-1);
+  border: 1px solid var(--ink);
+  font-size: 12px;
+  line-height: 16px;
+}
+.diario__ear:last-child {
+  justify-self: end;
+}
+.diario__ear p {
+  margin: 0;
+}
+.diario__ear-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px !important;
+}
+
+.diario__folio {
+  margin: 0 0 var(--space-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ink);
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Piezas de texto */
+.diario__kicker {
+  margin: 0 0 4px;
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.diario__h1 {
+  margin: 0 0 var(--space-2);
+  font-size: 44px;
+  line-height: 46px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.diario__h1--long {
+  font-size: 34px;
+  line-height: 38px;
+}
+.diario__h2 {
+  margin: 0 0 var(--space-1);
+  font-weight: 700;
+}
+.diario__item--m .diario__h2 {
+  font-size: 22px;
+  line-height: 26px;
+}
+.diario__item--s .diario__h2 {
+  font-size: 17px;
+  line-height: 21px;
+}
+.diario__text {
+  margin: 0 0 var(--space-1);
+  font-size: 14px;
+  line-height: 20px;
+  text-align: justify;
+  hyphens: auto;
+}
+.diario__text--cols {
+  column-count: 2;
+  column-gap: var(--space-3);
+  column-rule: 1px solid var(--ink);
+}
+.diario__text--cols p {
+  margin: 0;
+}
+.diario__dropcap::first-letter {
+  float: left;
+  font-size: 56px;
+  line-height: 46px;
+  font-weight: 700;
+  padding: 4px 6px 0 0;
+}
+.diario__byline {
+  margin: 0;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.diario__also {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 16px;
+}
+.diario__also a {
+  text-decoration: underline;
+}
+.diario__more {
+  display: inline-block;
+  margin-top: var(--space-1);
+  font-weight: 700;
+}
+.diario__empty {
+  text-align: center;
+}
+
+/* Foto tramada: blanco y negro, con contraste y una trama de puntos encima. */
+.diario__photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin: var(--space-1) 0;
+  aspect-ratio: 3 / 2;
+  background: var(--ground);
+}
+.diario__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.35) brightness(1.05);
+  mix-blend-mode: multiply;
+}
+.diario__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(243, 238, 227, 0.85) 0 0.9px, transparent 1.4px);
+  background-size: 3px 3px;
+  pointer-events: none;
+}
+.diario__photo--small {
+  aspect-ratio: 16 / 10;
+}
+
+/* Portada: apertura a la izquierda, columna lateral a la derecha. */
+.diario__front {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.diario__lead {
+  padding-right: var(--space-3);
+}
+.diario__side {
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--ink);
+}
+.diario__side .diario__item + .diario__item {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--ink);
+}
+
+/* Filas de cuatro columnas con filetes entre ellas. */
+.diario__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 3px double var(--ink);
+}
+.diario__row--plain {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.diario__row .diario__item {
+  padding: 0 var(--space-2);
+}
+.diario__row .diario__item:first-child {
+  padding-left: 0;
+}
+.diario__row .diario__item:last-child {
+  padding-right: 0;
+}
+.diario__row .diario__item + .diario__item {
+  border-left: 1px solid var(--ink);
+}
+
+/* Secciones y breves */
+.diario__section {
+  margin-top: var(--space-4);
+}
+.diario__section-title {
+  margin: 0 0 var(--space-2);
+  padding: 6px 0;
+  border-top: 6px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+.diario__briefs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-count: 3;
+  column-gap: var(--space-3);
+  column-rule: 1px solid var(--ink);
+}
+.diario__briefs li {
+  break-inside: avoid;
+  padding-bottom: var(--space-1);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px dotted var(--ink);
+  font-size: 14px;
+  line-height: 19px;
+}
+.diario__brief-title {
+  font-weight: 700;
+}
+
+/* Pantallas medianas y celu: menos columnas, filetes horizontales. */
+@media (max-width: 900px) {
+  .diario__head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .diario__plate {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .diario .banner {
+    --available: calc(100vw - 2 * var(--pad-x) - 2 * var(--space-4));
+  }
+  .diario__ear {
+    max-width: none;
+  }
+  .diario__front {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .diario__lead {
+    padding-right: 0;
+  }
+  .diario__side {
+    margin-top: var(--space-3);
+    padding: var(--space-2) 0 0;
+    border-left: 0;
+    border-top: 3px double var(--ink);
+  }
+  .diario__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--space-3);
+  }
+  .diario__row .diario__item:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .diario__briefs {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .diario {
+    padding: var(--space-2);
+  }
+  .diario__head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .diario__h1 {
+    font-size: 30px;
+    line-height: 34px;
+  }
+  .diario__text--cols {
+    column-count: 1;
+  }
+  .diario__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .diario__row .diario__item {
+    padding: 0;
+    border-left: 0 !important;
+  }
+  .diario__row .diario__item + .diario__item {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--ink);
+  }
+  .diario__briefs {
+    column-count: 1;
+  }
+}
+
+/* Barra de secciones: el menú de fuentes adentro de la hoja. */
+.diario__sections {
+  margin: calc(-1 * var(--space-3) + var(--space-1)) 0 var(--space-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ink);
+}
+.diario__sections .chips {
+  justify-content: center;
+  gap: 4px var(--space-2);
+}
+.diario__sections .chip {
+  color: var(--ink);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.diario__sections .chip[aria-current='true'] {
+  background: var(--ink);
+  color: var(--ground);
+}
+
+/* La marca de varias fuentes en la hoja */
+.diario__count {
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.06em;
+}
+
+/* Cabezal de las páginas interiores */
+.diario__head--inner {
+  display: block;
+  padding-bottom: var(--space-1);
+  text-align: center;
+}
+.diario__inner-name {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}

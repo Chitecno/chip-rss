@@ -32,7 +32,7 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
 ## Personalización con sello Chip Tecno
 - La persona bautiza su lector ("La [nombre] de Juana") → banner ASCII generado con ese nombre en una pantalla de arranque tipo boot.
 - Temas: `chip tecno` (por defecto), `fósforo verde`, `ámbar`, `papel` (claro). Color de acento y tipografía ajustables.
-- Sello fijo: línea de boot `// un proyecto chip tecno`, sección "acerca de" con manifiesto, packs curados firmados por Chip.
+- Sello fijo: línea de boot `// un proyecto chip tecno`, sección "acerca de" descriptiva (qué es y cómo se usa, sin editorializar), packs curados firmados por Chip.
 
 ## Futuro (no MVP)
 - v2: sincronización entre dispositivos sin servidor que vigile (archivo en el propio Drive, código de emparejamiento, etc.).

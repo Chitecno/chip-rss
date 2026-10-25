@@ -1,20 +1,27 @@
 import type { Article } from '../db/db';
 import { asciiPlaceholder } from '../ui/ascii-placeholder';
-import { el, longDate, shortDate } from '../ui/dom';
-import { renderBanner } from '../boot/banner';
-import type { Ranked } from './relevance';
-import { READER_NAME } from '../config';
+import { el, shortDate } from '../ui/dom';
+import type { Ranked, Topic } from './relevance';
+import type { RoutineGroup } from './routine';
+import { diario } from './diario';
 
-export type LayoutName = 'tapa' | 'revista' | 'teletipo' | 'grilla';
+/** Las formas de mostrar las historias en la pantalla de leer. */
+export type LayoutName = 'diario' | 'revista' | 'teletipo';
 
-export const LAYOUTS: { id: LayoutName; label: string }[] = [
-  { id: 'tapa', label: 'tapa de diario' },
-  { id: 'revista', label: 'revista' },
-  { id: 'teletipo', label: 'teletipo' },
-  { id: 'grilla', label: 'grilla' },
-];
-
-export type LayoutContext = { feedTitle: (id: string) => string; showReasons: boolean };
+export type LayoutContext = {
+  feedTitle: (id: string) => string;
+  showReasons: boolean;
+  /** El menú de fuentes (todo, principales, etiquetas), que va adentro de cada formato. */
+  filters?: HTMLElement;
+  /** En qué página estamos y cuántas hay. */
+  page?: number;
+  pages?: number;
+  /** Para el diario: qué fuentes se están mirando, los temas y la rutina del día, y las secciones. */
+  label?: string;
+  topics?: Topic[];
+  routine?: RoutineGroup[];
+  sectionsOf?: (story: Ranked) => string[];
+};
 
 /** La nota que encabeza la historia: la que tiene foto y más texto. */
 function lead(story: Ranked): Article {
@@ -96,36 +103,6 @@ function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 
   return block;
 }
 
-/** Tapa de diario: cabezal, apertura grande, columna lateral, segunda línea y breves. */
-function tapa(stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  const page = el('div', 'tapa');
-  const masthead = el('header', 'tapa__masthead');
-  masthead.append(renderBanner(READER_NAME, window.innerWidth < 640));
-  masthead.append(el('p', 'tapa__date web-small', `${longDate.format(Date.now())} · ${stories.length} historias`));
-  page.append(masthead);
-
-  const [first, ...rest] = stories;
-  if (!first) return page;
-  const top = el('div', 'tapa__top');
-  top.append(storyBlock(first, ctx, 'xl', true));
-  const side = el('div', 'tapa__side');
-  for (const s of rest.slice(0, 3)) side.append(storyBlock(s, ctx, 'm', true));
-  top.append(side);
-  page.append(top);
-
-  const second = el('div', 'tapa__second');
-  for (const s of rest.slice(3, 9)) second.append(storyBlock(s, ctx, 'm', false));
-  page.append(second);
-
-  if (rest.length > 9) {
-    page.append(el('h2', 'section-title', 'breves'));
-    const briefs = el('div', 'tapa__briefs');
-    for (const s of rest.slice(9, 39)) briefs.append(storyBlock(s, ctx, 's', false));
-    page.append(briefs);
-  }
-  return page;
-}
-
 /** Revista: fotos grandes, una historia por bloque, alternando lados. */
 function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const page = el('div', 'revista');
@@ -136,15 +113,15 @@ function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     c.append(storyBlock(cover, ctx, 'xl', true));
     page.append(c);
   }
-  rest.slice(0, 12).forEach((s, i) => {
+  rest.forEach((s, i) => {
     const row = el('div', `revista__row${i % 2 ? ' revista__row--flip' : ''}`);
     row.append(storyBlock(s, ctx, 'l', true));
     page.append(row);
   });
-  const others = stories.filter((s) => !withPhoto.slice(0, 13).includes(s)).slice(0, 20);
+  const others = stories.filter((s) => !withPhoto.includes(s));
   if (others.length) {
     page.append(el('h2', 'section-title', 'más'));
-    const more = el('div', 'tapa__briefs');
+    const more = el('div', 'revista__more');
     for (const s of others) more.append(storyBlock(s, ctx, 's', false));
     page.append(more);
   }
@@ -155,7 +132,7 @@ function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
 function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const list = el('ol', 'teletipo');
   const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-  for (const s of stories.slice(0, 120)) {
+  for (const s of stories) {
     const a = lead(s);
     const li = el('li', 'teletipo__row');
     li.append(el('span', 'teletipo__time muted', time.format(s.newest)));
@@ -172,16 +149,11 @@ function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   return list;
 }
 
-/** La grilla de siempre, pero por historias. */
-function grilla(stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  const grid = el('div', 'timeline__list');
-  for (const s of stories.slice(0, 90)) grid.append(storyBlock(s, ctx, 'm', true));
-  return grid;
-}
-
 export function renderLayout(name: LayoutName, stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  if (name === 'revista') return revista(stories, ctx);
-  if (name === 'teletipo') return teletipo(stories, ctx);
-  if (name === 'grilla') return grilla(stories, ctx);
-  return tapa(stories, ctx);
+  // El diario pone el menú de fuentes adentro de la hoja; los demás, arriba de todo.
+  if (name === 'diario') return diario(stories, ctx);
+  const wrap = el('div', 'formato');
+  if (ctx.filters) wrap.append(ctx.filters);
+  wrap.append(name === 'revista' ? revista(stories, ctx) : teletipo(stories, ctx));
+  return wrap;
 }
