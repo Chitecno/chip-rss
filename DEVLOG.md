@@ -192,3 +192,20 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - Con archivos de otros lectores, las carpetas se convierten en etiquetas. Como esos archivos no dicen qué fuentes son principales, se respeta lo que ya estaba.
 - Probamos el viaje de ida y vuelta: exportar de un navegador e importar en otro vacío. Volvieron las 9 fuentes con sus nombres, principales, etiquetas y formato.
 - Probar ideas directo en la app la ensucia. Para eso están las ramas: se prueba aparte y entra solo lo que funciona.
+
+---
+
+## 2026-10-25 · Varias fuentes, a la vista y en páginas
+
+### Qué hicimos
+
+- **La marca de cuántas fuentes cuentan lo mismo está en todos los formatos,** también en el timeline, con links a las otras versiones. Sumamos un filtro, **varias fuentes**, para ver solo esas historias.
+- **Las historias se arman con todas las fuentes,** aunque haya una etiqueta elegida. Si una nota de `#tecnología` también la cuenta una fuente que no tiene esa etiqueta, la historia muestra las dos.
+- **Las historias compartidas de la última semana van primero.**
+- **Todo el contenido, en páginas.** Ningún formato recorta: lo que no entra va a la página siguiente. En el diario, desde la página 2 el cabezal es chico, como en las páginas interiores de un diario.
+
+### Qué aprendimos
+
+- **Una función puede estar y no verse.** La marca de varias fuentes seguía en el código, pero con medios de tecnología había una sola historia compartida, y quedaba en el puesto 125. Los formatos mostraban solo las primeras, así que nunca aparecía.
+- Filtrar antes de agrupar esconde coincidencias. Hay que agrupar con todo y filtrar después.
+- **Leer desde un lector le saca visitas al sitio.** El feed lo publica el medio a propósito, pero cuando la nota se lee en la app no se cargan sus estadísticas ni su publicidad. Y cuando el feed trae solo un resumen y la app va a buscar la nota completa, va más allá de lo que el medio decidió compartir. Queda como decisión pendiente.

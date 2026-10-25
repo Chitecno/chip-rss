@@ -12,7 +12,7 @@ export function routineBox(routine: RoutineGroup[], feedTitle: (id: string) => s
     const details = el('details');
     details.append(el('summary', undefined, `${g.kind.label} · ${plural(g.articles.length, 'nota', 'notas')}`));
     const inner = el('ul', 'lab-routine__items web-small');
-    for (const a of g.articles.slice(0, 30)) {
+    for (const a of g.articles) {
       const li = el('li');
       li.append(el('span', 'muted', `${feedTitle(a.feedId)}: `));
       const link = el('a', undefined, a.title);

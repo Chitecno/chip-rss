@@ -5,7 +5,10 @@ import { groupStories } from './stories';
 
 /**
  * La "edición" de la pantalla de leer: qué fuentes se miran, qué es noticia y qué es rutina,
- * los temas del día y las historias ordenadas por relevancia.
+ * los temas del día y las historias ordenadas.
+ *
+ * Las historias se arman siempre con TODAS las fuentes: si una nota de #tecnología también la
+ * cuenta una fuente que no tiene esa etiqueta, la historia muestra las dos.
  */
 
 // Qué tan parecidas tienen que ser dos notas para contar como la misma historia (0 a 1).
@@ -17,38 +20,64 @@ const HOUR = 3600_000;
 // la ventana se agranda: una historia puede tardar días en aparecer en varios de ellos.
 const LOW_VOLUME_PER_DAY = 40;
 const WIDE_WINDOW_HOURS = 96;
+// Las historias que cuentan varias fuentes van primero si son de la última semana.
+const SHARED_FIRST_DAYS = 7;
 
 export type Edition = {
   feeds: Feed[];
-  news: Article[];
   routine: RoutineGroup[];
   topics: Topic[];
+  /** Las historias de las fuentes elegidas, en orden (las compartidas primero). */
   ranked: Ranked[];
+  /** Cuántas de esas historias cuentan dos o más fuentes. */
+  sharedCount: number;
+  /** La historia de cada nota, para marcar en el timeline las que cuentan varias fuentes. */
+  storyOf: Map<string, Ranked>;
   label: string;
 };
 
-/** Elige las fuentes según el filtro ('todo', 'principales' o el id de una etiqueta), agrupa y ordena. */
-export function buildEdition(feeds: Feed[], tags: Tag[], articles: Article[], filter: string): Edition {
+export function isShared(story: Ranked): boolean {
+  return story.feedIds.size > 1;
+}
+
+/**
+ * Elige las fuentes según el filtro ('todo', 'principales' o el id de una etiqueta), agrupa con
+ * todas las fuentes y ordena. Con `onlyShared`, deja solo las historias que cuentan varias fuentes.
+ */
+export function buildEdition(feeds: Feed[], tags: Tag[], articles: Article[], filter: string, onlyShared = false): Edition {
   const tag = tags.find((t) => t.id === filter);
   const chosen =
     filter === 'principales' ? feeds.filter((f) => f.principal) : tag ? feeds.filter((f) => f.tagIds.includes(tag.id)) : feeds;
   const ids = new Set(chosen.map((f) => f.id));
-  const mine = articles.filter((a) => ids.has(a.feedId));
-  const { news, routine } = splitRoutine(mine);
+
+  const { news, routine } = splitRoutine(articles);
+  const mine = (list: Article[]) => list.filter((a) => ids.has(a.feedId));
 
   const now = Date.now();
-  const lowVolume = mine.filter((a) => now - a.published <= 24 * HOUR).length < LOW_VOLUME_PER_DAY;
-  const topics = topicsOfTheDay(news, now, lowVolume ? 48 : 24);
+  const lowVolume = mine(articles).filter((a) => now - a.published <= 24 * HOUR).length < LOW_VOLUME_PER_DAY;
+  const topics = topicsOfTheDay(mine(news), now, lowVolume ? 48 : 24);
   const { stories } = groupStories(news, {
     threshold: THRESHOLD,
     windowHours: lowVolume ? WIDE_WINDOW_HOURS : WINDOW_HOURS,
   });
+  const ranked = rankStories(stories, feeds, topics, DEFAULT_WEIGHTS, now);
+
+  const sharedFirst = (s: Ranked) => isShared(s) && now - s.newest <= SHARED_FIRST_DAYS * 24 * HOUR;
+  const ordered = [...ranked.filter(sharedFirst), ...ranked.filter((s) => !sharedFirst(s))];
+  const inSelection = ordered.filter((s) => s.articles.some((a) => ids.has(a.feedId)));
+
+  const storyOf = new Map<string, Ranked>();
+  for (const s of ranked) for (const a of s.articles) storyOf.set(a.id, s);
+
   return {
     feeds: chosen,
-    news,
-    routine,
+    routine: routine
+      .map((g) => ({ ...g, articles: mine(g.articles) }))
+      .filter((g) => g.articles.length > 0),
     topics,
-    ranked: rankStories(stories, feeds, topics, DEFAULT_WEIGHTS, now),
+    ranked: onlyShared ? inSelection.filter(isShared) : inSelection,
+    sharedCount: inSelection.filter(isShared).length,
+    storyOf,
     label: filter === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todas las fuentes',
   };
 }

@@ -344,3 +344,25 @@
   background: var(--ink);
   color: var(--ground);
 }
+
+/* La marca de varias fuentes en la hoja */
+.diario__count {
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.06em;
+}
+
+/* Cabezal de las páginas interiores */
+.diario__head--inner {
+  display: block;
+  padding-bottom: var(--space-1);
+  text-align: center;
+}
+.diario__inner-name {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}

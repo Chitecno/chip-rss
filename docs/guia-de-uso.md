@@ -122,6 +122,10 @@ Cuando hay cambios nuevos en GitHub:
   - **teletipo:** una línea por historia, para pasar rápido.
 - Adentro de cada formato está el menú de fuentes: **todo**, **principales** o cualquier **#etiqueta**. En el diario aparece como la barra de secciones, debajo del cabezal.
 - En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
+- **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y los links a las otras versiones. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
+- En el menú de fuentes, **[ ] varias fuentes** deja solo las historias que cuentan dos o más fuentes. El número entre paréntesis dice cuántas hay.
+- Con una etiqueta elegida, las historias se arman igual con todas tus fuentes: si una nota de `#tecnología` también la cuenta una fuente sin esa etiqueta, la ves con las dos.
+- **Se muestra todo, en páginas.** Abajo de cada formato están los números de página y **[ siguiente > ]**. En el diario, desde la página 2 el cabezal es más chico, como en las páginas interiores de un diario.
 - El formato que elijas queda guardado para la próxima vez.
 - Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.

@@ -13,6 +13,9 @@ export type LayoutContext = {
   showReasons: boolean;
   /** El menú de fuentes (todo, principales, etiquetas), que va adentro de cada formato. */
   filters?: HTMLElement;
+  /** En qué página estamos y cuántas hay. */
+  page?: number;
+  pages?: number;
   /** Para el diario: qué fuentes se están mirando, los temas y la rutina del día, y las secciones. */
   label?: string;
   topics?: Topic[];
@@ -110,12 +113,12 @@ function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     c.append(storyBlock(cover, ctx, 'xl', true));
     page.append(c);
   }
-  rest.slice(0, 12).forEach((s, i) => {
+  rest.forEach((s, i) => {
     const row = el('div', `revista__row${i % 2 ? ' revista__row--flip' : ''}`);
     row.append(storyBlock(s, ctx, 'l', true));
     page.append(row);
   });
-  const others = stories.filter((s) => !withPhoto.slice(0, 13).includes(s)).slice(0, 20);
+  const others = stories.filter((s) => !withPhoto.includes(s));
   if (others.length) {
     page.append(el('h2', 'section-title', 'más'));
     const more = el('div', 'revista__more');
@@ -129,7 +132,7 @@ function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
 function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const list = el('ol', 'teletipo');
   const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-  for (const s of stories.slice(0, 120)) {
+  for (const s of stories) {
     const a = lead(s);
     const li = el('li', 'teletipo__row');
     li.append(el('span', 'teletipo__time muted', time.format(s.newest)));

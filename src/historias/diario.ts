@@ -4,6 +4,7 @@ import { READER_NAME } from '../config';
 import { el } from '../ui/dom';
 import type { Ranked } from './relevance';
 import type { LayoutContext } from './layouts';
+import { isShared } from './edition';
 import './diario.css';
 
 /**
@@ -26,12 +27,19 @@ function link(article: Article, text: string, className?: string): HTMLAnchorEle
   return a;
 }
 
+/** La marca rosa: cuántas fuentes cuentan la historia. */
+function sharedMark(story: Ranked): HTMLElement | '' {
+  return isShared(story) ? el('span', 'lab-count diario__count', `${story.feedIds.size} fuentes`) : '';
+}
+
 /** Volanta: la línea chiquita en mayúsculas arriba del título. */
 function kicker(story: Ranked, ctx: LayoutContext): HTMLElement {
   const sections = ctx.sectionsOf?.(story) ?? [];
-  const parts = sections.length ? [sections[0]] : [ctx.feedTitle(lead(story).feedId)];
-  if (story.feedIds.size > 1) parts.push(`${story.feedIds.size} fuentes`);
-  return el('p', 'diario__kicker', parts.join(' · '));
+  const p = el('p', 'diario__kicker');
+  const mark = sharedMark(story);
+  if (mark) p.append(mark, ' ');
+  p.append(sections.length ? sections[0] : ctx.feedTitle(lead(story).feedId));
+  return p;
 }
 
 /** La foto en blanco y negro con trama de puntos, como impresa. */
@@ -77,7 +85,8 @@ function opening(story: Ranked, ctx: LayoutContext): HTMLElement {
   const p = photo(a, 'diario__photo--lead');
   if (p) art.append(p);
   const text = el('div', 'diario__text diario__text--cols');
-  const body = el('p', 'diario__dropcap', a.summary || a.title);
+  // La letra capital queda rara si el texto empieza con comillas: se las sacamos.
+  const body = el('p', 'diario__dropcap', (a.summary || a.title).replace(/^[\s"'“”‘’«»]+/, ''));
   text.append(body);
   art.append(text, byline(a, ctx));
   const also = alsoIn(story, a, ctx);
@@ -118,19 +127,29 @@ function ears(ctx: LayoutContext): [HTMLElement, HTMLElement] {
 
 export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const page = el('div', 'diario papel');
-
-  const head = el('header', 'diario__head');
-  const [left, right] = ears(ctx);
-  const plate = el('div', 'diario__plate');
-  plate.append(renderBanner(READER_NAME, window.innerWidth < 640));
-  head.append(left, plate, right);
+  const number = ctx.page ?? 1;
   const date = editionDate.format(Date.now());
+  const pageInfo = ctx.pages && ctx.pages > 1 ? ` · página ${number} de ${ctx.pages}` : '';
+
+  if (number === 1) {
+    const head = el('header', 'diario__head');
+    const [left, right] = ears(ctx);
+    const plate = el('div', 'diario__plate');
+    plate.append(renderBanner(READER_NAME, window.innerWidth < 640));
+    head.append(left, plate, right);
+    page.append(head);
+  } else {
+    // Las páginas interiores llevan un cabezal chico, como en un diario.
+    const head = el('header', 'diario__head diario__head--inner');
+    head.append(el('p', 'diario__inner-name', READER_NAME));
+    page.append(head);
+  }
   const folio = el(
     'p',
     'diario__folio',
-    `${date.charAt(0).toUpperCase()}${date.slice(1)} · ${ctx.label ?? 'todas las fuentes'} · ${stories.length} historias`,
+    `${date.charAt(0).toUpperCase()}${date.slice(1)} · ${ctx.label ?? 'todas las fuentes'}${pageInfo}`,
   );
-  page.append(head, folio);
+  page.append(folio);
   // El menú de fuentes como la barra de secciones de un diario.
   if (ctx.filters) {
     const bar = el('div', 'diario__sections');
@@ -190,7 +209,7 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     }
   }
 
-  const briefs = rest.filter((s) => !shown.has(s.key)).slice(0, 36);
+  const briefs = rest.filter((s) => !shown.has(s.key));
   if (briefs.length) {
     const sec = el('section', 'diario__section');
     sec.append(el('h2', 'diario__section-title', 'Breves'));
@@ -198,6 +217,8 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     for (const s of briefs) {
       const a = lead(s);
       const li = el('li');
+      const mark = sharedMark(s);
+      if (mark) li.append(mark, ' ');
       li.append(link(a, a.title, 'diario__brief-title'));
       li.append(el('span', 'diario__byline', ` ${ctx.feedTitle(a.feedId)}${s.feedIds.size > 1 ? ` y ${s.feedIds.size - 1} más` : ''}`));
       list.append(li);

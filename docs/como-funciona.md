@@ -49,7 +49,9 @@ La nota queda guardada: se puede volver a leer sin conexión.
 
 ## Historias, rutina y formatos
 
-En la pantalla de leer se elige el formato: timeline (todas las notas), diario, revista o teletipo. En los últimos tres, las notas se agrupan en historias y la rutina va aparte.
+En la pantalla de leer se elige el formato: timeline (todas las notas), diario, revista o teletipo. En los últimos tres, las notas se agrupan en historias y la rutina va aparte. En todos, las notas que cuentan varias fuentes llevan la marca de cuántas son.
+
+Todo se muestra, repartido en páginas: 48 notas por página en el timeline, 40 historias en el diario, 16 en la revista y 60 en el teletipo.
 
 ### Historias: la misma noticia en varios medios
 
@@ -68,6 +70,8 @@ Las historias se ordenan por estos criterios, y cada historia sabe por qué qued
 | Principales | Si la cuenta una fuente principal. |
 | Volumen | Le baja el peso a las fuentes que publican muchísimo, para que no tapen al resto. |
 | Temas del día | Si habla de lo que más aparece hoy. |
+
+Además, las historias que cuentan dos o más fuentes van primero, siempre que sean de la última semana.
 
 
 ### Temas del día
@@ -91,7 +95,7 @@ Las fotos salen en blanco y negro con una trama de puntos encima, para que parez
 
 ### Por etiqueta
 
-Si elegís una etiqueta, como `#tecnología`, las historias y los temas salen solo de esas fuentes. Si publican poco, la ventana de tiempo se agranda sola: una historia puede tardar días en llegar a varios medios chicos.
+Si elegís una etiqueta, como `#tecnología`, se muestran las historias de esas fuentes y los temas salen de ellas. Pero las historias se arman con todas tus fuentes: si una nota de la etiqueta también la cuenta una fuente que no la tiene, la historia muestra las dos. Si publican poco, la ventana de tiempo se agranda sola: una historia puede tardar días en llegar a varios medios chicos.
 
 ## Exportar e importar
 

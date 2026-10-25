@@ -19,7 +19,8 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
   - **diario:** una hoja de papel con cabezal, columnas, fotos tramadas y breves;
   - **revista:** fotos grandes;
   - **teletipo:** una línea por historia.
-- **Historias:** en diario, revista y teletipo, las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
+- **Historias:** las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia, con la marca de cuántas fuentes la cuentan. Se ve en todos los formatos, y hay un filtro para ver solo esas. La rutina (clima, dólar, horóscopo…) va aparte.
+- **Todo el contenido, en páginas:** cada formato reparte todas las notas en página 1, 2, 3…, sin recortes.
 - **Exportar e importar tus fuentes** en un archivo OPML, con toda tu configuración: nombres, principales y etiquetas.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
 

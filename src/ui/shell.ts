@@ -1,5 +1,5 @@
 import { hashFrame } from './hash-frame';
-import { createLeer } from './leer';
+import { createLeer, type LeerRoute } from './leer';
 import { createFuentes } from './fuentes';
 import { renderNota } from './nota';
 import { createAjustes } from './ajustes';
@@ -10,7 +10,7 @@ import { refreshAll } from '../feeds/refresh';
 import './shell.css';
 
 type Route =
-  | { name: 'leer'; filter: string }
+  | ({ name: 'leer' } & LeerRoute)
   | { name: 'fuentes' }
   | { name: 'ajustes' }
   | { name: 'acerca' }
@@ -21,7 +21,13 @@ function parseRoute(): Route {
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   if (path.startsWith('nota/')) return { name: 'nota', id: decodeURIComponent(path.slice(5)) };
   if (path === 'fuentes' || path === 'ajustes' || path === 'acerca') return { name: path };
-  return { name: 'leer', filter: new URLSearchParams(query).get('f') ?? 'todo' };
+  const params = new URLSearchParams(query);
+  return {
+    name: 'leer',
+    filter: params.get('f') ?? 'todo',
+    page: Math.max(1, Number(params.get('p')) || 1),
+    shared: params.get('c') === '1',
+  };
 }
 
 /** La app después del arranque: menú arriba y una pantalla por vez. */
@@ -78,7 +84,7 @@ export function startApp(root: HTMLElement): void {
 
     if (route.name === 'leer') {
       views.replaceChildren(leer.el);
-      await leer.show(route.filter);
+      await leer.show(route);
       window.scrollTo(0, previous?.name === 'nota' ? leerScroll : 0);
     } else if (route.name === 'nota') {
       views.replaceChildren(renderNota(route.id, goBack));
@@ -110,7 +116,7 @@ export function startApp(root: HTMLElement): void {
     leer.invalidate();
     const route = parseRoute();
     // Si la persona ya está leyendo más abajo, no le movemos el timeline.
-    if (route.name === 'leer' && window.scrollY < 200) await leer.show(route.filter);
+    if (route.name === 'leer' && window.scrollY < 200) await leer.show(route);
     leer.setStatus(added > 0 ? plural(added, 'artículo nuevo', 'artículos nuevos') : 'al día');
   })();
 }
