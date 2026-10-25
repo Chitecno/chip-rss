@@ -50,7 +50,18 @@ Después de instalarlos, **cerrá y volvé a abrir** cualquier PowerShell que tu
 
 > **¿Por qué `npm.cmd` y no `npm`?** En muchas compus con Windows, PowerShell no deja correr `npm` a secas por seguridad. `npm.cmd` es lo mismo y no tiene ese problema. No hace falta cambiar ninguna configuración.
 
-## Cada vez que la quiero usar
+## Cada vez que la quiero usar: con doble clic
+
+En la carpeta `scripts` del proyecto está **`abrir-chip-rss.cmd`**. Con doble clic prende la app y, cuando está lista, la abre en tu navegador. No hace falta escribir nada.
+
+- Se abre una ventana negra que dice que la app se está prendiendo. **Dejala abierta** mientras uses la app: si la cerrás, la app se apaga.
+- Si la app ya estaba prendida, solo abre el navegador.
+
+**Para tenerlo en el escritorio:** clic derecho sobre `abrir-chip-rss.cmd` → **Mostrar más opciones** → **Enviar a** → **Escritorio (crear acceso directo)**. Si querés que el acceso directo tenga el ícono de la app: clic derecho sobre él → **Propiedades** → **Cambiar icono** → elegí `chip-rss.ico`, que está en la misma carpeta `scripts`.
+
+## Cada vez que la quiero usar: desde PowerShell
+
+Si preferís hacerlo a mano, o si el doble clic no funciona:
 
 1. **Abrí PowerShell**: tecla Windows, escribí `PowerShell` y Enter.
 2. **Entrá a la carpeta del proyecto:**
