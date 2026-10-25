@@ -11,7 +11,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | ✅ | Agregar y quitar fuentes, con autodescubrimiento | Feeds directos, anunciados, rutas comunes, Arc, secciones y enlaces de la página. |
 | ✅ | YouTube con miniaturas | Pegás el canal y se arma su feed. |
 | ✅ | Fuentes principales y secundarias, y etiquetas | Se crean, renombran y borran. Las fuentes nuevas entran como secundarias. |
-| ✅ | Vistas: timeline, por etiqueta, solo principales | Una sola pantalla con filtros arriba. |
+| ✅ | Vistas: timeline, por etiqueta, solo principales | Una sola pantalla con filtros arriba, y cuatro formatos: timeline, diario, revista y teletipo. |
 | ✅ | Foto real de cada nota o placeholder ASCII | |
 | ✅ | Guardado local | IndexedDB, con UUID en fuentes, etiquetas y notas. |
 | ⬜ | Exportar e importar las fuentes (OPML), con aviso | Es lo que protege tus fuentes si se borran los datos del navegador. |
@@ -30,7 +30,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | | Qué | Estado |
 | --- | --- | --- |
 | 🟡 | Bautizar el lector y verlo en un banner ASCII | El banner existe, con un nombre fijo. Falta que cada persona lo elija. |
-| ⬜ | Temas fósforo verde, ámbar y papel | Hoy está solo el tema chip tecno. |
+| 🟡 | Temas fósforo verde, ámbar y papel | El tema papel ya está, y lo usa el diario. Falta poder elegirlo para toda la app, y faltan fósforo y ámbar. |
 | ⬜ | Color de acento y tipografía ajustables | Van en Ajustes. |
 | ✅ | Línea `// un proyecto chip tecno` | |
 | ⬜ | "Acerca de" con el manifiesto | |
@@ -43,7 +43,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 3. **Proxy en Cloudflare y publicación en chiptecno.ar.**
 4. **Ajustes:** nombre del lector, temas, color de acento y tipografía.
 5. **"Acerca de"** con el manifiesto.
-6. **Elegir qué parte del laboratorio pasa a la pantalla de leer.**
+6. **Afinar el diario en papel** y decidir si la rutina y las historias también van en el timeline.
 7. **Nombre definitivo.**
 
 ## Más adelante

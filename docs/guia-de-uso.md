@@ -116,14 +116,21 @@ Cuando hay cambios nuevos en GitHub:
 ### Leer
 
 - En **leer** ves todas las notas, de la más nueva a la más vieja. Arriba podés filtrar por **todo**, **principales** o cualquier **#etiqueta**.
-- Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar del timeline.
+- Debajo de los filtros elegís el **formato**:
+  - **timeline:** todas las notas en tarjetas, de la más nueva a la más vieja;
+  - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal, columnas y breves;
+  - **revista:** las historias con fotos grandes;
+  - **teletipo:** una línea por historia, para pasar rápido.
+- En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
+- El formato que elijas queda guardado para la próxima vez.
+- Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.
 
 ### Laboratorio
 
-Es una pantalla para probar otras formas de ver las noticias:
+Es una pantalla para probar ajustes. Lo que cambies acá también cambia cómo se arman las historias en "leer":
 
-- Arriba elegís qué fuentes mirar y cómo mostrarlas: **tapa de diario**, **revista**, **teletipo** o **grilla**.
+- Arriba elegís qué fuentes mirar y cómo mostrarlas: **diario**, **revista**, **teletipo** o **grilla**.
 - Si varias fuentes cuentan lo mismo, aparece una marca rosa, "3 fuentes", y la opción de ver cada versión.
 - En **[ ajustar relevancia y agrupado ]** movés los criterios con que se ordenan las historias.
 - **Temas del día:** tocá una palabra para ver solo las notas que la nombran.

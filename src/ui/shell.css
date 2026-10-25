@@ -346,3 +346,17 @@ a.term-button {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.leer__formats {
+  align-items: baseline;
+}
+.leer__formats-label {
+  margin-right: var(--space-1);
+}
+.leer__content {
+  display: grid;
+  gap: var(--space-3);
+}
+.leer__content > .lab-routine:empty {
+  display: none;
+}

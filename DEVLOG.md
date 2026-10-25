@@ -149,3 +149,27 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - Subir el repositorio a GitHub, público.
 - Elegir la presentación que queda y llevarla a la pantalla de leer.
 - Comparar coberturas: ver lado a lado cómo cuenta cada medio la misma historia.
+
+---
+
+## 2026-10-25 · Formatos para leer y un diario en papel
+
+### Qué hicimos
+
+- **La pantalla de leer ahora tiene formatos:** timeline (la lista de siempre), diario, revista y teletipo. Los filtros de fuentes siguen andando en todos y el formato elegido queda guardado.
+- En diario, revista y teletipo las notas se agrupan en historias y la rutina va aparte, con los mismos ajustes que se mueven en el laboratorio.
+- **Rediseñamos el diario para que parezca impreso.** Antes se parecía demasiado a la revista. Ahora es una hoja clara sobre el fondo negro de la app:
+  - cabezal con el nombre en ASCII y dos "orejas" a los costados, con los temas del día y la rutina;
+  - folio con la fecha de la edición;
+  - apertura con título grande, foto y texto en dos columnas con letra capital;
+  - columna lateral y filas separadas por filetes;
+  - secciones por etiqueta y breves en tres columnas.
+- **Sumamos el tema papel:** fondo claro y tinta negra. Por ahora lo usa el diario; más adelante va a poder elegirse para toda la app.
+- Ordenamos la documentación: un README como portada del repositorio y una carpeta `docs` con la guía de uso, cómo funciona, la hoja de ruta y cómo trabajamos con GitHub.
+
+### Qué aprendimos
+
+- **Lo que hace que algo parezca un diario no son las fotos grandes sino la estructura:** columnas angostas, filetes finos entre ellas, títulos que cruzan columnas, una volanta chiquita arriba del título y una letra capital al empezar el texto.
+- **Las fotos parecen impresas sin tocarlas:** en blanco y negro, con más contraste y una trama de puntos encima.
+- Un mismo juego de colores puede vivir en toda la app o en una sola pieza. El tema papel está armado así: la hoja del diario lo usa sin cambiar el resto.
+- Los títulos muy largos se comen la página en la apertura: van un poco más chicos.

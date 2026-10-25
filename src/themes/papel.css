@@ -1,0 +1,22 @@
+/*
+ * Tema "papel": fondo claro y tinta negra, como un diario impreso.
+ * Sirve para toda la app (data-theme="papel") o para una sola pieza, como la hoja
+ * del diario, con la clase .papel: adentro todo toma estos colores.
+ */
+:root[data-theme='papel'],
+.papel {
+  --ground: #f3eee3;
+  --band: #ff66c4;
+  --ink: #141414;
+  --ink-muted: #4d4a44;
+  --ink-on-band: #000000;
+  --hash: #141414;
+  --accent: #141414;
+  --glitch-a: transparent;
+  --glitch-b: transparent;
+  --focus-ring: #141414;
+
+  color-scheme: light;
+  background: var(--ground);
+  color: var(--ink);
+}

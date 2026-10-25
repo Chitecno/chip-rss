@@ -1,56 +1,13 @@
 import { listArticles, listFeeds, listTags, type Article, type Feed, type Tag } from '../db/db';
 import { el, plural } from '../ui/dom';
-import { LAYOUTS, renderLayout, type LayoutName } from './layouts';
-import { DEFAULT_WEIGHTS, rankStories, topicsOfTheDay, type Topic, type Weights } from './relevance';
-import { ROUTINE, splitRoutine, type RoutineGroup } from './routine';
-import { groupStories, type GroupOptions, type Story } from './stories';
+import { LAYOUTS, renderLayout } from './layouts';
+import { rankStories, type Topic, type Weights } from './relevance';
+import { ROUTINE, type RoutineGroup } from './routine';
+import { routineBox } from './routine-box';
+import { groupStories, type Story } from './stories';
+import { loadSettings, saveSettings, sectionsFor, selectEdition, type Selection } from './edition';
 import { tokenize } from './text';
 import './lab.css';
-
-type Settings = GroupOptions & {
-  layout: LayoutName;
-  weights: Weights;
-  showReasons: boolean;
-  /** 'todo', 'principales' o el id de una etiqueta. */
-  filter: string;
-  /** Clima, dólar, horóscopo y compañía van a una caja aparte. */
-  routineApart: boolean;
-};
-
-const DEFAULTS: Settings = {
-  layout: 'tapa',
-  threshold: 0.25,
-  windowHours: 48,
-  weights: DEFAULT_WEIGHTS,
-  showReasons: true,
-  filter: 'todo',
-  routineApart: true,
-};
-
-const STORAGE_KEY = 'chip-rss:lab';
-const HOUR = 3600_000;
-// Si las fuentes elegidas publican menos que esto por día (como los medios de tecnología),
-// la ventana se agranda: una historia puede tardar días en aparecer en varios de ellos.
-const LOW_VOLUME_PER_DAY = 40;
-const WIDE_WINDOW_HOURS = 96;
-
-// Los ajustes del laboratorio se recuerdan en este navegador. Si no se puede, se usan los de siempre.
-function loadSettings(): Settings {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Partial<Settings>;
-    return { ...DEFAULTS, ...saved, weights: { ...DEFAULT_WEIGHTS, ...saved.weights } };
-  } catch {
-    return { ...DEFAULTS, weights: { ...DEFAULT_WEIGHTS } };
-  }
-}
-
-function saveSettings(s: Settings): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-  } catch {
-    // sin almacenamiento: los ajustes duran hasta que cierres la pestaña
-  }
-}
 
 const WEIGHT_LABELS: [keyof Weights, string, string][] = [
   ['cobertura', 'cobertura', 'cuántas fuentes cuentan la historia'],
@@ -117,54 +74,24 @@ export function createLab(): HTMLElement {
   const cloudTitle = el('h2', 'section-title', 'temas del día');
   const cloud = el('div', 'lab-cloud');
   const filterLine = el('p', 'web-small');
-  const routineBox = el('section', 'lab-routine');
+  const routineSlot = el('div');
   const output = el('div', 'lab-output');
-  view.append(h1, intro, sourceNav, layoutNav, controls, stats, note, cloudTitle, cloud, filterLine, routineBox, output);
+  view.append(h1, intro, sourceNav, layoutNav, controls, stats, note, cloudTitle, cloud, filterLine, routineSlot, output);
 
   let feeds: Feed[] = [];
   let tags: Tag[] = [];
   let allArticles: Article[] = [];
 
   // Lo que se recalcula cuando cambian las fuentes elegidas o la rutina.
-  let selection: {
-    key: string;
-    feeds: Feed[];
-    news: Article[];
-    routine: RoutineGroup[];
-    topics: Topic[];
-    windowHours: number;
-    label: string;
-  } | null = null;
+  let selection: (Selection & { key: string }) | null = null;
   let grouped: { key: string; stories: Story[] } | null = null;
 
   const feedTitle = (id: string) => feeds.find((f) => f.id === id)?.title ?? '';
 
   function select() {
-    const key = `${settings.filter}|${settings.routineApart}`;
+    const key = `${settings.filter}|${settings.routineApart}|${settings.windowHours}`;
     if (selection?.key === key) return selection;
-    const tag = tags.find((t) => t.id === settings.filter);
-    const chosen =
-      settings.filter === 'principales'
-        ? feeds.filter((f) => f.principal)
-        : tag
-          ? feeds.filter((f) => f.tagIds.includes(tag.id))
-          : feeds;
-    const ids = new Set(chosen.map((f) => f.id));
-    const articles = allArticles.filter((a) => ids.has(a.feedId));
-    const { news, routine } = settings.routineApart ? splitRoutine(articles) : { news: articles, routine: [] };
-
-    const now = Date.now();
-    const perDay = articles.filter((a) => now - a.published <= 24 * HOUR).length;
-    const lowVolume = perDay < LOW_VOLUME_PER_DAY;
-    selection = {
-      key,
-      feeds: chosen,
-      news,
-      routine,
-      topics: topicsOfTheDay(news, now, lowVolume ? 48 : 24),
-      windowHours: lowVolume ? Math.max(settings.windowHours, WIDE_WINDOW_HOURS) : settings.windowHours,
-      label: settings.filter === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todas las fuentes',
-    };
+    selection = { key, ...selectEdition(feeds, tags, allArticles, settings.filter, settings.routineApart, settings.windowHours) };
     grouped = null;
     return selection;
   }
@@ -279,28 +206,7 @@ export function createLab(): HTMLElement {
   }
 
   function renderRoutine(routine: RoutineGroup[]) {
-    routineBox.replaceChildren();
-    if (routine.length === 0) return;
-    routineBox.append(el('h2', 'section-title', 'la rutina del día'));
-    const list = el('ul', 'lab-routine__list');
-    for (const g of routine) {
-      const item = el('li');
-      const box = el('details');
-      box.append(el('summary', undefined, `${g.kind.label} · ${plural(g.articles.length, 'nota', 'notas')}`));
-      const inner = el('ul', 'lab-routine__items web-small');
-      for (const a of g.articles.slice(0, 30)) {
-        const li = el('li');
-        li.append(el('span', 'muted', `${feedTitle(a.feedId)}: `));
-        const link = el('a', undefined, a.title);
-        link.href = `#/nota/${a.id}`;
-        li.append(link);
-        inner.append(li);
-      }
-      box.append(inner);
-      item.append(box);
-      list.append(item);
-    }
-    routineBox.append(list);
+    routineSlot.replaceChildren(routineBox(routine, feedTitle));
   }
 
   function draw() {
@@ -339,7 +245,16 @@ export function createLab(): HTMLElement {
     if (sel.feeds.length === 0) note.textContent = 'Ninguna fuente tiene esta etiqueta todavía.';
 
     renderRoutine(sel.routine);
-    output.replaceChildren(renderLayout(settings.layout, ranked, { feedTitle, showReasons: settings.showReasons }));
+    output.replaceChildren(
+      renderLayout(settings.layout, ranked, {
+        feedTitle,
+        showReasons: settings.showReasons,
+        label: sel.label,
+        topics: sel.topics,
+        routine: sel.routine,
+        sectionsOf: sectionsFor(feeds, tags),
+      }),
+    );
   }
 
   void (async () => {

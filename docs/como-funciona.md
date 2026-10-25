@@ -49,7 +49,7 @@ La nota queda guardada: se puede volver a leer sin conexión.
 
 ## El laboratorio
 
-Una pantalla para probar otras formas de ordenar y mostrar las noticias.
+Una pantalla para probar otras formas de ordenar y mostrar las noticias. Los formatos diario, revista y teletipo ya se pueden elegir en la pantalla de leer, que usa los mismos ajustes.
 
 ### Historias: la misma noticia en varios medios
 
@@ -78,6 +78,17 @@ Palabras de los títulos de las últimas horas que aparecen en varias fuentes y 
 ### La rutina del día
 
 Clima, dólar, horóscopo, quinielas, tablas de posiciones, agenda de TV, efemérides y tapas de diarios: notas que todos los medios publican igual todos los días. Se reconocen por frases del título ("clima hoy en", "dólar hoy", "jornada financiera") y van a una caja aparte.
+
+### El diario en papel
+
+Una hoja clara sobre el fondo negro de la app, con el tema "papel":
+- arriba, un cabezal con el nombre en ASCII y dos "orejas" a los costados: los temas del día y la rutina;
+- la historia más relevante abre con un título grande, foto y texto en dos columnas con letra capital;
+- al lado, una columna con tres historias; abajo, una fila de cuatro, separadas por filetes;
+- si las fuentes tienen varias etiquetas, cada etiqueta es una sección, como en un diario ("Tecnología", "Medios"…);
+- al final, los breves en tres columnas.
+
+Las fotos salen en blanco y negro con una trama de puntos encima, para que parezcan impresas.
 
 ### Por etiqueta
 

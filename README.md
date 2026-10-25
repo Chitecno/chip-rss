@@ -14,11 +14,16 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
 - **Fuentes principales y secundarias, y etiquetas** para agrupar. El timeline se filtra por etiqueta o por principales.
 - **Tarjetas con la foto real** de cada nota cuando el feed la trae. Si no la trae, un dibujo ASCII.
 - **Leer la nota completa dentro de la app,** sin salir al sitio. Queda guardada para leerla sin conexión.
+- **Elegir el formato de lectura:**
+  - **timeline:** la lista de siempre;
+  - **diario:** una hoja de papel con cabezal, columnas, fotos tramadas y breves;
+  - **revista:** fotos grandes;
+  - **teletipo:** una línea por historia.
 - **Laboratorio:** una pantalla para probar otras formas de ordenar y mostrar las noticias:
   - agrupar en una sola historia las notas que cuentan lo mismo;
   - ordenar por una relevancia que se explica y se ajusta a mano;
   - ver los temas del día y separar la rutina (clima, dólar, horóscopo…);
-  - mostrarlo todo como tapa de diario, revista o teletipo.
+  - mostrarlo todo como diario, revista o teletipo.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
 
 ## Cómo probarla

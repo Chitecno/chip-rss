@@ -1,20 +1,28 @@
 import type { Article } from '../db/db';
 import { asciiPlaceholder } from '../ui/ascii-placeholder';
-import { el, longDate, shortDate } from '../ui/dom';
-import { renderBanner } from '../boot/banner';
-import type { Ranked } from './relevance';
-import { READER_NAME } from '../config';
+import { el, shortDate } from '../ui/dom';
+import type { Ranked, Topic } from './relevance';
+import type { RoutineGroup } from './routine';
+import { diario } from './diario';
 
 export type LayoutName = 'tapa' | 'revista' | 'teletipo' | 'grilla';
 
 export const LAYOUTS: { id: LayoutName; label: string }[] = [
-  { id: 'tapa', label: 'tapa de diario' },
+  { id: 'tapa', label: 'diario' },
   { id: 'revista', label: 'revista' },
   { id: 'teletipo', label: 'teletipo' },
   { id: 'grilla', label: 'grilla' },
 ];
 
-export type LayoutContext = { feedTitle: (id: string) => string; showReasons: boolean };
+export type LayoutContext = {
+  feedTitle: (id: string) => string;
+  showReasons: boolean;
+  /** Para el diario: qué fuentes se están mirando, los temas y la rutina del día, y las secciones. */
+  label?: string;
+  topics?: Topic[];
+  routine?: RoutineGroup[];
+  sectionsOf?: (story: Ranked) => string[];
+};
 
 /** La nota que encabeza la historia: la que tiene foto y más texto. */
 function lead(story: Ranked): Article {
@@ -96,36 +104,6 @@ function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 
   return block;
 }
 
-/** Tapa de diario: cabezal, apertura grande, columna lateral, segunda línea y breves. */
-function tapa(stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  const page = el('div', 'tapa');
-  const masthead = el('header', 'tapa__masthead');
-  masthead.append(renderBanner(READER_NAME, window.innerWidth < 640));
-  masthead.append(el('p', 'tapa__date web-small', `${longDate.format(Date.now())} · ${stories.length} historias`));
-  page.append(masthead);
-
-  const [first, ...rest] = stories;
-  if (!first) return page;
-  const top = el('div', 'tapa__top');
-  top.append(storyBlock(first, ctx, 'xl', true));
-  const side = el('div', 'tapa__side');
-  for (const s of rest.slice(0, 3)) side.append(storyBlock(s, ctx, 'm', true));
-  top.append(side);
-  page.append(top);
-
-  const second = el('div', 'tapa__second');
-  for (const s of rest.slice(3, 9)) second.append(storyBlock(s, ctx, 'm', false));
-  page.append(second);
-
-  if (rest.length > 9) {
-    page.append(el('h2', 'section-title', 'breves'));
-    const briefs = el('div', 'tapa__briefs');
-    for (const s of rest.slice(9, 39)) briefs.append(storyBlock(s, ctx, 's', false));
-    page.append(briefs);
-  }
-  return page;
-}
-
 /** Revista: fotos grandes, una historia por bloque, alternando lados. */
 function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const page = el('div', 'revista');
@@ -183,5 +161,5 @@ export function renderLayout(name: LayoutName, stories: Ranked[], ctx: LayoutCon
   if (name === 'revista') return revista(stories, ctx);
   if (name === 'teletipo') return teletipo(stories, ctx);
   if (name === 'grilla') return grilla(stories, ctx);
-  return tapa(stories, ctx);
+  return diario(stories, ctx);
 }
