@@ -173,3 +173,22 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Las fotos parecen impresas sin tocarlas:** en blanco y negro, con más contraste y una trama de puntos encima.
 - Un mismo juego de colores puede vivir en toda la app o en una sola pieza. El tema papel está armado así: la hoja del diario lo usa sin cambiar el resto.
 - Los títulos muy largos se comen la página en la apertura: van un poco más chicos.
+
+---
+
+## 2026-10-25 · Respaldo de fuentes y orden en el proyecto
+
+### Qué hicimos
+
+- **Exportar e importar las fuentes**, en Ajustes. El archivo es un OPML, el formato que entienden casi todos los lectores de RSS. Lleva las fuentes con el nombre que les pusiste, si son principales o secundarias, todas las etiquetas y el formato de lectura elegido. Al importar, se restaura todo y se vuelven a bajar las notas.
+- **El menú de fuentes** (todo, principales, etiquetas) pasó a estar adentro de cada formato. En el diario es la barra de secciones, debajo del cabezal.
+- **"Acerca de"** es ahora una descripción básica: qué es la app, cómo se usa y qué pasa con tus datos.
+- **Sacamos el laboratorio de la app.** Era una pantalla de pruebas y quedó guardada en su propia rama. Lo que servía, como agrupar historias o separar la rutina, ya es parte de leer.
+- **Ordenamos cómo trabajamos.** `main` queda solo con la última versión probada. El trabajo de todos los días va en una rama `desarrollo`, y las pruebas en ramas aparte.
+
+### Qué aprendimos
+
+- **Un OPML puede llevar más de lo que dice el estándar sin romper nada.** Lo propio de chip-rss va en atributos con un prefijo propio (`chip:`). Los otros lectores los ignoran, y chip-rss los usa para restaurar todo como estaba.
+- Con archivos de otros lectores, las carpetas se convierten en etiquetas. Como esos archivos no dicen qué fuentes son principales, se respeta lo que ya estaba.
+- Probamos el viaje de ida y vuelta: exportar de un navegador e importar en otro vacío. Volvieron las 9 fuentes con sus nombres, principales, etiquetas y formato.
+- Probar ideas directo en la app la ensucia. Para eso están las ramas: se prueba aparte y entra solo lo que funciona.

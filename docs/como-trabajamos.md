@@ -21,12 +21,24 @@ Pensalo como un documento al que le vas guardando versiones. **Git** es el progr
 | **Clone (clonar)** | Bajar el proyecto entero de GitHub por primera vez. |
 | **Fork** | Una copia entera del proyecto en la cuenta de otra persona, para que haga su propia versión. No es lo mismo que una rama. |
 
+## Las ramas de este proyecto
+
+| Rama | Para qué |
+| --- | --- |
+| **main** | Solo la última versión probada y que funciona bien. Es lo que ve cualquiera en GitHub. |
+| **desarrollo** | El trabajo de todos los días. Se sube a GitHub al final del día, como respaldo. Subirla no toca main. |
+| **ramas de prueba** | Experimentos e ideas para probar, separados de la app. Por ejemplo, la rama `laboratorio`. |
+
 ## Cómo se ve el recorrido de un cambio
 
-1. Se hace el cambio en los archivos.
+1. Se hace el cambio en la rama **desarrollo**.
 2. Se guarda como **commit**, con una frase que diga qué cambió.
-3. Se **sube** a GitHub (push).
-4. Si se trabajó en una **rama**, se abre un **pull request** y, cuando está bien, se **une** a main.
+3. Al final del día se **sube** a GitHub (push), como respaldo.
+4. Cuando lo probaste y confirmás que funciona, se abre un **pull request** de desarrollo a main y se **une**. Recién ahí pasa a la versión oficial.
+
+## Volver atrás
+
+Ninguna versión se pierde. Si algo que pasó a main sale mal, se puede deshacer con un commit que revierte ese cambio, o volviendo main a una versión anterior. La historia completa queda guardada igual.
 
 ## Los commits van firmados
 

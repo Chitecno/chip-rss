@@ -131,6 +131,12 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     `${date.charAt(0).toUpperCase()}${date.slice(1)} · ${ctx.label ?? 'todas las fuentes'} · ${stories.length} historias`,
   );
   page.append(head, folio);
+  // El menú de fuentes como la barra de secciones de un diario.
+  if (ctx.filters) {
+    const bar = el('div', 'diario__sections');
+    bar.append(ctx.filters);
+    page.append(bar);
+  }
 
   const [first, ...rest] = stories;
   if (!first) {

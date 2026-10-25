@@ -2,7 +2,8 @@ import { hashFrame } from './hash-frame';
 import { createLeer } from './leer';
 import { createFuentes } from './fuentes';
 import { renderNota } from './nota';
-import { createLab } from '../lab/lab';
+import { createAjustes } from './ajustes';
+import { createAcerca } from './acerca';
 import { el, plural } from './dom';
 import { listFeeds } from '../db/db';
 import { refreshAll } from '../feeds/refresh';
@@ -13,24 +14,14 @@ type Route =
   | { name: 'fuentes' }
   | { name: 'ajustes' }
   | { name: 'acerca' }
-  | { name: 'lab' }
   | { name: 'nota'; id: string };
 
 /** Cada pantalla tiene su dirección (#/leer, #/fuentes…), así el botón de volver funciona. */
 function parseRoute(): Route {
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   if (path.startsWith('nota/')) return { name: 'nota', id: decodeURIComponent(path.slice(5)) };
-  if (path === 'fuentes' || path === 'ajustes' || path === 'acerca' || path === 'lab') return { name: path };
+  if (path === 'fuentes' || path === 'ajustes' || path === 'acerca') return { name: path };
   return { name: 'leer', filter: new URLSearchParams(query).get('f') ?? 'todo' };
-}
-
-// Placeholders: estos textos los escribe Chip.
-function simplePage(title: string, text: string): HTMLElement {
-  const page = el('section', 'page');
-  const h1 = el('h1', 'web-title', title);
-  h1.tabIndex = -1;
-  page.append(h1, el('p', 'band', 'Próxima etapa.'), el('p', 'muted', text));
-  return page;
 }
 
 /** La app después del arranque: menú arriba y una pantalla por vez. */
@@ -43,7 +34,6 @@ export function startApp(root: HTMLElement): void {
       <nav id="menu" class="topbar__nav" aria-label="Secciones">
         <a href="#/leer" data-route="leer">leer</a>
         <a href="#/fuentes" data-route="fuentes">fuentes</a>
-        <a href="#/lab" data-route="lab">laboratorio</a>
         <a href="#/ajustes" data-route="ajustes">ajustes</a>
         <a href="#/acerca" data-route="acerca">acerca de</a>
       </nav>
@@ -97,11 +87,9 @@ export function startApp(root: HTMLElement): void {
       const page =
         route.name === 'fuentes'
           ? createFuentes(() => leer.invalidate())
-          : route.name === 'lab'
-            ? createLab()
-            : route.name === 'ajustes'
-            ? simplePage('Ajustes', 'Acá van el nombre de tu lector, el tema y exportar o importar tus fuentes (OPML).')
-            : simplePage('Acerca de', 'Acá va el manifiesto.');
+          : route.name === 'ajustes'
+            ? createAjustes(() => leer.invalidate())
+            : createAcerca();
       views.replaceChildren(page);
       window.scrollTo(0, 0);
       page.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });

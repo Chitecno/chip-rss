@@ -120,6 +120,19 @@ export async function listTags(): Promise<Tag[]> {
   return tags.sort((a, b) => a.name.localeCompare(b.name, 'es'));
 }
 
+export async function getTag(id: string): Promise<Tag | undefined> {
+  return (await db()).get('tags', id);
+}
+
+export async function getTagByName(raw: string): Promise<Tag | undefined> {
+  return (await db()).getFromIndex('tags', 'byName', normalizeTagName(raw));
+}
+
+/** Guarda una etiqueta tal cual (con su id), por ejemplo al importar un respaldo. */
+export async function saveTag(tag: Tag): Promise<void> {
+  await (await db()).put('tags', tag);
+}
+
 export async function createTag(raw: string): Promise<Tag> {
   const name = normalizeTagName(raw);
   if (!name) throw new TagError('escribí un nombre primero');

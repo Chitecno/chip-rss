@@ -14,7 +14,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | ✅ | Vistas: timeline, por etiqueta, solo principales | Una sola pantalla con filtros arriba, y cuatro formatos: timeline, diario, revista y teletipo. |
 | ✅ | Foto real de cada nota o placeholder ASCII | |
 | ✅ | Guardado local | IndexedDB, con UUID en fuentes, etiquetas y notas. |
-| ⬜ | Exportar e importar las fuentes (OPML), con aviso | Es lo que protege tus fuentes si se borran los datos del navegador. |
+| ✅ | Exportar e importar las fuentes (OPML), con aviso | En Ajustes. Lleva nombres, principales, etiquetas y el formato de lectura. |
 | 🟡 | Instalable y que funcione sin conexión | Está configurado y se arma con `npm.cmd run app`. Falta confirmarlo en Chrome y en el celu. |
 
 ## Para publicarla
@@ -33,18 +33,16 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | 🟡 | Temas fósforo verde, ámbar y papel | El tema papel ya está, y lo usa el diario. Falta poder elegirlo para toda la app, y faltan fósforo y ámbar. |
 | ⬜ | Color de acento y tipografía ajustables | Van en Ajustes. |
 | ✅ | Línea `// un proyecto chip tecno` | |
-| ⬜ | "Acerca de" con el manifiesto | |
+| ✅ | "Acerca de" | Qué es la app, cómo se usa y qué pasa con tus datos. |
 | ⬜ | Packs de fuentes curados | |
 
 ## Lo que sigue, en orden
 
-1. **Exportar e importar las fuentes (OPML),** con el aviso de "exportá antes".
-2. **Confirmar la instalación y el modo sin conexión** en Chrome.
-3. **Proxy en Cloudflare y publicación en chiptecno.ar.**
-4. **Ajustes:** nombre del lector, temas, color de acento y tipografía.
-5. **"Acerca de"** con el manifiesto.
-6. **Afinar el diario en papel** y decidir si la rutina y las historias también van en el timeline.
-7. **Nombre definitivo.**
+1. **Confirmar la instalación y el modo sin conexión** en Chrome.
+2. **Proxy en Cloudflare y publicación en chiptecno.ar.**
+3. **Ajustes:** nombre del lector, temas, color de acento y tipografía.
+4. **Afinar el diario en papel.**
+5. **Nombre definitivo.**
 
 ## Más adelante
 

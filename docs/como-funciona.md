@@ -47,9 +47,9 @@ La nota queda guardada: se puede volver a leer sin conexión.
 - **La app no avisa desde dónde se miran las fotos ni los links** (se llama "no referrer"). Igual, cargar una foto le avisa a su sitio que alguien la miró: es el precio de ver la foto real.
 - **El proxy no es abierto:** ver las reglas más arriba.
 
-## El laboratorio
+## Historias, rutina y formatos
 
-Una pantalla para probar otras formas de ordenar y mostrar las noticias. Los formatos diario, revista y teletipo ya se pueden elegir en la pantalla de leer, que usa los mismos ajustes.
+En la pantalla de leer se elige el formato: timeline (todas las notas), diario, revista o teletipo. En los últimos tres, las notas se agrupan en historias y la rutina va aparte.
 
 ### Historias: la misma noticia en varios medios
 
@@ -59,7 +59,7 @@ Para no armar cadenas que no tienen sentido (A se parece a B y B a C, pero A nad
 
 ### Relevancia que se puede explicar
 
-Cada historia dice por qué está donde está, por ejemplo: "4 fuentes · hace 3 h · tema del día: dibu, fractura". Los criterios se mueven a mano:
+Las historias se ordenan por estos criterios, y cada historia sabe por qué quedó donde quedó (por ejemplo: "4 fuentes · hace 3 h · tema del día: dibu, fractura"):
 
 | Criterio | Qué mide |
 | --- | --- |
@@ -69,7 +69,6 @@ Cada historia dice por qué está donde está, por ejemplo: "4 fuentes · hace 3
 | Volumen | Le baja el peso a las fuentes que publican muchísimo, para que no tapen al resto. |
 | Temas del día | Si habla de lo que más aparece hoy. |
 
-Que se pueda leer y ajustar es lo que la separa de un algoritmo de plataforma: no decide por vos, te muestra cómo ordena.
 
 ### Temas del día
 
@@ -93,6 +92,18 @@ Las fotos salen en blanco y negro con una trama de puntos encima, para que parez
 ### Por etiqueta
 
 Si elegís una etiqueta, como `#tecnología`, las historias y los temas salen solo de esas fuentes. Si publican poco, la ventana de tiempo se agranda sola: una historia puede tardar días en llegar a varios medios chicos.
+
+## Exportar e importar
+
+Las fuentes se exportan en OPML, el formato que entienden casi todos los lectores de RSS. Cada fuente lleva su nombre, la dirección del feed y la del sitio, y sus etiquetas: como carpetas, para los otros lectores, y como "category".
+
+Lo propio de chip-rss va en atributos con el prefijo `chip:`. Los otros lectores los ignoran:
+- los identificadores únicos de cada fuente y etiqueta;
+- si la fuente es principal;
+- todas las etiquetas, también las que no se usan;
+- el formato de lectura elegido.
+
+Al importar, si una fuente ya está, vale lo que dice el archivo. Si el archivo viene de otro lector y no dice qué fuentes son principales, se respeta lo que ya estaba.
 
 ## Problemas que resolvimos
 

@@ -5,18 +5,14 @@ import type { Ranked, Topic } from './relevance';
 import type { RoutineGroup } from './routine';
 import { diario } from './diario';
 
-export type LayoutName = 'tapa' | 'revista' | 'teletipo' | 'grilla';
-
-export const LAYOUTS: { id: LayoutName; label: string }[] = [
-  { id: 'tapa', label: 'diario' },
-  { id: 'revista', label: 'revista' },
-  { id: 'teletipo', label: 'teletipo' },
-  { id: 'grilla', label: 'grilla' },
-];
+/** Las formas de mostrar las historias en la pantalla de leer. */
+export type LayoutName = 'diario' | 'revista' | 'teletipo';
 
 export type LayoutContext = {
   feedTitle: (id: string) => string;
   showReasons: boolean;
+  /** El menú de fuentes (todo, principales, etiquetas), que va adentro de cada formato. */
+  filters?: HTMLElement;
   /** Para el diario: qué fuentes se están mirando, los temas y la rutina del día, y las secciones. */
   label?: string;
   topics?: Topic[];
@@ -122,7 +118,7 @@ function revista(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const others = stories.filter((s) => !withPhoto.slice(0, 13).includes(s)).slice(0, 20);
   if (others.length) {
     page.append(el('h2', 'section-title', 'más'));
-    const more = el('div', 'tapa__briefs');
+    const more = el('div', 'revista__more');
     for (const s of others) more.append(storyBlock(s, ctx, 's', false));
     page.append(more);
   }
@@ -150,16 +146,11 @@ function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   return list;
 }
 
-/** La grilla de siempre, pero por historias. */
-function grilla(stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  const grid = el('div', 'timeline__list');
-  for (const s of stories.slice(0, 90)) grid.append(storyBlock(s, ctx, 'm', true));
-  return grid;
-}
-
 export function renderLayout(name: LayoutName, stories: Ranked[], ctx: LayoutContext): HTMLElement {
-  if (name === 'revista') return revista(stories, ctx);
-  if (name === 'teletipo') return teletipo(stories, ctx);
-  if (name === 'grilla') return grilla(stories, ctx);
-  return diario(stories, ctx);
+  // El diario pone el menú de fuentes adentro de la hoja; los demás, arriba de todo.
+  if (name === 'diario') return diario(stories, ctx);
+  const wrap = el('div', 'formato');
+  if (ctx.filters) wrap.append(ctx.filters);
+  wrap.append(name === 'revista' ? revista(stories, ctx) : teletipo(stories, ctx));
+  return wrap;
 }

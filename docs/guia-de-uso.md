@@ -115,32 +115,38 @@ Cuando hay cambios nuevos en GitHub:
 
 ### Leer
 
-- En **leer** ves todas las notas, de la más nueva a la más vieja. Arriba podés filtrar por **todo**, **principales** o cualquier **#etiqueta**.
-- Debajo de los filtros elegís el **formato**:
+- Arriba de todo elegís el **formato**:
   - **timeline:** todas las notas en tarjetas, de la más nueva a la más vieja;
   - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal, columnas y breves;
   - **revista:** las historias con fotos grandes;
   - **teletipo:** una línea por historia, para pasar rápido.
+- Adentro de cada formato está el menú de fuentes: **todo**, **principales** o cualquier **#etiqueta**. En el diario aparece como la barra de secciones, debajo del cabezal.
 - En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
 - El formato que elijas queda guardado para la próxima vez.
 - Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.
 
-### Laboratorio
+### Hacer un respaldo de tus fuentes
 
-Es una pantalla para probar ajustes. Lo que cambies acá también cambia cómo se arman las historias en "leer":
+1. En el menú, entrá a **ajustes**.
+2. Tocá **[ exportar fuentes ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-fuentes-2026-10-25.opml`. Chrome lo guarda en tu carpeta Descargas.
+3. Guardalo en un lugar seguro.
 
-- Arriba elegís qué fuentes mirar y cómo mostrarlas: **diario**, **revista**, **teletipo** o **grilla**.
-- Si varias fuentes cuentan lo mismo, aparece una marca rosa, "3 fuentes", y la opción de ver cada versión.
-- En **[ ajustar relevancia y agrupado ]** movés los criterios con que se ordenan las historias.
-- **Temas del día:** tocá una palabra para ver solo las notas que la nombran.
-- **La rutina del día** junta aparte el clima, el dólar, el horóscopo y otras notas de servicio.
+El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas y el formato de lectura que elegiste. Las notas no van: se vuelven a bajar de cada fuente.
+
+### Cargar un respaldo (o tus fuentes de otro lector)
+
+1. En **ajustes**, tocá **[ importar fuentes ]** y elegí el archivo `.opml`.
+2. Abajo vas a ver cómo va: cuántas fuentes suma y cuándo termina de bajar sus notas.
+3. Si una fuente ya estaba cargada, queda como dice el archivo: su nombre, si es principal y sus etiquetas.
+
+Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). Sus carpetas pasan a ser etiquetas.
 
 ## Tus datos
 
 - Todo lo que cargás se guarda **en tu navegador, en tu compu**. No viaja a ningún servidor.
 - Chrome guarda los datos **por dirección**: lo que cargues en `localhost:4173` no aparece en otra dirección, y al revés. Usá siempre `localhost:4173`.
-- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Todavía no está la opción de exportarlas para tener un respaldo (está en la [hoja de ruta](hoja-de-ruta.md)).
+- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Antes, hacé un respaldo desde **ajustes** (ver más arriba).
 
 ## Si algo falla
 

@@ -19,11 +19,8 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
   - **diario:** una hoja de papel con cabezal, columnas, fotos tramadas y breves;
   - **revista:** fotos grandes;
   - **teletipo:** una línea por historia.
-- **Laboratorio:** una pantalla para probar otras formas de ordenar y mostrar las noticias:
-  - agrupar en una sola historia las notas que cuentan lo mismo;
-  - ordenar por una relevancia que se explica y se ajusta a mano;
-  - ver los temas del día y separar la rutina (clima, dólar, horóscopo…);
-  - mostrarlo todo como diario, revista o teletipo.
+- **Historias:** en diario, revista y teletipo, las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
+- **Exportar e importar tus fuentes** en un archivo OPML, con toda tu configuración: nombres, principales y etiquetas.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
 
 ## Cómo probarla
@@ -58,7 +55,8 @@ src/
   ui/        pantallas: leer, fuentes, nota, menú
   feeds/     buscar, leer y entender feeds
   reader/    traer y limpiar la nota completa
-  lab/       laboratorio: historias, relevancia, rutina, presentaciones
+  historias/ agrupar historias, rutina, temas del día y los formatos diario, revista y teletipo
+  opml/      exportar e importar las fuentes
   db/        guardado local (IndexedDB)
 dev/         proxy local para leer feeds de otros sitios
 public/      íconos de la app

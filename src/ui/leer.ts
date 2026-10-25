@@ -1,40 +1,11 @@
 import { listArticles, listFeeds, listTags, type Article, type Tag } from '../db/db';
-import { buildEdition, loadSettings, sectionsFor } from '../lab/edition';
-import { renderLayout, type LayoutName } from '../lab/layouts';
-import { routineBox } from '../lab/routine-box';
-import '../lab/lab.css';
+import { buildEdition, sectionsFor } from '../historias/edition';
+import { renderLayout } from '../historias/layouts';
+import { routineBox } from '../historias/routine-box';
+import '../historias/historias.css';
 import { asciiPlaceholder } from './ascii-placeholder';
 import { el, plural, shortDate } from './dom';
-
-/** Cómo se muestra "leer": la lista de siempre o las historias como diario, revista o teletipo. */
-type Format = 'timeline' | LayoutName;
-
-const FORMATS: { id: Format; label: string }[] = [
-  { id: 'timeline', label: 'timeline' },
-  { id: 'tapa', label: 'diario' },
-  { id: 'revista', label: 'revista' },
-  { id: 'teletipo', label: 'teletipo' },
-];
-
-const FORMAT_KEY = 'chip-rss:leer-formato';
-
-// El formato elegido se recuerda en este navegador.
-function loadFormat(): Format {
-  try {
-    const saved = localStorage.getItem(FORMAT_KEY);
-    return FORMATS.some((f) => f.id === saved) ? (saved as Format) : 'timeline';
-  } catch {
-    return 'timeline';
-  }
-}
-
-function saveFormat(format: Format): void {
-  try {
-    localStorage.setItem(FORMAT_KEY, format);
-  } catch {
-    // sin almacenamiento: vale hasta cerrar la pestaña
-  }
-}
+import { FORMATS, loadFormat, saveFormat } from './preferencias';
 
 export type LeerView = {
   el: HTMLElement;
@@ -97,16 +68,13 @@ function emptyState(text: string, linkText: string): HTMLElement {
 export function createLeer(): LeerView {
   const view = el('section', 'leer');
   view.setAttribute('aria-label', 'Leer');
-  const chips = el('nav', 'chips');
-  chips.setAttribute('aria-label', 'Filtrar por fuentes');
   const formats = el('nav', 'chips leer__formats');
   formats.setAttribute('aria-label', 'Formato');
   const band = el('p', 'band');
   const status = el('p', 'leer__status web-small muted');
   status.setAttribute('role', 'status');
-  const empty = el('div');
   const content = el('div', 'leer__content');
-  view.append(chips, formats, band, status, empty, content);
+  view.append(formats, band, status, content);
 
   let dirty = true;
   let current = '';
@@ -137,6 +105,8 @@ export function createLeer(): LeerView {
     el: view,
     invalidate() {
       dirty = true;
+      format = loadFormat();
+      renderFormats();
     },
     setStatus(msg) {
       status.textContent = msg;
@@ -156,31 +126,32 @@ export function createLeer(): LeerView {
             ? feeds.filter((f) => f.tagIds.includes(tag!.id))
             : feeds;
 
-      chips.replaceChildren(
+      // El menú de fuentes va adentro de cada formato.
+      const filters = el('nav', 'chips leer__filters');
+      filters.setAttribute('aria-label', 'Filtrar por fuentes');
+      filters.append(
         chip('todo', 'todo', mode === 'todo'),
         chip('* principales', 'principales', mode === 'principales'),
         ...tags.map((t) => chip(`#${t.name}`, t.id, t.id === tag?.id)),
       );
 
-      if (feeds.length === 0) {
-        empty.replaceChildren(emptyState('Pegá la dirección de un medio y la app busca su feed.', '[ agregar fuentes ]'));
-      } else if (selected.length === 0) {
-        empty.replaceChildren(
-          mode === 'principales'
-            ? emptyState('Todavía no marcaste ninguna fuente como principal.', '[ elegir en fuentes ]')
-            : emptyState('Ninguna fuente tiene esta etiqueta todavía.', '[ etiquetar en fuentes ]'),
-        );
-      } else {
-        empty.replaceChildren();
-      }
-
       const label = mode === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todo';
       const titles = new Map(feeds.map((f) => [f.id, f.title]));
       const feedTitle = (id: string) => titles.get(id) ?? '';
 
-      if (feeds.length === 0 || selected.length === 0) {
-        band.textContent = feeds.length === 0 ? 'Todavía no hay fuentes.' : `0 artículos · ${label}`;
-        content.replaceChildren();
+      if (feeds.length === 0) {
+        band.textContent = 'Todavía no hay fuentes.';
+        content.replaceChildren(emptyState('Pegá la dirección de un medio y la app busca su feed.', '[ agregar fuentes ]'));
+        return;
+      }
+      if (selected.length === 0) {
+        band.textContent = `0 artículos · ${label}`;
+        content.replaceChildren(
+          filters,
+          mode === 'principales'
+            ? emptyState('Todavía no marcaste ninguna fuente como principal.', '[ elegir en fuentes ]')
+            : emptyState('Ninguna fuente tiene esta etiqueta todavía.', '[ etiquetar en fuentes ]'),
+        );
         return;
       }
 
@@ -189,24 +160,25 @@ export function createLeer(): LeerView {
         band.textContent = `${plural(articles.length, 'artículo', 'artículos')} · ${label}`;
         const list = el('div', 'timeline__list');
         list.append(...articles.map((a) => card(a, feedTitle(a.feedId))));
-        content.replaceChildren(list);
+        content.replaceChildren(filters, list);
         return;
       }
 
-      // Diario, revista y teletipo: las historias agrupadas, con los ajustes del laboratorio.
+      // Diario, revista y teletipo: las notas agrupadas en historias, con la rutina aparte.
       const articles = await listArticles(undefined, 800);
-      const edition = buildEdition(feeds, tags, articles, filter, loadSettings());
+      const edition = buildEdition(feeds, tags, articles, filter);
       band.textContent = `${plural(edition.ranked.length, 'historia', 'historias')} · ${label}`;
       const layout = renderLayout(format, edition.ranked, {
         feedTitle,
         showReasons: false,
+        filters,
         label: edition.label,
         topics: edition.topics,
         routine: edition.routine,
         sectionsOf: sectionsFor(feeds, tags),
       });
       // En el diario la rutina ya está en la oreja del cabezal; en los demás va en su caja.
-      content.replaceChildren(...(format === 'tapa' ? [] : [routineBox(edition.routine, feedTitle)]), layout);
+      content.replaceChildren(layout, ...(format === 'diario' ? [] : [routineBox(edition.routine, feedTitle)]));
     },
   };
   return api;
