@@ -226,3 +226,20 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Una app web se puede publicar casi en cualquier lado,** porque son archivos. Lo único que necesita un servidor es el intermediario que trae los feeds.
 - **Un proxy público tiene que tener reglas,** si no, cualquiera lo puede usar para lo que quiera. El nuestro solo responde a la app, solo lee, y nunca entra a redes internas.
 - **El modo sin conexión funciona,** y hasta demasiado: el navegador siguió mostrando la versión vieja guardada hasta que se actualizó. Es lo esperado en una app instalable, y conviene saberlo al probar.
+
+---
+
+## 2026-10-26 · El proxy, en internet
+
+### Qué hicimos
+
+- Creamos la cuenta de Cloudflare y **publicamos el proxy** en `chip-rss-proxy.chiptecno.workers.dev`.
+- Lo probamos en vivo: trae los feeds cuando el pedido viene de la app y rechaza los pedidos de otros sitios, los que no dicen de dónde vienen y los que apuntan a redes internas.
+- Armamos la app apuntando al proxy real y funcionó: pidió los feeds por Cloudflare, sin errores.
+- Cargamos la dirección del proxy en la configuración de GitHub, para que la publicación automática la use.
+
+### Qué aprendimos
+
+- **Publicar un Worker es rápido:** se inicia sesión una vez desde la terminal (se autoriza en el navegador), se elige un nombre para el espacio en workers.dev y el proxy queda en internet en segundos.
+- **El nombre que se elige en workers.dev es público:** queda en la dirección del proxy.
+- **GitHub pide un permiso aparte** para tocar los archivos de publicación automática. Es una protección: así nada puede cambiar cómo se publica un proyecto sin que alguien lo autorice.
