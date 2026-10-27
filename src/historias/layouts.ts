@@ -13,8 +13,8 @@ export type LayoutContext = {
   showReasons: boolean;
   /** El menú de fuentes (todo, principales, etiquetas), que va adentro de cada formato. */
   filters?: HTMLElement;
-  /** El botón de guardar de una nota (chico, para los lugares con poco espacio). */
-  saveButton?: (article: Article, compact?: boolean) => HTMLElement;
+  /** Guardar y compartir una nota (chico, para los lugares con poco espacio). */
+  actions?: (article: Article, compact?: boolean) => HTMLElement;
   /** En qué página estamos y cuántas hay. */
   page?: number;
   pages?: number;
@@ -98,7 +98,7 @@ function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 
   block.append(headline(a, size === 'xl' ? 'h2' : size === 's' ? 'h4' : 'h3', 'lab-title'));
   if (size !== 's' && a.summary) block.append(el('p', 'lab-summary', a.summary));
   block.append(sources(story, ctx));
-  if (ctx.saveButton) block.append(ctx.saveButton(a));
+  if (ctx.actions) block.append(ctx.actions(a));
   const r = reasons(story, ctx);
   if (r) block.append(r);
   const v = versions(story, ctx);
@@ -143,7 +143,7 @@ function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     const link = el('a', 'teletipo__title', a.title);
     link.href = `#/nota/${a.id}`;
     li.append(link);
-    if (ctx.saveButton) li.append(ctx.saveButton(a, true));
+    if (ctx.actions) li.append(ctx.actions(a, true));
     if (s.feedIds.size > 1) li.append(el('span', 'lab-count', `${s.feedIds.size} fuentes`));
     if (ctx.showReasons) li.append(el('span', 'teletipo__why web-small', s.reasons.join(' · ')));
     const v = versions(s, ctx);

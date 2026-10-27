@@ -21,6 +21,7 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
   - **teletipo:** una línea por historia.
 - **Historias:** las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia, con la marca de cuántas fuentes la cuentan. Se ve en todos los formatos, y hay un filtro para ver solo esas. La rutina (clima, dólar, horóscopo…) va aparte.
 - **Todo el contenido, en páginas:** cada formato reparte todas las notas en página 1, 2, 3…, sin recortes.
+- **Compartir** cualquier nota: copiar el link, mandarla por WhatsApp o por mail.
 - **Guardar notas** para leerlas después, organizadas en secciones, en la pestaña **archivo**. Se guarda una copia: no se pierden aunque quites la fuente.
 - **Exportar e importar** en un archivo `.opml` tus fuentes, con toda tu configuración (nombres, principales y etiquetas), y tus notas guardadas.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.

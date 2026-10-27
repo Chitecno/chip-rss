@@ -1,31 +1,59 @@
-/* --- Botón de guardar y su menú --- */
-.guardar {
+/* --- Acciones de una nota: guardar y compartir --- */
+.acciones {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--space-2);
+}
+.acciones--chico {
+  gap: 4px var(--space-1);
+  vertical-align: middle;
+}
+
+.guardar,
+.compartir {
   position: relative;
   display: inline-block;
 }
 
-.guardar__boton {
+.guardar__boton,
+.compartir__boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 0;
   color: var(--ink-muted);
   font-weight: 700;
   white-space: nowrap;
 }
 .guardar__boton:hover,
+.compartir__boton:hover,
 .guardar__boton--activo {
   color: var(--accent);
 }
-.guardar__boton--chico {
+.guardar__boton--chico,
+.compartir__boton--chico {
   font-size: 13px;
+  gap: 2px;
 }
 
-.guardar__menu {
+/* Del mismo tamaño que la letra de al lado. */
+.icono {
+  display: block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+/* --- El menú que se abre al lado del botón --- */
+.menu {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   z-index: 20;
   display: grid;
   gap: 2px;
-  min-width: 220px;
+  min-width: 200px;
   padding: var(--space-1);
   background: var(--ground);
   color: var(--ink);
@@ -36,22 +64,23 @@
   letter-spacing: 0;
 }
 
-.guardar__titulo {
+.menu__titulo {
   margin: 0 0 4px;
   color: var(--ink-muted);
   font-size: 12px;
 }
 
-.guardar__opcion {
+.menu__opcion {
   justify-self: stretch;
   padding: 2px 0;
   color: var(--ink);
   font-weight: 400;
   text-align: left;
+  text-decoration: none;
   white-space: pre;
 }
-.guardar__opcion:hover,
-.guardar__opcion[aria-current='true'] {
+.menu__opcion:hover,
+.menu__opcion[aria-current='true'] {
   color: var(--accent);
 }
 

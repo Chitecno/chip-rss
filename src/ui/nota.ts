@@ -2,7 +2,9 @@ import { getArticle, getFeed, getSaved, listSections, removeSaved } from '../db/
 import { loadReadable } from '../reader/content';
 import { sanitizeArticle } from '../reader/sanitize';
 import { button, el, longDate } from './dom';
-import { loadSaveState, saveButton } from './guardar';
+import { loadSaveState } from './guardar';
+import { noteActions } from './acciones';
+import { shareButton } from './compartir';
 import './nota.css';
 
 function hero(src: string): HTMLImageElement {
@@ -54,7 +56,7 @@ async function fill(view: HTMLElement, bar: HTMLElement, id: string, onSavedChan
   }
   const feed = await getFeed(article.feedId);
   const isVideo = /youtube\.com|youtu\.be/i.test(article.link);
-  bar.append(saveButton(article, feed?.title ?? '', await loadSaveState(onSavedChange)));
+  bar.append(noteActions(article, feed?.title ?? '', await loadSaveState(onSavedChange)));
 
   const meta = el('p', 'nota__meta web-small', `${feed?.title ?? ''} · ${longDate.format(article.published)}`);
   const title = el('h1', 'nota__title', article.title);
@@ -113,7 +115,9 @@ export function renderGuardada(id: string, goBack: () => void, onSavedChange: ()
       onSavedChange();
       goBack();
     });
-    bar.append(remove);
+    const actions = el('span', 'acciones');
+    actions.append(shareButton(saved.title, saved.link), remove);
+    bar.append(actions);
 
     const meta = el(
       'p',

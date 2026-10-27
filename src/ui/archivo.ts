@@ -11,6 +11,7 @@ import {
   type Section,
 } from '../db/db';
 import { button, el, plural, shortDate } from './dom';
+import { shareButton } from './compartir';
 
 /** Qué se mira en el archivo: todo, lo que no tiene sección, o una sección. */
 export type ArchivoFilter = 'todo' | 'sin' | string;
@@ -101,7 +102,7 @@ export function createArchivo(filter: ArchivoFilter, onChange: () => void): HTML
       say(`quité "${saved.title}" del archivo`);
       await changed();
     });
-    actions.append(label, remove);
+    actions.append(label, shareButton(saved.title, saved.link), remove);
     li.append(title, meta, actions);
     return li;
   }

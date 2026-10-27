@@ -73,7 +73,7 @@ function alsoIn(story: Ranked, shown: Article, ctx: LayoutContext): HTMLElement 
 
 function byline(article: Article, ctx: LayoutContext): HTMLElement {
   const p = el('p', 'diario__byline', `${ctx.feedTitle(article.feedId)} · ${time.format(article.published)}`);
-  if (ctx.saveButton) p.append(' ', ctx.saveButton(article, true));
+  if (ctx.actions) p.append(' ', ctx.actions(article, true));
   return p;
 }
 
@@ -222,7 +222,7 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
       const mark = sharedMark(s);
       if (mark) li.append(mark, ' ');
       li.append(link(a, a.title, 'diario__brief-title'));
-      if (ctx.saveButton) li.append(' ', ctx.saveButton(a, true));
+      if (ctx.actions) li.append(' ', ctx.actions(a, true));
       li.append(el('span', 'diario__byline', ` ${ctx.feedTitle(a.feedId)}${s.feedIds.size > 1 ? ` y ${s.feedIds.size - 1} más` : ''}`));
       list.append(li);
     }

@@ -141,10 +141,20 @@ Cuando hay cambios nuevos en GitHub:
 - Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.
 
+### Compartir una nota
+
+En cada nota hay un botón **compartir**, con una flecha que sale hacia arriba (en el diario y el teletipo aparece solo la flecha). Al tocarlo podés:
+- **copiar link:** copia el link a la nota en el sitio original;
+- **WhatsApp:** abre WhatsApp con el título y el link listos para mandar;
+- **mail:** abre tu programa de mail con el título como asunto y el link en el cuerpo;
+- **más opciones…:** en el celu, abre el menú de compartir del sistema (Telegram, Signal…).
+
+Siempre se comparte el link a la nota en el sitio original.
+
 ### Guardar notas: el archivo
 
-- En cada nota hay un botón **[+] guardar** (en el diario, la revista y el teletipo aparece como **[+]**). Al tocarlo se abre un menú para elegir en qué sección del archivo va: **sin sección**, una que ya tengas, o una nueva que podés crear ahí mismo.
-- Cuando una nota está guardada, el botón cambia a **[✓]**. Si lo tocás de nuevo, podés moverla a otra sección o **quitarla de guardados**.
+- En cada nota hay un botón **guardar**, con un disquete (en el diario y el teletipo aparece solo el disquete). Al tocarlo se abre un menú para elegir en qué sección del archivo va: **sin sección**, una que ya tengas, o una nueva que podés crear ahí mismo.
+- Cuando una nota está guardada, el botón dice **guardada** (o muestra un ✓ al lado del disquete). Si lo tocás de nuevo, podés moverla a otra sección o **quitarla de guardados**.
 - En la pestaña **archivo** están todas tus notas guardadas. Arriba filtrás por sección; en cada nota podés cambiarle la sección o quitarla.
 - Abajo, en **secciones**, las creás, las renombrás y las borrás. Si borrás una sección, sus notas no se borran: quedan sin sección.
 - Se guarda una copia de cada nota, así no se pierde aunque quites la fuente o el medio la saque de su feed.

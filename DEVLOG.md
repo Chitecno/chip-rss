@@ -262,3 +262,18 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Guardar una nota es guardar una copia.** Si solo se guardara un puntero a la nota, se perdería cuando la fuente se quita o el medio la saca de su feed.
 - **"Libre" es una palabra con contenido legal:** sin una licencia, un código publicado se puede mirar pero no reutilizar. La GPL deja usarlo, estudiarlo y modificarlo, con una condición: las versiones modificadas que se distribuyan también tienen que ser libres.
 - **RSS es de 1999,** y en su versión 1.0 participó Aaron Swartz. No hace falta inventar nada nuevo para informarse mejor: muchas veces alcanza con recuperar herramientas que ya existen.
+
+---
+
+## 2026-10-27 · Compartir, y un disquete
+
+### Qué hicimos
+
+- **Compartir:** al lado de guardar, cada nota tiene un botón para copiar el link, mandarla por WhatsApp o por mail, y en el celu, abrir el menú de compartir del sistema. Siempre se comparte el link al sitio original.
+- **Íconos en pixel art:** un disquete para guardar y una flecha saliendo de una bandeja para compartir. Están dibujados con cuadraditos y toman el color del texto, así funcionan en cualquier tema.
+- Guardar y compartir usan el mismo menú chico, que se cierra al tocar afuera o con Escape. Nunca quedan dos abiertos a la vez.
+
+### Qué aprendimos
+
+- **El sistema de diseño de Chip Tecno no usa emoji:** el guiño es ASCII o pixel. Por eso el disquete no es 💾 sino un dibujito de 12 × 12 cuadraditos, que se ve igual en cualquier compu y en cualquier celu.
+- **Para compartir por WhatsApp o mail no hace falta ninguna conexión especial:** alcanza con un link armado de una forma particular (`wa.me/?text=…` o `mailto:…`), y la compu o el celu abren la app que corresponde.
