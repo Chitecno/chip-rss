@@ -39,9 +39,9 @@ function topBar(goBack: () => void): HTMLElement {
   return bar;
 }
 
-/** La nota abierta dentro de la app. */
-export function renderNota(id: string, goBack: () => void, onSavedChange: () => void): HTMLElement {
-  const view = el('article', 'nota');
+/** La nota abierta dentro de la app. Con `paper`, en la hoja clara del diario. */
+export function renderNota(id: string, goBack: () => void, onSavedChange: () => void, paper = false): HTMLElement {
+  const view = el('article', paper ? 'nota nota--papel papel' : 'nota');
   const bar = topBar(goBack);
   view.append(bar);
   void fill(view, bar, id, onSavedChange);

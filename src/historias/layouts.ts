@@ -143,8 +143,11 @@ function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     const link = el('a', 'teletipo__title', a.title);
     link.href = `#/nota/${a.id}`;
     li.append(link);
-    if (ctx.actions) li.append(ctx.actions(a, true));
-    if (s.feedIds.size > 1) li.append(el('span', 'lab-count', `${s.feedIds.size} fuentes`));
+    // Al final de la línea, juntos: cuántas fuentes la cuentan, guardar y compartir.
+    const end = el('span', 'teletipo__end');
+    if (s.feedIds.size > 1) end.append(el('span', 'lab-count', `${s.feedIds.size} fuentes`));
+    if (ctx.actions) end.append(ctx.actions(a, true));
+    li.append(end);
     if (ctx.showReasons) li.append(el('span', 'teletipo__why web-small', s.reasons.join(' · ')));
     const v = versions(s, ctx);
     if (v) li.append(v);

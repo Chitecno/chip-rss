@@ -277,3 +277,18 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 
 - **El sistema de diseño de Chip Tecno no usa emoji:** el guiño es ASCII o pixel. Por eso el disquete no es 💾 sino un dibujito de 12 × 12 cuadraditos, que se ve igual en cualquier compu y en cualquier celu.
 - **Para compartir por WhatsApp o mail no hace falta ninguna conexión especial:** alcanza con un link armado de una forma particular (`wa.me/?text=…` o `mailto:…`), y la compu o el celu abren la app que corresponde.
+
+---
+
+## 2026-10-27 · Revista, teletipo y la nota en papel
+
+### Qué hicimos
+
+- **Revista:** en pantallas anchas las fotos quedaban enormes y la letra chiquita. Ahora la página tiene un ancho máximo y queda centrada, la foto ocupa un poco más de la mitad, y el título y el resumen tienen letra más grande. En el celu, foto arriba y texto abajo.
+- **Teletipo:** la marca "N fuentes" se cortaba al final de la línea. Ahora va junto a guardar y compartir, y nunca se parte.
+- **Diario:** al entrar a una nota desde el diario, la nota se abre también en papel, con la misma tipografía y el mismo fondo claro.
+
+### Qué aprendimos
+
+- **Una pantalla de compu ancha no es una hoja más grande.** Si todo se estira al ancho, las fotos crecen y el texto queda perdido. Las revistas de papel tienen un tamaño fijo por algo: hay que poner un límite.
+- **El texto justificado en el celu deja huecos grandes** entre palabras. En pantallas chicas va alineado a la izquierda.

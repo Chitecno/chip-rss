@@ -113,3 +113,49 @@
   justify-content: space-between;
   gap: var(--space-1) var(--space-3);
 }
+
+/* La nota en la hoja de papel del diario. */
+.views > .nota--papel {
+  max-width: calc(70ch + 2 * var(--space-4));
+  padding: var(--space-4);
+}
+.nota--papel .nota__meta {
+  color: var(--ink-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--ink);
+}
+.nota--papel .nota__title {
+  font-size: 36px;
+  line-height: 42px;
+  letter-spacing: -0.02em;
+}
+.nota--papel .nota__body {
+  text-align: justify;
+  hyphens: auto;
+}
+.nota--papel .nota__body img,
+.nota--papel .nota__hero {
+  border: 0;
+  padding: 0;
+}
+.nota--papel .nota__body a,
+.nota--papel .nota__original a {
+  color: var(--ink);
+  text-decoration: underline;
+}
+@media (max-width: 640px) {
+  .views > .nota--papel {
+    padding: var(--space-2);
+  }
+  .nota--papel .nota__title {
+    font-size: 26px;
+    line-height: 32px;
+  }
+  /* En pantallas angostas, justificar deja huecos grandes entre palabras. */
+  .nota--papel .nota__body {
+    text-align: left;
+  }
+}

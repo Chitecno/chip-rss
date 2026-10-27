@@ -3,6 +3,7 @@ import { createLeer, type LeerRoute } from './leer';
 import { createFuentes } from './fuentes';
 import { renderGuardada, renderNota } from './nota';
 import { createArchivo } from './archivo';
+import { loadFormat } from './preferencias';
 import { createAcerca } from './acerca';
 import { el, plural } from './dom';
 import { listFeeds } from '../db/db';
@@ -90,7 +91,8 @@ export function startApp(root: HTMLElement): void {
       await leer.show(route);
       window.scrollTo(0, previous?.name === 'nota' ? leerScroll : 0);
     } else if (route.name === 'nota') {
-      views.replaceChildren(renderNota(route.id, goBack, () => leer.invalidate()));
+      // Si se está leyendo en formato diario, la nota se abre en la misma hoja de papel.
+      views.replaceChildren(renderNota(route.id, goBack, () => leer.invalidate(), loadFormat() === 'diario'));
       window.scrollTo(0, 0);
     } else if (route.name === 'guardada') {
       views.replaceChildren(renderGuardada(route.id, goBack, () => leer.invalidate()));
