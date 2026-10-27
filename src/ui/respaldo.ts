@@ -27,12 +27,12 @@ export function respaldoSection(onChange: () => void): HTMLElement {
   const warning = el(
     'p',
     'band',
-    'Tus fuentes se guardan solo en este navegador. Si borrás los datos del navegador, se borran. Exportalas antes para tener un respaldo.',
+    'Tus fuentes y tus notas guardadas viven solo en este navegador. Si borrás los datos del navegador, se borran. Exportalas antes para tener un respaldo.',
   );
   const explain = el(
     'p',
     'muted',
-    'El archivo es un OPML, el formato que entienden casi todos los lectores de RSS. Lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas y el formato de lectura que elegiste. Las notas no van en el archivo: al importarlo se vuelven a bajar de cada fuente.',
+    'Se descarga un archivo .opml, el formato que entienden casi todos los lectores de RSS. Lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas, el formato de lectura que elegiste y tu archivo de notas guardadas, con sus secciones. Las demás notas no van: al importarlo se vuelven a bajar de cada fuente.',
   );
 
   const status = el('p', 'status web-small');
@@ -43,13 +43,15 @@ export function respaldoSection(onChange: () => void): HTMLElement {
     status.dataset.kind = kind;
   };
 
-  const exportButton = button('[ exportar fuentes ]');
+  const exportButton = button('[ exportar ]');
   exportButton.addEventListener('click', async () => {
     try {
-      const { text, feeds, tags } = await exportOpml();
-      if (feeds === 0) return say('todavía no hay fuentes para exportar', 'error');
-      download(text, `chip-rss-fuentes-${today()}.opml`);
-      say(`listo: bajé un archivo con ${plural(feeds, 'fuente', 'fuentes')} y ${plural(tags, 'etiqueta', 'etiquetas')}`);
+      const { text, feeds, tags, saved } = await exportOpml();
+      if (feeds === 0 && saved === 0) return say('todavía no hay nada para exportar', 'error');
+      download(text, `chip-rss-${today()}.opml`);
+      say(
+        `listo: bajé un archivo con ${plural(feeds, 'fuente', 'fuentes')}, ${plural(tags, 'etiqueta', 'etiquetas')} y ${plural(saved, 'nota guardada', 'notas guardadas')}`,
+      );
     } catch {
       say('no pude armar el archivo', 'error');
     }
@@ -59,7 +61,7 @@ export function respaldoSection(onChange: () => void): HTMLElement {
   fileInput.type = 'file';
   fileInput.accept = '.opml,.xml,text/xml,text/x-opml,application/xml';
   fileInput.hidden = true;
-  const importButton = button('[ importar fuentes ]');
+  const importButton = button('[ importar ]');
   importButton.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files?.[0];
@@ -71,6 +73,7 @@ export function respaldoSection(onChange: () => void): HTMLElement {
       const result = await importOpml(await file.text(), (msg) => say(`${msg}…`));
       const parts = [plural(result.added, 'fuente nueva', 'fuentes nuevas'), plural(result.updated, 'actualizada', 'actualizadas')];
       if (result.tags) parts.push(plural(result.tags, 'etiqueta nueva', 'etiquetas nuevas'));
+      if (result.saved) parts.push(plural(result.saved, 'nota guardada', 'notas guardadas'));
       if (result.failed.length) parts.push(`${result.failed.length} con errores`);
       say(`listo: ${parts.join(' · ')}`);
       onChange();
@@ -88,7 +91,7 @@ export function respaldoSection(onChange: () => void): HTMLElement {
   const note = el(
     'p',
     'web-small muted',
-    'Al importar, si una fuente ya estaba, queda como dice el archivo: su nombre, si es principal y sus etiquetas.',
+    'Al importar, si una fuente o una nota guardada ya estaba, queda como dice el archivo.',
   );
 
   page.append(title, warning, explain, actions, status, note);

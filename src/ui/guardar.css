@@ -1,0 +1,89 @@
+/* --- Botón de guardar y su menú --- */
+.guardar {
+  position: relative;
+  display: inline-block;
+}
+
+.guardar__boton {
+  padding: 0;
+  color: var(--ink-muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.guardar__boton:hover,
+.guardar__boton--activo {
+  color: var(--accent);
+}
+.guardar__boton--chico {
+  font-size: 13px;
+}
+
+.guardar__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 2px;
+  min-width: 220px;
+  padding: var(--space-1);
+  background: var(--ground);
+  color: var(--ink);
+  border: 2px solid var(--hash);
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.guardar__titulo {
+  margin: 0 0 4px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.guardar__opcion {
+  justify-self: stretch;
+  padding: 2px 0;
+  color: var(--ink);
+  font-weight: 400;
+  text-align: left;
+  white-space: pre;
+}
+.guardar__opcion:hover,
+.guardar__opcion[aria-current='true'] {
+  color: var(--accent);
+}
+
+.guardar__nueva {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--space-1);
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dotted var(--hash);
+}
+.guardar__nueva .text-input {
+  flex: 1 1 120px;
+  font-size: 13px;
+  padding: 2px 0;
+}
+.guardar__error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--pink-chat);
+  font-size: 12px;
+}
+.guardar__error:empty {
+  display: none;
+}
+
+.guardar__quitar {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 0;
+  color: var(--ink-muted);
+  font-weight: 400;
+  font-size: 13px;
+}

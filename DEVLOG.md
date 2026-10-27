@@ -243,3 +243,22 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Publicar un Worker es rápido:** se inicia sesión una vez desde la terminal (se autoriza en el navegador), se elige un nombre para el espacio en workers.dev y el proxy queda en internet en segundos.
 - **El nombre que se elige en workers.dev es público:** queda en la dirección del proxy.
 - **GitHub pide un permiso aparte** para tocar los archivos de publicación automática. Es una protección: así nada puede cambiar cómo se publica un proyecto sin que alguien lo autorice.
+
+---
+
+## 2026-10-27 · Versión 0.1.0: el archivo, software libre y correcciones
+
+### Qué hicimos
+
+- **El archivo:** cada nota tiene un botón para guardarla. Al tocarlo se elige en qué sección va, o se crea una nueva ahí mismo. En la pestaña **archivo** están todas las notas guardadas, organizadas en secciones que se crean, renombran y borran como carpetas.
+- **Lo guardado entra en el respaldo:** el archivo `.opml` lleva ahora las fuentes, las etiquetas, el formato de lectura y las notas guardadas con sus secciones.
+- **chip-rss es software libre**, con licencia GPL 3.0.
+- **Versión 0.1.0**, la primera demo para probar con la comunidad. El número vive en un solo lugar y la app lo muestra en el arranque y en "Acerca de".
+- **"Acerca de" con texto de Chip:** por qué existe, qué es RSS, cómo se usa, qué pasa con los datos, y cómo apoyar a Chip Tecno.
+- **Correcciones:** la app usa todo el ancho de la pantalla en compu, las fotos del diario van originales y sin filtro, exportar e importar pasaron a la pantalla de fuentes, y el arranque perdió una línea que sobraba.
+
+### Qué aprendimos
+
+- **Guardar una nota es guardar una copia.** Si solo se guardara un puntero a la nota, se perdería cuando la fuente se quita o el medio la saca de su feed.
+- **"Libre" es una palabra con contenido legal:** sin una licencia, un código publicado se puede mirar pero no reutilizar. La GPL deja usarlo, estudiarlo y modificarlo, con una condición: las versiones modificadas que se distribuyan también tienen que ser libres.
+- **RSS es de 1999,** y en su versión 1.0 participó Aaron Swartz. No hace falta inventar nada nuevo para informarse mejor: muchas veces alcanza con recuperar herramientas que ya existen.

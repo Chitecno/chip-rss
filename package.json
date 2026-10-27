@@ -1,8 +1,9 @@
 {
   "name": "chip-rss",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Lector de feeds RSS local-first con estética terminal. Un proyecto Chip Tecno.",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite",

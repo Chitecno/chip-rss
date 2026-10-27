@@ -13,7 +13,7 @@ import { isIP } from 'node:net';
 const MAX_BYTES = 5 * 1024 * 1024;
 const TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
-const USER_AGENT = 'chip-rss/0.0.1 (+https://chiptecno.ar)';
+const USER_AGENT = 'chip-rss/0.1 (+https://chiptecno.ar)';
 const ACCEPT =
   'application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, text/html;q=0.8, */*;q=0.5';
 

@@ -21,7 +21,8 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
   - **teletipo:** una línea por historia.
 - **Historias:** las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia, con la marca de cuántas fuentes la cuentan. Se ve en todos los formatos, y hay un filtro para ver solo esas. La rutina (clima, dólar, horóscopo…) va aparte.
 - **Todo el contenido, en páginas:** cada formato reparte todas las notas en página 1, 2, 3…, sin recortes.
-- **Exportar e importar tus fuentes** en un archivo OPML, con toda tu configuración: nombres, principales y etiquetas.
+- **Guardar notas** para leerlas después, organizadas en secciones, en la pestaña **archivo**. Se guarda una copia: no se pierden aunque quites la fuente.
+- **Exportar e importar** en un archivo `.opml` tus fuentes, con toda tu configuración (nombres, principales y etiquetas), y tus notas guardadas.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
 
 ## Cómo probarla
@@ -53,7 +54,7 @@ La [guía de uso](docs/guia-de-uso.md) explica cada paso sin dar nada por sabido
 src/
   boot/      pantalla de arranque y banner ASCII
   themes/    temas de color
-  ui/        pantallas: leer, fuentes, nota, menú
+  ui/        pantallas: leer, archivo, fuentes, nota, acerca de, menú
   feeds/     buscar, leer y entender feeds
   reader/    traer y limpiar la nota completa
   historias/ agrupar historias, rutina, temas del día y los formatos diario, revista y teletipo
@@ -74,4 +75,4 @@ Vite y TypeScript, sin framework. La app es una PWA, es decir, una página web q
 
 ## Licencia
 
-Todavía sin definir.
+chip-rss es software libre, con licencia [GPL 3.0](LICENSE): cualquiera puede usarlo, estudiarlo, copiarlo y modificarlo, y las versiones modificadas que se distribuyan también tienen que ser libres.

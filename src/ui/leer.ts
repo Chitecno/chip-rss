@@ -7,6 +7,7 @@ import '../historias/historias.css';
 import { asciiPlaceholder } from './ascii-placeholder';
 import { el, plural, shortDate } from './dom';
 import { FORMATS, loadFormat, saveFormat, type Format } from './preferencias';
+import { loadSaveState, saveButton } from './guardar';
 
 /** Qué se está mirando: el filtro de fuentes, la página y si son solo las historias compartidas. */
 export type LeerRoute = { filter: string; page: number; shared: boolean };
@@ -46,7 +47,12 @@ function otherVersions(story: Ranked, shown: Article, feedTitle: (id: string) =>
   return line;
 }
 
-function card(article: Article, feedTitle: (id: string) => string, story?: Ranked): HTMLElement {
+function card(
+  article: Article,
+  feedTitle: (id: string) => string,
+  story: Ranked | undefined,
+  save: (article: Article) => HTMLElement,
+): HTMLElement {
   const node = el('article', 'card');
   const href = `#/nota/${article.id}`;
 
@@ -79,6 +85,7 @@ function card(article: Article, feedTitle: (id: string) => string, story?: Ranke
   node.append(media, meta, title);
   if (article.summary) node.append(el('p', 'card__summary', article.summary));
   if (story && isShared(story)) node.append(otherVersions(story, article, feedTitle));
+  node.append(save(article));
   return node;
 }
 
@@ -182,6 +189,9 @@ export function createLeer(): LeerView {
       const mode = route.filter === 'principales' ? 'principales' : tag ? 'tag' : 'todo';
       const titles = new Map(feeds.map((f) => [f.id, f.title]));
       const feedTitle = (id: string) => titles.get(id) ?? '';
+      // Qué notas ya están guardadas, para el botón de guardar.
+      const saveState = await loadSaveState(() => {});
+      const save = (a: Article, compact = false) => saveButton(a, feedTitle(a.feedId), saveState, compact);
 
       if (feeds.length === 0) {
         band.textContent = 'Todavía no hay fuentes.';
@@ -254,7 +264,7 @@ export function createLeer(): LeerView {
 
       if (format === 'timeline') {
         const list = el('div', 'timeline__list');
-        list.append(...notes.slice(from, from + size).map((a) => card(a, feedTitle, edition.storyOf.get(a.id))));
+        list.append(...notes.slice(from, from + size).map((a) => card(a, feedTitle, edition.storyOf.get(a.id), save)));
         content.replaceChildren(filters, list, pager(pageRoute, pages));
         return;
       }
@@ -264,6 +274,7 @@ export function createLeer(): LeerView {
         feedTitle,
         showReasons: false,
         filters,
+        saveButton: save,
         page,
         pages,
         label: edition.label,

@@ -1,14 +1,21 @@
 import {
   findFeedByUrl,
   getFeed,
+  getSaved,
+  getSectionByName,
   getTag,
   getTagByName,
   listFeeds,
+  listSaved,
+  listSections,
   listTags,
   normalizeTagName,
+  putSaved,
   saveFeed,
+  saveSection,
   saveTag,
   type Feed,
+  type Saved,
   type Tag,
 } from '../db/db';
 import { resolveUrl } from '../feeds/parse';
@@ -54,8 +61,8 @@ function feedOutline(doc: XMLDocument, feed: Feed, tagNames: Map<string, string>
 }
 
 /** Arma el archivo OPML con todas las fuentes y su configuración. */
-export async function exportOpml(): Promise<{ text: string; feeds: number; tags: number }> {
-  const [feeds, tags] = await Promise.all([listFeeds(), listTags()]);
+export async function exportOpml(): Promise<{ text: string; feeds: number; tags: number; saved: number }> {
+  const [feeds, tags, sections, saved] = await Promise.all([listFeeds(), listTags(), listSections(), listSaved()]);
   const tagNames = new Map(tags.map((t) => [t.id, t.name]));
 
   const doc = document.implementation.createDocument(null, 'opml', null);
@@ -81,6 +88,40 @@ export async function exportOpml(): Promise<{ text: string; feeds: number; tags:
     tagList.append(item);
   }
   head.append(tagList);
+
+  // El archivo: secciones y notas guardadas, con su copia completa.
+  const sectionList = doc.createElementNS(CHIP_NS, 'chip:secciones');
+  for (const sec of sections) {
+    const item = doc.createElementNS(CHIP_NS, 'chip:seccion');
+    item.setAttribute('id', sec.id);
+    item.setAttribute('name', sec.name);
+    item.setAttribute('createdAt', String(sec.createdAt));
+    sectionList.append(item);
+  }
+  head.append(sectionList);
+  const savedList = doc.createElementNS(CHIP_NS, 'chip:guardados');
+  for (const note of saved) {
+    const item = doc.createElementNS(CHIP_NS, 'chip:guardado');
+    item.setAttribute('id', note.id);
+    item.setAttribute('articleId', note.articleId);
+    if (note.sectionId) item.setAttribute('sectionId', note.sectionId);
+    item.setAttribute('feedTitle', note.feedTitle);
+    item.setAttribute('title', note.title);
+    item.setAttribute('link', note.link);
+    if (note.image) item.setAttribute('image', note.image);
+    item.setAttribute('published', String(note.published));
+    item.setAttribute('savedAt', String(note.savedAt));
+    const summary = doc.createElementNS(CHIP_NS, 'chip:resumen');
+    summary.textContent = note.summary;
+    item.append(summary);
+    if (note.content) {
+      const content = doc.createElementNS(CHIP_NS, 'chip:contenido');
+      content.textContent = note.content;
+      item.append(content);
+    }
+    savedList.append(item);
+  }
+  head.append(savedList);
   root.append(head);
 
   // Para los otros lectores: cada fuente va dentro de la carpeta de su primera etiqueta.
@@ -105,10 +146,10 @@ export async function exportOpml(): Promise<{ text: string; feeds: number; tags:
   root.append(body);
 
   const text = `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(doc)}`;
-  return { text, feeds: feeds.length, tags: tags.length };
+  return { text, feeds: feeds.length, tags: tags.length, saved: saved.length };
 }
 
-export type ImportResult = { added: number; updated: number; tags: number; failed: string[] };
+export type ImportResult = { added: number; updated: number; tags: number; saved: number; failed: string[] };
 
 /**
  * Carga un OPML. Si una fuente ya está, vale lo que dice el archivo (sirve para restaurar):
@@ -160,9 +201,10 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
   };
   const body = Array.from(doc.documentElement.children).find((c) => c.localName === 'body');
   if (body) walk(body, []);
-  if (outlines.length === 0) throw new OpmlError('el archivo no tiene fuentes');
+  const savedItems = Array.from(doc.getElementsByTagNameNS(CHIP_NS, 'guardado'));
+  if (outlines.length === 0 && savedItems.length === 0) throw new OpmlError('el archivo no tiene fuentes');
 
-  const result: ImportResult = { added: 0, updated: 0, tags: 0, failed: [] };
+  const result: ImportResult = { added: 0, updated: 0, tags: 0, saved: 0, failed: [] };
   const toFetch: Feed[] = [];
   for (const [i, { el, folders }] of outlines.entries()) {
     const url = resolveUrl(el.getAttribute('xmlUrl') ?? '', 'https://invalid/');
@@ -216,12 +258,49 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
     result.added++;
   }
 
-  // 3. El formato de lectura, si el archivo lo trae.
+  // 3. El archivo: secciones (por nombre o id) y notas guardadas. Si una nota ya estaba, vale la del archivo.
+  const sectionIdMap = new Map<string, string>();
+  for (const item of Array.from(doc.getElementsByTagNameNS(CHIP_NS, 'seccion'))) {
+    const id = item.getAttribute('id') ?? '';
+    const name = (item.getAttribute('name') ?? '').trim();
+    if (!name) continue;
+    const byName = await getSectionByName(name);
+    if (byName) {
+      sectionIdMap.set(id, byName.id);
+      continue;
+    }
+    const newId = id || crypto.randomUUID();
+    await saveSection({ id: newId, name, createdAt: Number(item.getAttribute('createdAt')) || Date.now() });
+    sectionIdMap.set(id, newId);
+  }
+  for (const item of savedItems) {
+    const child = (name: string) => Array.from(item.children).find((c) => c.localName === name)?.textContent ?? '';
+    const id = item.getAttribute('id') || crypto.randomUUID();
+    const sectionId = item.getAttribute('sectionId');
+    const note: Saved = {
+      id,
+      articleId: item.getAttribute('articleId') ?? '',
+      feedTitle: item.getAttribute('feedTitle') ?? '',
+      title: item.getAttribute('title') ?? '(sin título)',
+      link: resolveUrl(item.getAttribute('link') ?? '', 'https://invalid/'),
+      summary: child('resumen'),
+      content: child('contenido') || undefined,
+      image: resolveUrl(item.getAttribute('image') ?? '', 'https://invalid/') || undefined,
+      published: Number(item.getAttribute('published')) || Date.now(),
+      savedAt: Number(item.getAttribute('savedAt')) || Date.now(),
+      sectionId: sectionId ? (sectionIdMap.get(sectionId) ?? null) : null,
+    };
+    const existing = await getSaved(id);
+    await putSaved(existing ? { ...existing, ...note } : note);
+    result.saved++;
+  }
+
+  // 4. El formato de lectura, si el archivo lo trae.
   const prefs = doc.getElementsByTagNameNS(CHIP_NS, 'preferencias')[0];
   const formato = prefs?.getAttribute('formato');
   if (isFormat(formato)) saveFormat(formato);
 
-  // 4. Bajar las notas de las fuentes nuevas, de a tres por vez.
+  // 5. Bajar las notas de las fuentes nuevas, de a tres por vez.
   for (let i = 0; i < toFetch.length; i += 3) {
     onStep?.(`bajando notas: ${Math.min(i + 3, toFetch.length)} de ${toFetch.length} fuentes`);
     await Promise.all(toFetch.slice(i, i + 3).map(refreshFeed));

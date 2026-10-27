@@ -1,10 +1,15 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readFileSync } from 'node:fs';
 import { feedProxy } from './dev/feed-proxy';
+
+// La versión sale de package.json: se cambia en un solo lugar.
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'));
 
 export default defineConfig({
   // Rutas relativas: así la app funciona igual en una subruta de chiptecno.ar o en un subdominio.
   base: './',
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     {
       name: 'feed-proxy',

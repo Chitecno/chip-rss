@@ -141,19 +141,27 @@ Cuando hay cambios nuevos en GitHub:
 - Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.
 
+### Guardar notas: el archivo
+
+- En cada nota hay un botón **[+] guardar** (en el diario, la revista y el teletipo aparece como **[+]**). Al tocarlo se abre un menú para elegir en qué sección del archivo va: **sin sección**, una que ya tengas, o una nueva que podés crear ahí mismo.
+- Cuando una nota está guardada, el botón cambia a **[✓]**. Si lo tocás de nuevo, podés moverla a otra sección o **quitarla de guardados**.
+- En la pestaña **archivo** están todas tus notas guardadas. Arriba filtrás por sección; en cada nota podés cambiarle la sección o quitarla.
+- Abajo, en **secciones**, las creás, las renombrás y las borrás. Si borrás una sección, sus notas no se borran: quedan sin sección.
+- Se guarda una copia de cada nota, así no se pierde aunque quites la fuente o el medio la saque de su feed.
+
 ### Hacer un respaldo de tus fuentes
 
 1. En el menú, entrá a **fuentes** y bajá hasta **respaldo**.
-2. Tocá **[ exportar fuentes ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-fuentes-2026-10-25.opml`. Chrome lo guarda en tu carpeta Descargas.
+2. Tocá **[ exportar ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-2026-10-27.opml`. El navegador lo guarda en tu carpeta Descargas.
 3. Guardalo en un lugar seguro.
 
-El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas y el formato de lectura que elegiste. Las notas no van: se vuelven a bajar de cada fuente.
+El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas, el formato de lectura que elegiste y tus notas guardadas con sus secciones. Las demás notas no van: se vuelven a bajar de cada fuente.
 
 ### Cargar un respaldo (o tus fuentes de otro lector)
 
-1. En **fuentes**, sección **respaldo**, tocá **[ importar fuentes ]** y elegí el archivo `.opml`.
+1. En **fuentes**, sección **respaldo**, tocá **[ importar ]** y elegí el archivo `.opml`.
 2. Abajo vas a ver cómo va: cuántas fuentes suma y cuándo termina de bajar sus notas.
-3. Si una fuente ya estaba cargada, queda como dice el archivo: su nombre, si es principal y sus etiquetas.
+3. Si una fuente o una nota guardada ya estaba, queda como dice el archivo.
 
 Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). Sus carpetas pasan a ser etiquetas.
 

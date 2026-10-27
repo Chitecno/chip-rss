@@ -430,3 +430,48 @@ a.term-button {
   display: grid;
   gap: var(--space-2);
 }
+
+/* --- Archivo --- */
+.archivo__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.archivo__item {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-2) 0;
+  border-bottom: 1px dotted var(--hash);
+}
+.archivo__title {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.archivo__title:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.archivo__meta {
+  margin: 0;
+  color: var(--ink-muted);
+}
+.archivo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  color: var(--ink-muted);
+}
+.archivo__actions .term-button {
+  padding: 0;
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+.archivo__select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--hash);
+  padding: 2px 4px;
+}

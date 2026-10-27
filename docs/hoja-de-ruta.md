@@ -14,7 +14,8 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | ✅ | Vistas: timeline, por etiqueta, solo principales | Una sola pantalla con filtros arriba, y cuatro formatos: timeline, diario, revista y teletipo. |
 | ✅ | Foto real de cada nota o placeholder ASCII | |
 | ✅ | Guardado local | IndexedDB, con UUID en fuentes, etiquetas y notas. |
-| ✅ | Exportar e importar las fuentes (OPML), con aviso | En Fuentes, sección "respaldo". Lleva nombres, principales, etiquetas y el formato de lectura. |
+| ✅ | Exportar e importar las fuentes (OPML), con aviso | En Fuentes, sección "respaldo". Lleva nombres, principales, etiquetas, el formato de lectura y las notas guardadas. |
+| ✅ | Guardar notas y organizarlas en secciones | La pestaña archivo. Se guarda una copia de cada nota. |
 | 🟡 | Instalable y que funcione sin conexión | Está configurado y se arma con `npm.cmd run app`. Falta confirmarlo en Chrome y en el celu. |
 
 ## Para publicarla
@@ -24,7 +25,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | ✅ | Proxy en un Cloudflare Worker | Publicado en `https://chip-rss-proxy.chiptecno.workers.dev`. Solo atiende a la app. |
 | 🟡 | Publicación en GitHub Pages | Configurada, y la dirección del proxy ya está cargada en GitHub. Falta activarla y pasar la rama `publicacion` a main. |
 | ⬜ | Dirección en chiptecno.ar | Después de GitHub Pages, se puede apuntar una dirección de chiptecno.ar. |
-| ✅ | Código público en GitHub | Este repositorio. |
+| ✅ | Código público en GitHub | Este repositorio, con licencia libre GPL 3.0. |
 
 ## El sello Chip Tecno
 

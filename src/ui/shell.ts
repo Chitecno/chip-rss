@@ -1,7 +1,8 @@
 import { hashFrame } from './hash-frame';
 import { createLeer, type LeerRoute } from './leer';
 import { createFuentes } from './fuentes';
-import { renderNota } from './nota';
+import { renderGuardada, renderNota } from './nota';
+import { createArchivo } from './archivo';
 import { createAcerca } from './acerca';
 import { el, plural } from './dom';
 import { listFeeds } from '../db/db';
@@ -12,12 +13,16 @@ type Route =
   | ({ name: 'leer' } & LeerRoute)
   | { name: 'fuentes' }
   | { name: 'acerca' }
-  | { name: 'nota'; id: string };
+  | { name: 'nota'; id: string }
+  | { name: 'archivo'; filter: string }
+  | { name: 'guardada'; id: string };
 
 /** Cada pantalla tiene su dirección (#/leer, #/fuentes…), así el botón de volver funciona. */
 function parseRoute(): Route {
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   if (path.startsWith('nota/')) return { name: 'nota', id: decodeURIComponent(path.slice(5)) };
+  if (path.startsWith('archivo/')) return { name: 'guardada', id: decodeURIComponent(path.slice(8)) };
+  if (path === 'archivo') return { name: 'archivo', filter: new URLSearchParams(query).get('s') ?? 'todo' };
   if (path === 'fuentes' || path === 'acerca') return { name: path };
   const params = new URLSearchParams(query);
   return {
@@ -37,6 +42,7 @@ export function startApp(root: HTMLElement): void {
       <button type="button" class="term-button topbar__menu" aria-expanded="false" aria-controls="menu">[ menú ]</button>
       <nav id="menu" class="topbar__nav" aria-label="Secciones">
         <a href="#/leer" data-route="leer">leer</a>
+        <a href="#/archivo" data-route="archivo">archivo</a>
         <a href="#/fuentes" data-route="fuentes">fuentes</a>
         <a href="#/acerca" data-route="acerca">acerca de</a>
       </nav>
@@ -73,7 +79,7 @@ export function startApp(root: HTMLElement): void {
     setMenu(false);
     if (previous?.name === 'leer') leerScroll = window.scrollY;
 
-    const section = route.name === 'nota' ? 'leer' : route.name;
+    const section = route.name === 'nota' ? 'leer' : route.name === 'guardada' ? 'archivo' : route.name;
     for (const link of Array.from(nav.querySelectorAll<HTMLAnchorElement>('a'))) {
       if (link.dataset.route === section) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
@@ -84,7 +90,15 @@ export function startApp(root: HTMLElement): void {
       await leer.show(route);
       window.scrollTo(0, previous?.name === 'nota' ? leerScroll : 0);
     } else if (route.name === 'nota') {
-      views.replaceChildren(renderNota(route.id, goBack));
+      views.replaceChildren(renderNota(route.id, goBack, () => leer.invalidate()));
+      window.scrollTo(0, 0);
+    } else if (route.name === 'guardada') {
+      views.replaceChildren(renderGuardada(route.id, goBack, () => leer.invalidate()));
+      window.scrollTo(0, 0);
+    } else if (route.name === 'archivo') {
+      const page = createArchivo(route.filter, () => leer.invalidate());
+      views.replaceChildren(page);
+      page.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });
       window.scrollTo(0, 0);
     } else {
       const page =
