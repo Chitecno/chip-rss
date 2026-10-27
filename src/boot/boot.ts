@@ -59,7 +59,6 @@ export function runBoot(root: HTMLElement): Promise<void> {
 
   return (async () => {
     await print(`CHIP-RSS v${VERSION} · arranque`, 260);
-    await print('sin cuentas · sin vigilancia', 420);
     await print('', 120);
     for (const check of CHECKS) {
       await print(dotted(check.label, await check.run()), 300);

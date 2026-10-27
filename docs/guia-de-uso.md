@@ -143,7 +143,7 @@ Cuando hay cambios nuevos en GitHub:
 
 ### Hacer un respaldo de tus fuentes
 
-1. En el menú, entrá a **ajustes**.
+1. En el menú, entrá a **fuentes** y bajá hasta **respaldo**.
 2. Tocá **[ exportar fuentes ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-fuentes-2026-10-25.opml`. Chrome lo guarda en tu carpeta Descargas.
 3. Guardalo en un lugar seguro.
 
@@ -151,7 +151,7 @@ El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o
 
 ### Cargar un respaldo (o tus fuentes de otro lector)
 
-1. En **ajustes**, tocá **[ importar fuentes ]** y elegí el archivo `.opml`.
+1. En **fuentes**, sección **respaldo**, tocá **[ importar fuentes ]** y elegí el archivo `.opml`.
 2. Abajo vas a ver cómo va: cuántas fuentes suma y cuándo termina de bajar sus notas.
 3. Si una fuente ya estaba cargada, queda como dice el archivo: su nombre, si es principal y sus etiquetas.
 
@@ -161,7 +161,7 @@ Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). 
 
 - Todo lo que cargás se guarda **en tu navegador, en tu compu**. No viaja a ningún servidor.
 - Chrome guarda los datos **por dirección**: lo que cargues en `localhost:4173` no aparece en otra dirección, y al revés. Usá siempre `localhost:4173`.
-- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Antes, hacé un respaldo desde **ajustes** (ver más arriba).
+- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Antes, hacé un respaldo desde **fuentes** (ver más arriba).
 
 ## Si algo falla
 

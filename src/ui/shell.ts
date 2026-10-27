@@ -2,7 +2,6 @@ import { hashFrame } from './hash-frame';
 import { createLeer, type LeerRoute } from './leer';
 import { createFuentes } from './fuentes';
 import { renderNota } from './nota';
-import { createAjustes } from './ajustes';
 import { createAcerca } from './acerca';
 import { el, plural } from './dom';
 import { listFeeds } from '../db/db';
@@ -12,7 +11,6 @@ import './shell.css';
 type Route =
   | ({ name: 'leer' } & LeerRoute)
   | { name: 'fuentes' }
-  | { name: 'ajustes' }
   | { name: 'acerca' }
   | { name: 'nota'; id: string };
 
@@ -20,7 +18,7 @@ type Route =
 function parseRoute(): Route {
   const [path, query = ''] = location.hash.replace(/^#\/?/, '').split('?');
   if (path.startsWith('nota/')) return { name: 'nota', id: decodeURIComponent(path.slice(5)) };
-  if (path === 'fuentes' || path === 'ajustes' || path === 'acerca') return { name: path };
+  if (path === 'fuentes' || path === 'acerca') return { name: path };
   const params = new URLSearchParams(query);
   return {
     name: 'leer',
@@ -40,7 +38,6 @@ export function startApp(root: HTMLElement): void {
       <nav id="menu" class="topbar__nav" aria-label="Secciones">
         <a href="#/leer" data-route="leer">leer</a>
         <a href="#/fuentes" data-route="fuentes">fuentes</a>
-        <a href="#/ajustes" data-route="ajustes">ajustes</a>
         <a href="#/acerca" data-route="acerca">acerca de</a>
       </nav>
     </header>
@@ -93,9 +90,7 @@ export function startApp(root: HTMLElement): void {
       const page =
         route.name === 'fuentes'
           ? createFuentes(() => leer.invalidate())
-          : route.name === 'ajustes'
-            ? createAjustes(() => leer.invalidate())
-            : createAcerca();
+          : createAcerca();
       views.replaceChildren(page);
       window.scrollTo(0, 0);
       page.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });

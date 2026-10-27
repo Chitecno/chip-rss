@@ -9,7 +9,7 @@ import './diario.css';
 
 /**
  * Diario en papel: una hoja clara sobre el fondo de la app, con cabezal, orejas,
- * columnas angostas separadas por filetes, fotos tramadas como impresas y breves.
+ * columnas angostas separadas por filetes, fotos y breves.
  */
 
 const editionDate = new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -42,7 +42,7 @@ function kicker(story: Ranked, ctx: LayoutContext): HTMLElement {
   return p;
 }
 
-/** La foto en blanco y negro con trama de puntos, como impresa. */
+/** La foto original de la nota. */
 function photo(article: Article, className: string): HTMLElement | '' {
   if (!article.image) return '';
   const box = link(article, '', `diario__photo ${className}`);

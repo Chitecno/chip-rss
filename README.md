@@ -16,7 +16,7 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
 - **Leer la nota completa dentro de la app,** sin salir al sitio. Queda guardada para leerla sin conexión.
 - **Elegir el formato de lectura:**
   - **timeline:** la lista de siempre;
-  - **diario:** una hoja de papel con cabezal, columnas, fotos tramadas y breves;
+  - **diario:** una hoja de papel con cabezal, columnas, fotos y breves;
   - **revista:** fotos grandes;
   - **teletipo:** una línea por historia.
 - **Historias:** las notas de distintas fuentes que cuentan lo mismo se juntan en una sola historia, con la marca de cuántas fuentes la cuentan. Se ve en todos los formatos, y hay un filtro para ver solo esas. La rutina (clima, dólar, horóscopo…) va aparte.

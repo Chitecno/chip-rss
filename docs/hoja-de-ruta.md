@@ -14,7 +14,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | ✅ | Vistas: timeline, por etiqueta, solo principales | Una sola pantalla con filtros arriba, y cuatro formatos: timeline, diario, revista y teletipo. |
 | ✅ | Foto real de cada nota o placeholder ASCII | |
 | ✅ | Guardado local | IndexedDB, con UUID en fuentes, etiquetas y notas. |
-| ✅ | Exportar e importar las fuentes (OPML), con aviso | En Ajustes. Lleva nombres, principales, etiquetas y el formato de lectura. |
+| ✅ | Exportar e importar las fuentes (OPML), con aviso | En Fuentes, sección "respaldo". Lleva nombres, principales, etiquetas y el formato de lectura. |
 | 🟡 | Instalable y que funcione sin conexión | Está configurado y se arma con `npm.cmd run app`. Falta confirmarlo en Chrome y en el celu. |
 
 ## Para publicarla
@@ -32,7 +32,7 @@ Qué está hecho y qué falta para la primera versión (el MVP, "producto mínim
 | --- | --- | --- |
 | 🟡 | Bautizar el lector y verlo en un banner ASCII | El banner existe, con un nombre fijo. Falta que cada persona lo elija. |
 | 🟡 | Temas fósforo verde, ámbar y papel | El tema papel ya está, y lo usa el diario. Falta poder elegirlo para toda la app, y faltan fósforo y ámbar. |
-| ⬜ | Color de acento y tipografía ajustables | Van en Ajustes. |
+| ⬜ | Color de acento y tipografía ajustables | Van en una pantalla de ajustes, que vuelve al menú cuando tenga contenido. |
 | ✅ | Línea `// un proyecto chip tecno` | |
 | ✅ | "Acerca de" | Qué es la app, cómo se usa y qué pasa con tus datos. |
 | ⬜ | Packs de fuentes curados | |

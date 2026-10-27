@@ -21,7 +21,7 @@ export function createAcerca(): HTMLElement {
     <ul class="acerca__list">
       <li>Es una app local: tus fuentes, tus etiquetas y las notas guardadas quedan en este navegador, en tu dispositivo. No se suben a ninguna nube y no hay cuentas.</li>
       <li>Para leer los feeds de otros sitios, la app los pide a través de un intermediario que va a buscarlos y te los devuelve, sin guardar nada.</li>
-      <li>Si borrás los datos del navegador, se borran tus fuentes. Antes, exportalas desde <a href="#/ajustes">ajustes</a>.</li>
+      <li>Si borrás los datos del navegador, se borran tus fuentes. Antes, exportalas desde <a href="#/fuentes">fuentes</a>.</li>
     </ul>
 
     <p class="web-small muted">Un proyecto de Chip Tecno.</p>

@@ -13,6 +13,7 @@ import {
 } from '../db/db';
 import { addFeedFromInput } from '../feeds/refresh';
 import { button, el, plural } from './dom';
+import { respaldoSection } from './respaldo';
 
 type State = {
   editing: string | null; // fuente con el editor de etiquetas abierto
@@ -295,6 +296,9 @@ export function createFuentes(onChange: () => void): HTMLElement {
       addButton.disabled = false;
     }
   });
+
+  // Exportar e importar, al final de la pantalla de fuentes.
+  view.append(respaldoSection(() => void changed()));
 
   void render();
   return view;

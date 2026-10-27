@@ -19,13 +19,11 @@ function download(text: string, filename: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Ajustes: por ahora, el respaldo de las fuentes. */
-export function createAjustes(onChange: () => void): HTMLElement {
-  const page = el('section', 'ajustes');
-  const h1 = el('h1', 'web-title', 'Ajustes');
-  h1.tabIndex = -1;
+/** El respaldo de tus fuentes: exportar e importar. Va en la pantalla de fuentes. */
+export function respaldoSection(onChange: () => void): HTMLElement {
+  const page = el('section', 'respaldo');
 
-  const title = el('h2', 'section-title', 'tus fuentes');
+  const title = el('h2', 'section-title', 'respaldo');
   const warning = el(
     'p',
     'band',
@@ -84,7 +82,7 @@ export function createAjustes(onChange: () => void): HTMLElement {
     }
   });
 
-  const actions = el('div', 'ajustes__actions');
+  const actions = el('div', 'respaldo__actions');
   actions.append(exportButton, importButton, fileInput);
 
   const note = el(
@@ -93,6 +91,6 @@ export function createAjustes(onChange: () => void): HTMLElement {
     'Al importar, si una fuente ya estaba, queda como dice el archivo: su nombre, si es principal y sus etiquetas.',
   );
 
-  page.append(h1, title, warning, explain, actions, status, note);
+  page.append(title, warning, explain, actions, status, note);
   return page;
 }
