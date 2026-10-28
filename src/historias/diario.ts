@@ -4,7 +4,8 @@ import { READER_NAME } from '../config';
 import { el } from '../ui/dom';
 import type { Ranked } from './relevance';
 import type { LayoutContext } from './layouts';
-import { isShared } from './edition';
+import { isShared, leadOf } from './edition';
+import { compareList } from './comparar';
 import './diario.css';
 
 /**
@@ -15,11 +16,6 @@ import './diario.css';
 const editionDate = new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 
-function lead(story: Ranked): Article {
-  return [...story.articles].sort(
-    (a, b) => Number(Boolean(b.image)) - Number(Boolean(a.image)) || b.summary.length - a.summary.length,
-  )[0];
-}
 
 function link(article: Article, text: string, className?: string): HTMLAnchorElement {
   const a = el('a', className, text);
@@ -38,7 +34,7 @@ function kicker(story: Ranked, ctx: LayoutContext): HTMLElement {
   const p = el('p', 'diario__kicker');
   const mark = sharedMark(story);
   if (mark) p.append(mark, ' ');
-  p.append(sections.length ? sections[0] : ctx.feedTitle(lead(story).feedId));
+  p.append(sections.length ? sections[0] : ctx.feedTitle(leadOf(story, ctx.chosen).feedId));
   return p;
 }
 
@@ -58,17 +54,9 @@ function photo(article: Article, className: string): HTMLElement | '' {
   return box;
 }
 
-/** "También lo cuentan: Xataka, Genbeta", con un link a cada versión. */
+/** Las otras fuentes que cuentan la historia, cada una con su título, para comparar. */
 function alsoIn(story: Ranked, shown: Article, ctx: LayoutContext): HTMLElement | '' {
-  const others = story.articles.filter((a) => a.id !== shown.id);
-  if (others.length === 0) return '';
-  const line = el('p', 'diario__also');
-  line.append('También lo cuentan: ');
-  others.forEach((a, i) => {
-    if (i) line.append(', ');
-    line.append(link(a, ctx.feedTitle(a.feedId)));
-  });
-  return line;
+  return compareList(story, shown, ctx.feedTitle, { max: 3, className: 'diario__also' });
 }
 
 function byline(article: Article, ctx: LayoutContext): HTMLElement {
@@ -78,7 +66,7 @@ function byline(article: Article, ctx: LayoutContext): HTMLElement {
 }
 
 function opening(story: Ranked, ctx: LayoutContext): HTMLElement {
-  const a = lead(story);
+  const a = leadOf(story, ctx.chosen);
   const art = el('article', 'diario__lead');
   // Los títulos muy largos van un poco más chicos para no comerse la página.
   const h = el('h2', a.title.length > 90 ? 'diario__h1 diario__h1--long' : 'diario__h1');
@@ -98,7 +86,7 @@ function opening(story: Ranked, ctx: LayoutContext): HTMLElement {
 }
 
 function item(story: Ranked, ctx: LayoutContext, size: 'm' | 's', withPhoto: boolean): HTMLElement {
-  const a = lead(story);
+  const a = leadOf(story, ctx.chosen);
   const art = el('article', `diario__item diario__item--${size}`);
   const h = el('h3', 'diario__h2');
   h.append(link(a, a.title));
@@ -165,21 +153,26 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     return page;
   }
 
+  // Portada: la nota principal al centro y una columna de noticias a cada lado.
   const shown = new Set<string>([first.key]);
   const front = el('section', 'diario__front');
   front.append(opening(first, ctx));
-  const side = el('div', 'diario__side');
-  rest.slice(0, 3).forEach((s, i) => {
-    side.append(item(s, ctx, 'm', i === 0));
-    shown.add(s.key);
-  });
-  front.append(side);
+  for (const [side, list] of [['left', rest.slice(0, 2)], ['right', rest.slice(2, 4)]] as const) {
+    if (!list.length) continue;
+    const col = el('div', `diario__side diario__side--${side}`);
+    list.forEach((s, i) => {
+      col.append(item(s, ctx, 'm', i === 0));
+      shown.add(s.key);
+    });
+    front.append(col);
+  }
   page.append(front);
 
-  const second = rest.slice(3, 7);
-  if (second.length) {
-    const row = el('section', 'diario__row');
-    for (const s of second) {
+  // Debajo, dos filas de noticias en recuadros.
+  for (const [i, list] of [rest.slice(4, 8), rest.slice(8, 12)].entries()) {
+    if (!list.length) continue;
+    const row = el('section', i === 0 ? 'diario__row' : 'diario__row diario__row--next');
+    for (const s of list) {
       row.append(item(s, ctx, 's', true));
       shown.add(s.key);
     }
@@ -217,7 +210,7 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
     sec.append(el('h2', 'diario__section-title', 'Breves'));
     const list = el('ul', 'diario__briefs');
     for (const s of briefs) {
-      const a = lead(s);
+      const a = leadOf(s, ctx.chosen);
       const li = el('li');
       const mark = sharedMark(s);
       if (mark) li.append(mark, ' ');

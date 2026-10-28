@@ -125,6 +125,10 @@
   color: var(--ground);
 }
 
+.leer[data-format='diario'] > .band {
+  display: none;
+}
+
 .leer__status {
   min-height: 18px;
   margin: 0;
@@ -362,7 +366,65 @@ a.term-button {
   display: none;
 }
 
-/* --- Ajustes y Acerca de --- */
+/* --- Fuentes: pestañas, y arriba el campo para agregar con el respaldo al lado --- */
+.fuentes__tabs {
+  margin-bottom: var(--space-1);
+}
+/* Los avisos vacíos no ocupan lugar. */
+.fuentes > .status:empty,
+.respaldo .status:empty {
+  display: none;
+}
+.fuentes__pane {
+  display: grid;
+  gap: var(--space-2);
+}
+.fuentes__pane[hidden] {
+  display: none;
+}
+.fuentes__pane > p {
+  margin: 0;
+  max-width: 70ch;
+}
+.fuentes__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  align-items: start;
+  gap: var(--space-3);
+}
+@media (max-width: 760px) {
+  .fuentes__top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.respaldo {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 2px dotted var(--hash);
+}
+.respaldo__title {
+  margin: 0;
+  color: var(--accent);
+  font-size: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.respaldo__warning {
+  font-size: 14px;
+  line-height: 20px;
+}
+.respaldo__more summary {
+  cursor: pointer;
+  color: var(--accent);
+}
+.respaldo__more p {
+  margin-top: var(--space-1);
+}
+
+/* --- Acerca de --- */
 .respaldo__actions {
   display: flex;
   flex-wrap: wrap;
@@ -414,21 +476,17 @@ a.term-button {
   color: var(--ink-muted);
 }
 
-/* Marca y versiones en las tarjetas del timeline */
-.card__also {
-  margin: 0;
-  color: var(--ink-muted);
+/* El menú para elegir una fuente sola */
+.leer__feed {
+  position: relative;
+  display: inline-block;
 }
-.card__also a {
-  color: var(--accent);
+.leer__feed .menu {
+  max-height: 60vh;
+  overflow-y: auto;
 }
 .leer__shared {
   margin-left: var(--space-2);
-}
-
-.respaldo {
-  display: grid;
-  gap: var(--space-2);
 }
 
 /* --- Archivo --- */

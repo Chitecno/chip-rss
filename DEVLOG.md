@@ -292,3 +292,20 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 
 - **Una pantalla de compu ancha no es una hoja más grande.** Si todo se estira al ancho, las fotos crecen y el texto queda perdido. Las revistas de papel tienen un tamaño fijo por algo: hay que poner un límite.
 - **El texto justificado en el celu deja huecos grandes** entre palabras. En pantallas chicas va alineado a la izquierda.
+
+---
+
+## 2026-10-27 · Portada en tres columnas y comparar fuentes
+
+### Qué hicimos
+
+- **Portada del diario:** la nota principal va al centro y hay una columna de noticias a cada lado. Debajo, dos filas de recuadros. La foto principal es más apaisada y tiene un alto máximo, así la primera pantalla muestra varias noticias sin bajar. En el diario se esconde la franja rosa de arriba, porque el folio de la hoja ya dice lo mismo.
+- **Leer una sola fuente:** en el menú de fuentes de cada formato hay un **fuentes ▾** para elegir un feed suelto. Cuando filtrás, cada historia se encabeza con la nota de las fuentes elegidas.
+- **Comparar fuentes:** donde antes decía "También lo cuentan: Xataka, Xataka, Hipertextual" ahora va una línea por medio, sin repetir, con su título. Al abrir la nota, un recuadro muestra cómo la cuenta cada fuente.
+- **La nota abierta** es más ancha (unos 90 caracteres por línea) y va centrada.
+- **Fuentes en dos pestañas:** fuentes y etiquetas. El respaldo pasó arriba, en un recuadro al lado de la caja para agregar.
+
+### Qué aprendimos
+
+- **En una pantalla de compu, lo que se ve sin bajar es poco:** el menú de la app, la franja y el cabezal del diario se comían más de la mitad. Para que entre la portada hubo que achicar todo lo de arriba, no solo la foto.
+- **Comparar títulos dice mucho:** la misma noticia puede ser "advierte un riesgo catastrófico" en un medio y "sale a la bolsa" en otro. Ver los títulos juntos es una forma simple de leer cómo encuadra cada medio.

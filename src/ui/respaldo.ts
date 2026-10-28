@@ -19,19 +19,20 @@ function download(text: string, filename: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** El respaldo de tus fuentes: exportar e importar. Va en la pantalla de fuentes. */
+/** El respaldo de tus fuentes: exportar e importar. Un recuadro arriba en la pantalla de fuentes. */
 export function respaldoSection(onChange: () => void): HTMLElement {
   const page = el('section', 'respaldo');
+  page.setAttribute('aria-label', 'Respaldo');
 
-  const title = el('h2', 'section-title', 'respaldo');
+  const title = el('h2', 'respaldo__title', 'respaldo');
   const warning = el(
     'p',
-    'band',
-    'Tus fuentes y tus notas guardadas viven solo en este navegador. Si borrás los datos del navegador, se borran. Exportalas antes para tener un respaldo.',
+    'respaldo__warning',
+    'Tus fuentes y tus notas guardadas viven solo en este navegador. Si borrás los datos del navegador, se borran: exportalas para tener un respaldo.',
   );
   const explain = el(
     'p',
-    'muted',
+    undefined,
     'Se descarga un archivo .opml, el formato que entienden casi todos los lectores de RSS. Lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas, el formato de lectura que elegiste y tu archivo de notas guardadas, con sus secciones. Las demás notas no van: al importarlo se vuelven a bajar de cada fuente.',
   );
 
@@ -88,12 +89,12 @@ export function respaldoSection(onChange: () => void): HTMLElement {
   const actions = el('div', 'respaldo__actions');
   actions.append(exportButton, importButton, fileInput);
 
-  const note = el(
-    'p',
-    'web-small muted',
-    'Al importar, si una fuente o una nota guardada ya estaba, queda como dice el archivo.',
-  );
+  const note = el('p', undefined, 'Al importar, si una fuente o una nota guardada ya estaba, queda como dice el archivo.');
 
-  page.append(title, warning, explain, actions, status, note);
+  // La explicación larga, plegada: el recuadro queda chico y los botones a la vista.
+  const more = el('details', 'respaldo__more web-small muted');
+  more.append(el('summary', undefined, '¿qué lleva el archivo?'), explain, note);
+
+  page.append(title, warning, actions, status, more);
   return page;
 }

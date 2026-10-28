@@ -4,6 +4,8 @@ import { el, shortDate } from '../ui/dom';
 import type { Ranked, Topic } from './relevance';
 import type { RoutineGroup } from './routine';
 import { diario } from './diario';
+import { leadOf } from './edition';
+import { compareList, onePerFeed } from './comparar';
 
 /** Las formas de mostrar las historias en la pantalla de leer. */
 export type LayoutName = 'diario' | 'revista' | 'teletipo';
@@ -23,14 +25,10 @@ export type LayoutContext = {
   topics?: Topic[];
   routine?: RoutineGroup[];
   sectionsOf?: (story: Ranked) => string[];
+  /** Las fuentes elegidas en el filtro: la nota que encabeza cada historia sale de ellas. */
+  chosen?: Set<string>;
 };
 
-/** La nota que encabeza la historia: la que tiene foto y más texto. */
-function lead(story: Ranked): Article {
-  return [...story.articles].sort(
-    (a, b) => Number(Boolean(b.image)) - Number(Boolean(a.image)) || b.summary.length - a.summary.length,
-  )[0];
-}
 
 function image(article: Article, className: string): HTMLElement {
   const box = el('a', className);
@@ -73,13 +71,14 @@ function reasons(story: Ranked, ctx: LayoutContext): HTMLElement | '' {
   return el('p', 'lab-reasons web-small', `por qué: ${story.reasons.join(' · ')}`);
 }
 
-/** Si la historia tiene varias versiones, una lista desplegable para leer cada una. */
+/** Si la historia la cuentan varias fuentes, una lista desplegable con el título de cada una. */
 function versions(story: Ranked, ctx: LayoutContext): HTMLElement | '' {
-  if (story.articles.length < 2) return '';
+  const perFeed = onePerFeed(story.articles);
+  if (perFeed.length < 2) return '';
   const box = el('details', 'lab-versions web-small');
-  box.append(el('summary', undefined, `[ ver las ${story.articles.length} versiones ]`));
+  box.append(el('summary', undefined, `[ comparar las ${perFeed.length} fuentes ]`));
   const list = el('ul');
-  for (const a of story.articles) {
+  for (const a of perFeed) {
     const li = el('li');
     li.append(el('span', 'muted', `${ctx.feedTitle(a.feedId)}: `));
     const link = el('a', undefined, a.title);
@@ -92,7 +91,7 @@ function versions(story: Ranked, ctx: LayoutContext): HTMLElement | '' {
 }
 
 function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 's', withImage: boolean): HTMLElement {
-  const a = lead(story);
+  const a = leadOf(story, ctx.chosen);
   const block = el('article', `lab-story lab-story--${size}`);
   if (withImage) block.append(image(a, 'lab-media'));
   block.append(headline(a, size === 'xl' ? 'h2' : size === 's' ? 'h4' : 'h3', 'lab-title'));
@@ -101,8 +100,8 @@ function storyBlock(story: Ranked, ctx: LayoutContext, size: 'xl' | 'l' | 'm' | 
   if (ctx.actions) block.append(ctx.actions(a));
   const r = reasons(story, ctx);
   if (r) block.append(r);
-  const v = versions(story, ctx);
-  if (v) block.append(v);
+  const c = compareList(story, a, ctx.feedTitle, { max: 3 });
+  if (c) block.append(c);
   return block;
 }
 
@@ -136,10 +135,10 @@ function teletipo(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const list = el('ol', 'teletipo');
   const time = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
   for (const s of stories) {
-    const a = lead(s);
+    const a = leadOf(s, ctx.chosen);
     const li = el('li', 'teletipo__row');
     li.append(el('span', 'teletipo__time muted', time.format(s.newest)));
-    li.append(el('span', 'teletipo__source', [...s.feedIds].map(ctx.feedTitle)[0]?.slice(0, 18) ?? ''));
+    li.append(el('span', 'teletipo__source', ctx.feedTitle(a.feedId).slice(0, 18)));
     const link = el('a', 'teletipo__title', a.title);
     link.href = `#/nota/${a.id}`;
     li.append(link);

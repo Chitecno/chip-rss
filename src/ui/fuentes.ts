@@ -46,26 +46,49 @@ function inlineForm(input: HTMLInputElement, submitLabel: string, onSubmit: () =
   return form;
 }
 
-/** Pantalla de gestión: agregar fuentes, principal o secundaria, etiquetas, renombrar, quitar. */
-export function createFuentes(onChange: () => void): HTMLElement {
+/** Las dos pestañas de la pantalla de fuentes. */
+export type FuentesTab = 'fuentes' | 'etiquetas';
+
+export function fuentesHref(tab: FuentesTab): string {
+  return tab === 'etiquetas' ? '#/fuentes?t=etiquetas' : '#/fuentes';
+}
+
+/**
+ * Pantalla de gestión, en dos pestañas. Fuentes: agregar, principal o secundaria, etiquetas de
+ * cada una, renombrar, quitar, y el respaldo. Etiquetas: crearlas, renombrarlas y borrarlas.
+ */
+export function createFuentes(onChange: () => void, tab: FuentesTab = 'fuentes'): HTMLElement {
   const view = el('section', 'fuentes');
   view.innerHTML = `
     <h1 class="web-title" tabindex="-1">Tus fuentes</h1>
-    <form class="add-feed" novalidate>
-      <label class="add-feed__label" for="feed-url">&gt; pegá la dirección de un medio o de su feed</label>
-      <div class="inline-form">
-        <input id="feed-url" class="text-input" type="text" inputmode="url" autocomplete="off"
-          autocapitalize="off" spellcheck="false" placeholder="https://…" />
-        <button type="submit" class="term-button">[ agregar ]</button>
-      </div>
-    </form>
+    <nav class="chips fuentes__tabs" aria-label="Pestañas">
+      <a class="chip" data-tab="fuentes" href="${fuentesHref('fuentes')}">fuentes</a>
+      <a class="chip" data-tab="etiquetas" href="${fuentesHref('etiquetas')}">etiquetas</a>
+    </nav>
     <p class="status web-small" role="status" aria-live="polite"></p>
-    <p class="band"></p>
-    <ul class="fuentes__list"></ul>
-    <h2 class="section-title">etiquetas</h2>
-    <div class="tags__new"></div>
-    <ul class="tags__list"></ul>
+    <div class="fuentes__pane" data-pane="fuentes">
+      <div class="fuentes__top">
+        <form class="add-feed" novalidate>
+          <label class="add-feed__label" for="feed-url">&gt; pegá la dirección de un medio o de su feed</label>
+          <div class="inline-form">
+            <input id="feed-url" class="text-input" type="text" inputmode="url" autocomplete="off"
+              autocapitalize="off" spellcheck="false" placeholder="https://…" />
+            <button type="submit" class="term-button">[ agregar ]</button>
+          </div>
+        </form>
+      </div>
+      <p class="band"></p>
+      <ul class="fuentes__list"></ul>
+    </div>
+    <div class="fuentes__pane" data-pane="etiquetas">
+      <p class="muted">Las etiquetas agrupan fuentes ("tecnología", "medios"…). En leer podés mirar una etiqueta sola, y en el diario cada etiqueta es una sección. Para sumarle etiquetas a una fuente, usá [ etiquetas ] en la pestaña de fuentes.</p>
+      <div class="tags__new"></div>
+      <ul class="tags__list"></ul>
+    </div>
   `;
+  for (const pane of view.querySelectorAll<HTMLElement>('[data-pane]')) pane.hidden = pane.dataset.pane !== tab;
+  const tabLinks = [...view.querySelectorAll<HTMLAnchorElement>('[data-tab]')];
+  for (const a of tabLinks) if (a.dataset.tab === tab) a.setAttribute('aria-current', 'true');
 
   const addForm = view.querySelector<HTMLFormElement>('.add-feed')!;
   const addInput = addForm.querySelector<HTMLInputElement>('input')!;
@@ -248,6 +271,7 @@ export function createFuentes(onChange: () => void): HTMLElement {
 
   async function render(focusKey?: string): Promise<void> {
     const [feeds, tags] = await Promise.all([listFeeds(), listTags()]);
+    for (const a of tabLinks) a.textContent = a.dataset.tab === 'etiquetas' ? `etiquetas (${tags.length})` : `fuentes (${feeds.length})`;
     const principales = feeds.filter((f) => f.principal).length;
     band.textContent =
       feeds.length === 0
@@ -297,8 +321,8 @@ export function createFuentes(onChange: () => void): HTMLElement {
     }
   });
 
-  // Exportar e importar, al final de la pantalla de fuentes.
-  view.append(respaldoSection(() => void changed()));
+  // Exportar e importar, en un recuadro al lado del campo para agregar, así se ve.
+  view.querySelector('.fuentes__top')!.append(respaldoSection(() => void changed()));
 
   void render();
   return view;

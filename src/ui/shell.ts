@@ -1,6 +1,6 @@
 import { hashFrame } from './hash-frame';
 import { createLeer, type LeerRoute } from './leer';
-import { createFuentes } from './fuentes';
+import { createFuentes, type FuentesTab } from './fuentes';
 import { renderGuardada, renderNota } from './nota';
 import { createArchivo } from './archivo';
 import { loadFormat } from './preferencias';
@@ -12,7 +12,7 @@ import './shell.css';
 
 type Route =
   | ({ name: 'leer' } & LeerRoute)
-  | { name: 'fuentes' }
+  | { name: 'fuentes'; tab: FuentesTab }
   | { name: 'acerca' }
   | { name: 'nota'; id: string }
   | { name: 'archivo'; filter: string }
@@ -24,7 +24,8 @@ function parseRoute(): Route {
   if (path.startsWith('nota/')) return { name: 'nota', id: decodeURIComponent(path.slice(5)) };
   if (path.startsWith('archivo/')) return { name: 'guardada', id: decodeURIComponent(path.slice(8)) };
   if (path === 'archivo') return { name: 'archivo', filter: new URLSearchParams(query).get('s') ?? 'todo' };
-  if (path === 'fuentes' || path === 'acerca') return { name: path };
+  if (path === 'fuentes') return { name: 'fuentes', tab: new URLSearchParams(query).get('t') === 'etiquetas' ? 'etiquetas' : 'fuentes' };
+  if (path === 'acerca') return { name: 'acerca' };
   const params = new URLSearchParams(query);
   return {
     name: 'leer',
@@ -92,7 +93,9 @@ export function startApp(root: HTMLElement): void {
       window.scrollTo(0, previous?.name === 'nota' ? leerScroll : 0);
     } else if (route.name === 'nota') {
       // Si se está leyendo en formato diario, la nota se abre en la misma hoja de papel.
-      views.replaceChildren(renderNota(route.id, goBack, () => leer.invalidate(), loadFormat() === 'diario'));
+      views.replaceChildren(
+        renderNota(route.id, goBack, () => leer.invalidate(), (id) => leer.storyFor(id), loadFormat() === 'diario'),
+      );
       window.scrollTo(0, 0);
     } else if (route.name === 'guardada') {
       views.replaceChildren(renderGuardada(route.id, goBack, () => leer.invalidate()));
@@ -105,7 +108,7 @@ export function startApp(root: HTMLElement): void {
     } else {
       const page =
         route.name === 'fuentes'
-          ? createFuentes(() => leer.invalidate())
+          ? createFuentes(() => leer.invalidate(), route.tab)
           : createAcerca();
       views.replaceChildren(page);
       window.scrollTo(0, 0);

@@ -1,5 +1,6 @@
-import { listArticles, listFeeds, listTags, type Article, type Tag } from '../db/db';
-import { buildEdition, isShared, sectionsFor } from '../historias/edition';
+import { listArticles, listFeeds, listTags, type Article, type Feed, type Tag } from '../db/db';
+import { buildEdition, isShared, sectionsFor, type Edition } from '../historias/edition';
+import { compareList } from '../historias/comparar';
 import { renderLayout } from '../historias/layouts';
 import type { Ranked } from '../historias/relevance';
 import { routineBox } from '../historias/routine-box';
@@ -9,6 +10,7 @@ import { el, plural, shortDate } from './dom';
 import { FORMATS, loadFormat, saveFormat, type Format } from './preferencias';
 import { loadSaveState } from './guardar';
 import { noteActions } from './acciones';
+import { attachMenu } from './menu';
 
 /** Qué se está mirando: el filtro de fuentes, la página y si son solo las historias compartidas. */
 export type LeerRoute = { filter: string; page: number; shared: boolean };
@@ -19,6 +21,8 @@ export type LeerView = {
   /** Avisa que cambiaron los datos: la próxima vez se vuelve a armar. */
   invalidate(): void;
   setStatus(msg: string): void;
+  /** La historia de una nota (todas las fuentes que la cuentan), para compararlas al abrirla. */
+  storyFor(articleId: string): Promise<{ story: Ranked; feedTitle: (id: string) => string } | undefined>;
 };
 
 // Cuántas cosas entran en cada página, según el formato. Todo se muestra: lo que no entra, va a la página siguiente.
@@ -31,21 +35,6 @@ export function leerHref(route: LeerRoute): string {
   if (route.page > 1) params.set('p', String(route.page));
   const query = params.toString();
   return query ? `#/leer?${query}` : '#/leer';
-}
-
-/** "También en: Xataka, Genbeta", con un link a cada versión. */
-function otherVersions(story: Ranked, shown: Article, feedTitle: (id: string) => string): HTMLElement {
-  const line = el('p', 'card__also web-small');
-  line.append('También en: ');
-  story.articles
-    .filter((a) => a.id !== shown.id)
-    .forEach((a, i) => {
-      if (i) line.append(', ');
-      const link = el('a', undefined, feedTitle(a.feedId));
-      link.href = `#/nota/${a.id}`;
-      line.append(link);
-    });
-  return line;
 }
 
 function card(
@@ -85,9 +74,36 @@ function card(
 
   node.append(media, meta, title);
   if (article.summary) node.append(el('p', 'card__summary', article.summary));
-  if (story && isShared(story)) node.append(otherVersions(story, article, feedTitle));
+  if (story && isShared(story)) {
+    const others = compareList(story, article, feedTitle, { max: 3 });
+    if (others) node.append(others);
+  }
   node.append(actions(article));
   return node;
+}
+
+/** "fuentes ▾": un menú con cada fuente, para leer una sola. */
+function feedMenu(feeds: Feed[], route: LeerRoute, current: Feed | undefined): HTMLElement {
+  const wrap = el('span', 'leer__feed');
+  const trigger = el('button', 'chip', current ? `${current.title} ▾` : 'fuentes ▾');
+  trigger.type = 'button';
+  if (current) trigger.setAttribute('aria-current', 'true');
+  trigger.setAttribute('aria-label', current ? `Fuente elegida: ${current.title}. Elegir otra` : 'Elegir una fuente sola');
+  attachMenu(wrap, trigger, (close) => {
+    const menu = el('div');
+    menu.append(el('p', 'menu__titulo', 'leer una sola fuente'));
+    const sorted = [...feeds].sort((a, b) => a.title.localeCompare(b.title, 'es'));
+    for (const f of sorted) {
+      const a = el('a', 'term-button menu__opcion', `${f.id === current?.id ? '> ' : '  '}${f.title}`);
+      a.href = leerHref({ filter: f.id, page: 1, shared: route.shared });
+      if (f.id === current?.id) a.setAttribute('aria-current', 'true');
+      a.addEventListener('click', () => close());
+      menu.append(a);
+    }
+    return menu;
+  });
+  wrap.append(trigger);
+  return wrap;
 }
 
 function emptyState(text: string, linkText: string, href = '#/fuentes'): HTMLElement {
@@ -144,6 +160,8 @@ export function createLeer(): LeerView {
   let current: LeerRoute = { filter: 'todo', page: 1, shared: false };
   let currentKey = '';
   let format = loadFormat();
+  // La última edición armada: sirve para comparar fuentes al abrir una nota.
+  let lastEdition: { edition: Edition; feedTitle: (id: string) => string } | null = null;
 
   const renderFormats = () => {
     formats.replaceChildren(
@@ -178,16 +196,29 @@ export function createLeer(): LeerView {
     setStatus(msg) {
       status.textContent = msg;
     },
+    async storyFor(articleId) {
+      if (!lastEdition || dirty) {
+        // Las historias se arman con todas las fuentes, así que el filtro no cambia nada acá.
+        const [feeds, tags, articles] = await Promise.all([listFeeds(), listTags(), listArticles(undefined, Infinity)]);
+        const titles = new Map(feeds.map((f) => [f.id, f.title]));
+        lastEdition = { edition: buildEdition(feeds, tags, articles, 'todo'), feedTitle: (id) => titles.get(id) ?? '' };
+      }
+      const story = lastEdition.edition.storyOf.get(articleId);
+      return story ? { story, feedTitle: lastEdition.feedTitle } : undefined;
+    },
     async show(route) {
       const key = `${route.filter}|${route.page}|${route.shared}`;
       if (!dirty && key === currentKey) return;
       dirty = false;
       current = route;
       currentKey = key;
+      // En el diario, la franja de arriba se esconde: el folio de la hoja ya dice lo mismo.
+      view.dataset.format = format;
 
       const [feeds, tags, articles] = await Promise.all([listFeeds(), listTags(), listArticles(undefined, Infinity)]);
       const tag: Tag | undefined = tags.find((t) => t.id === route.filter);
-      const mode = route.filter === 'principales' ? 'principales' : tag ? 'tag' : 'todo';
+      const single = feeds.find((f) => f.id === route.filter);
+      const mode = route.filter === 'principales' ? 'principales' : tag ? 'tag' : single ? 'fuente' : 'todo';
       const titles = new Map(feeds.map((f) => [f.id, f.title]));
       const feedTitle = (id: string) => titles.get(id) ?? '';
       // Qué notas ya están guardadas, para los botones de guardar y compartir.
@@ -202,6 +233,7 @@ export function createLeer(): LeerView {
 
       // Las historias se arman con todas las fuentes, aunque haya una etiqueta elegida.
       const edition = buildEdition(feeds, tags, articles, route.filter, route.shared);
+      lastEdition = { edition, feedTitle };
 
       // El menú de fuentes va adentro de cada formato.
       const filters = el('nav', 'chips leer__filters');
@@ -220,10 +252,11 @@ export function createLeer(): LeerView {
         chip('todo', 'todo', mode === 'todo'),
         chip('* principales', 'principales', mode === 'principales'),
         ...tags.map((t) => chip(`#${t.name}`, t.id, t.id === tag?.id)),
+        feedMenu(feeds, route, single),
         sharedToggle,
       );
 
-      const label = mode === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todo';
+      const label = mode === 'principales' ? 'principales' : tag ? `#${tag.name}` : single ? single.title : 'todo';
       if (edition.feeds.length === 0) {
         band.textContent = `0 artículos · ${label}`;
         content.replaceChildren(
@@ -282,6 +315,7 @@ export function createLeer(): LeerView {
         topics: edition.topics,
         routine: edition.routine,
         sectionsOf: sectionsFor(feeds, tags),
+        chosen: ids,
       });
       // En el diario la rutina ya está en la oreja del cabezal; en los demás va en su caja, en la última página.
       const routine = format !== 'diario' && page === pages ? [routineBox(edition.routine, feedTitle)] : [];

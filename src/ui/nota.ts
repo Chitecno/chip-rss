@@ -1,4 +1,5 @@
-import { getArticle, getFeed, getSaved, listSections, removeSaved } from '../db/db';
+import { getArticle, getFeed, getSaved, listSections, removeSaved, type Article } from '../db/db';
+import { compareList, type StoryLike } from '../historias/comparar';
 import { loadReadable } from '../reader/content';
 import { sanitizeArticle } from '../reader/sanitize';
 import { button, el, longDate } from './dom';
@@ -39,16 +40,40 @@ function topBar(goBack: () => void): HTMLElement {
   return bar;
 }
 
+/** Busca la historia de una nota: todas las fuentes que la cuentan. */
+export type StoryLookup = (
+  articleId: string,
+) => Promise<{ story: StoryLike; feedTitle: (id: string) => string } | undefined>;
+
 /** La nota abierta dentro de la app. Con `paper`, en la hoja clara del diario. */
-export function renderNota(id: string, goBack: () => void, onSavedChange: () => void, paper = false): HTMLElement {
+export function renderNota(
+  id: string,
+  goBack: () => void,
+  onSavedChange: () => void,
+  storyFor: StoryLookup,
+  paper = false,
+): HTMLElement {
   const view = el('article', paper ? 'nota nota--papel papel' : 'nota');
   const bar = topBar(goBack);
   view.append(bar);
-  void fill(view, bar, id, onSavedChange);
+  void fill(view, bar, id, onSavedChange, storyFor);
   return view;
 }
 
-async function fill(view: HTMLElement, bar: HTMLElement, id: string, onSavedChange: () => void): Promise<void> {
+/** Si otras fuentes cuentan la misma historia, un recuadro con el título de cada una. */
+async function comparison(article: Article, storyFor: StoryLookup): Promise<HTMLElement | ''> {
+  const found = await storyFor(article.id);
+  if (!found) return '';
+  return compareList(found.story, article, found.feedTitle, { markShown: true, className: 'comparar--nota' });
+}
+
+async function fill(
+  view: HTMLElement,
+  bar: HTMLElement,
+  id: string,
+  onSavedChange: () => void,
+  storyFor: StoryLookup,
+): Promise<void> {
   const article = await getArticle(id);
   if (!article) {
     view.append(el('p', 'band', 'No encontré esa nota. Puede que hayas quitado su fuente.'));
@@ -64,7 +89,10 @@ async function fill(view: HTMLElement, bar: HTMLElement, id: string, onSavedChan
   const status = el('p', 'nota__status web-small', 'trayendo la nota completa…');
   status.setAttribute('role', 'status');
   const body = el('div', 'nota__body');
-  view.append(meta, title, status, body);
+  view.append(meta, title);
+  const compare = await comparison(article, storyFor);
+  if (compare) view.append(compare);
+  view.append(status, body);
   if (article.link) view.append(originalLink(article.link));
   title.focus({ preventScroll: true });
 

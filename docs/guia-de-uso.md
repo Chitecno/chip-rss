@@ -121,19 +121,22 @@ Cuando hay cambios nuevos en GitHub:
 ### Principales, secundarias y etiquetas
 
 - **Principal o secundaria** dice cuánto te importa una fuente. Las fuentes nuevas entran como secundarias. Para cambiarla, tocá **[ ] principal** al lado de su nombre.
-- **Las etiquetas** dicen de qué trata una fuente, por ejemplo `#tecnología`. Una fuente puede tener varias.
+- **Las etiquetas** dicen de qué trata una fuente, por ejemplo `#tecnología`. Una fuente puede tener varias. Para sumárselas, tocá **[ etiquetas ]** debajo de su nombre.
+- La pantalla de fuentes tiene dos pestañas: **fuentes** y **etiquetas**. En la de etiquetas las creás, les cambiás el nombre o las borrás.
 - Si borrás una etiqueta, las fuentes no se borran: solo pierden esa etiqueta.
 
 ### Leer
 
 - Arriba de todo elegís el **formato**:
   - **timeline:** todas las notas en tarjetas, de la más nueva a la más vieja;
-  - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal, columnas y breves;
+  - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal al centro con una columna de noticias a cada lado, dos filas de recuadros, secciones y breves;
   - **revista:** las historias con fotos grandes;
   - **teletipo:** una línea por historia, para pasar rápido.
 - Adentro de cada formato está el menú de fuentes: **todo**, **principales** o cualquier **#etiqueta**. En el diario aparece como la barra de secciones, debajo del cabezal.
+- Para leer **una sola fuente**, tocá **fuentes ▾** en ese mismo menú y elegila.
 - En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
-- **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y los links a las otras versiones. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
+- **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y, debajo, **"También lo cuentan"**: cada una de las otras fuentes con su título, para comparar cómo lo cuenta cada una. En el teletipo está plegado en **[ comparar las N fuentes ]**. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
+- Al abrir una de esas notas, arriba del texto está el recuadro **"Cómo lo cuenta cada fuente"**, con todos los títulos. Tocá otro para leer esa versión.
 - En el menú de fuentes, **[ ] varias fuentes** deja solo las historias que cuentan dos o más fuentes. El número entre paréntesis dice cuántas hay.
 - Con una etiqueta elegida, las historias se arman igual con todas tus fuentes: si una nota de `#tecnología` también la cuenta una fuente sin esa etiqueta, la ves con las dos.
 - **Se muestra todo, en páginas.** Abajo de cada formato están los números de página y **[ siguiente > ]**. En el diario, desde la página 2 el cabezal es más chico, como en las páginas interiores de un diario.
@@ -161,7 +164,7 @@ Siempre se comparte el link a la nota en el sitio original.
 
 ### Hacer un respaldo de tus fuentes
 
-1. En el menú, entrá a **fuentes** y bajá hasta **respaldo**.
+1. En el menú, entrá a **fuentes**. El recuadro **respaldo** está arriba, al lado de la caja para agregar fuentes (en el celu, debajo).
 2. Tocá **[ exportar ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-2026-10-27.opml`. El navegador lo guarda en tu carpeta Descargas.
 3. Guardalo en un lugar seguro.
 
@@ -169,7 +172,7 @@ El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o
 
 ### Cargar un respaldo (o tus fuentes de otro lector)
 
-1. En **fuentes**, sección **respaldo**, tocá **[ importar ]** y elegí el archivo `.opml`.
+1. En **fuentes**, recuadro **respaldo**, tocá **[ importar ]** y elegí el archivo `.opml`.
 2. Abajo vas a ver cómo va: cuántas fuentes suma y cuándo termina de bajar sus notas.
 3. Si una fuente o una nota guardada ya estaba, queda como dice el archivo.
 
