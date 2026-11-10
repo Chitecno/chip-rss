@@ -50,7 +50,18 @@ Después de instalarlos, **cerrá y volvé a abrir** cualquier PowerShell que tu
 
 > **¿Por qué `npm.cmd` y no `npm`?** En muchas compus con Windows, PowerShell no deja correr `npm` a secas por seguridad. `npm.cmd` es lo mismo y no tiene ese problema. No hace falta cambiar ninguna configuración.
 
-## Cada vez que la quiero usar
+## Cada vez que la quiero usar: con doble clic
+
+En la carpeta `scripts` del proyecto está **`abrir-chip-rss.cmd`**. Con doble clic prende la app y, cuando está lista, la abre en tu navegador. No hace falta escribir nada.
+
+- Se abre una ventana negra que dice que la app se está prendiendo. **Dejala abierta** mientras uses la app: si la cerrás, la app se apaga.
+- Si la app ya estaba prendida, solo abre el navegador.
+
+**Para tenerlo en el escritorio:** clic derecho sobre `abrir-chip-rss.cmd` → **Mostrar más opciones** → **Enviar a** → **Escritorio (crear acceso directo)**. Si querés que el acceso directo tenga el ícono de la app: clic derecho sobre él → **Propiedades** → **Cambiar icono** → elegí `chip-rss.ico`, que está en la misma carpeta `scripts`.
+
+## Cada vez que la quiero usar: desde PowerShell
+
+Si preferís hacerlo a mano, o si el doble clic no funciona:
 
 1. **Abrí PowerShell**: tecla Windows, escribí `PowerShell` y Enter.
 2. **Entrá a la carpeta del proyecto:**
@@ -110,19 +121,22 @@ Cuando hay cambios nuevos en GitHub:
 ### Principales, secundarias y etiquetas
 
 - **Principal o secundaria** dice cuánto te importa una fuente. Las fuentes nuevas entran como secundarias. Para cambiarla, tocá **[ ] principal** al lado de su nombre.
-- **Las etiquetas** dicen de qué trata una fuente, por ejemplo `#tecnología`. Una fuente puede tener varias.
+- **Las etiquetas** dicen de qué trata una fuente, por ejemplo `#tecnología`. Una fuente puede tener varias. Para sumárselas, tocá **[ etiquetas ]** debajo de su nombre.
+- La pantalla de fuentes tiene dos pestañas: **fuentes** y **etiquetas**. En la de etiquetas las creás, les cambiás el nombre o las borrás.
 - Si borrás una etiqueta, las fuentes no se borran: solo pierden esa etiqueta.
 
 ### Leer
 
 - Arriba de todo elegís el **formato**:
   - **timeline:** todas las notas en tarjetas, de la más nueva a la más vieja;
-  - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal, columnas y breves;
+  - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal al centro con una columna de noticias a cada lado, dos filas de recuadros, secciones y breves;
   - **revista:** las historias con fotos grandes;
   - **teletipo:** una línea por historia, para pasar rápido.
 - Adentro de cada formato está el menú de fuentes: **todo**, **principales** o cualquier **#etiqueta**. En el diario aparece como la barra de secciones, debajo del cabezal.
+- Para leer **una sola fuente**, tocá **fuentes ▾** en ese mismo menú y elegila.
 - En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
-- **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y los links a las otras versiones. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
+- **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y, debajo, **"También lo cuentan"**: cada una de las otras fuentes con su título, para comparar cómo lo cuenta cada una. En el teletipo está plegado en **[ comparar las N fuentes ]**. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
+- Al abrir una de esas notas, arriba del texto está el recuadro **"Cómo lo cuenta cada fuente"**, con todos los títulos. Tocá otro para leer esa versión.
 - En el menú de fuentes, **[ ] varias fuentes** deja solo las historias que cuentan dos o más fuentes. El número entre paréntesis dice cuántas hay.
 - Con una etiqueta elegida, las historias se arman igual con todas tus fuentes: si una nota de `#tecnología` también la cuenta una fuente sin esa etiqueta, la ves con las dos.
 - **Se muestra todo, en páginas.** Abajo de cada formato están los números de página y **[ siguiente > ]**. En el diario, desde la página 2 el cabezal es más chico, como en las páginas interiores de un diario.
@@ -130,19 +144,37 @@ Cuando hay cambios nuevos en GitHub:
 - Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
 - Al final de cada nota está el link al sitio original.
 
+### Compartir una nota
+
+En cada nota hay un botón **compartir**, con una flecha que sale hacia arriba (en el diario y el teletipo aparece solo la flecha). Al tocarlo podés:
+- **copiar link:** copia el link a la nota en el sitio original;
+- **WhatsApp:** abre WhatsApp con el título y el link listos para mandar;
+- **mail:** abre tu programa de mail con el título como asunto y el link en el cuerpo;
+- **más opciones…:** en el celu, abre el menú de compartir del sistema (Telegram, Signal…).
+
+Siempre se comparte el link a la nota en el sitio original.
+
+### Guardar notas: el archivo
+
+- En cada nota hay un botón **guardar**, con un disquete (en el diario y el teletipo aparece solo el disquete). Al tocarlo se abre un menú para elegir en qué sección del archivo va: **sin sección**, una que ya tengas, o una nueva que podés crear ahí mismo.
+- Cuando una nota está guardada, el botón dice **guardada** (o muestra un ✓ al lado del disquete). Si lo tocás de nuevo, podés moverla a otra sección o **quitarla de guardados**.
+- En la pestaña **archivo** están todas tus notas guardadas. Arriba filtrás por sección; en cada nota podés cambiarle la sección o quitarla.
+- Abajo, en **secciones**, las creás, las renombrás y las borrás. Si borrás una sección, sus notas no se borran: quedan sin sección.
+- Se guarda una copia de cada nota, así no se pierde aunque quites la fuente o el medio la saque de su feed.
+
 ### Hacer un respaldo de tus fuentes
 
-1. En el menú, entrá a **ajustes**.
-2. Tocá **[ exportar fuentes ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-fuentes-2026-10-25.opml`. Chrome lo guarda en tu carpeta Descargas.
+1. En el menú, entrá a **fuentes**. El recuadro **respaldo** está arriba, al lado de la caja para agregar fuentes (en el celu, debajo).
+2. Tocá **[ exportar ]**. Se baja un archivo que termina en `.opml`, por ejemplo `chip-rss-2026-10-27.opml`. El navegador lo guarda en tu carpeta Descargas.
 3. Guardalo en un lugar seguro.
 
-El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas y el formato de lectura que elegiste. Las notas no van: se vuelven a bajar de cada fuente.
+El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o secundarias, sus etiquetas, el formato de lectura que elegiste y tus notas guardadas con sus secciones. Las demás notas no van: se vuelven a bajar de cada fuente.
 
 ### Cargar un respaldo (o tus fuentes de otro lector)
 
-1. En **ajustes**, tocá **[ importar fuentes ]** y elegí el archivo `.opml`.
+1. En **fuentes**, recuadro **respaldo**, tocá **[ importar ]** y elegí el archivo `.opml`.
 2. Abajo vas a ver cómo va: cuántas fuentes suma y cuándo termina de bajar sus notas.
-3. Si una fuente ya estaba cargada, queda como dice el archivo: su nombre, si es principal y sus etiquetas.
+3. Si una fuente o una nota guardada ya estaba, queda como dice el archivo.
 
 Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). Sus carpetas pasan a ser etiquetas.
 
@@ -150,7 +182,7 @@ Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). 
 
 - Todo lo que cargás se guarda **en tu navegador, en tu compu**. No viaja a ningún servidor.
 - Chrome guarda los datos **por dirección**: lo que cargues en `localhost:4173` no aparece en otra dirección, y al revés. Usá siempre `localhost:4173`.
-- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Antes, hacé un respaldo desde **ajustes** (ver más arriba).
+- **Si borrás los datos de navegación de Chrome, se borran tus fuentes.** Antes, hacé un respaldo desde **fuentes** (ver más arriba).
 
 ## Si algo falla
 

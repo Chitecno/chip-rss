@@ -41,13 +41,34 @@ export function isShared(story: Ranked): boolean {
 }
 
 /**
- * Elige las fuentes según el filtro ('todo', 'principales' o el id de una etiqueta), agrupa con
- * todas las fuentes y ordena. Con `onlyShared`, deja solo las historias que cuentan varias fuentes.
+ * La nota que encabeza la historia: primero las de las fuentes elegidas (si se filtró por una
+ * etiqueta o una fuente), y entre ellas la que tiene foto y más texto.
+ */
+export function leadOf(story: Ranked, chosen?: Set<string>): Article {
+  const score = (a: Article) => Number(!chosen || chosen.has(a.feedId));
+  return [...story.articles].sort(
+    (a, b) =>
+      score(b) - score(a) ||
+      Number(Boolean(b.image)) - Number(Boolean(a.image)) ||
+      b.summary.length - a.summary.length,
+  )[0];
+}
+
+/**
+ * Elige las fuentes según el filtro ('todo', 'principales', el id de una etiqueta o el de una
+ * fuente sola), agrupa con todas las fuentes y ordena. Con `onlyShared`, deja solo las historias que cuentan varias fuentes.
  */
 export function buildEdition(feeds: Feed[], tags: Tag[], articles: Article[], filter: string, onlyShared = false): Edition {
   const tag = tags.find((t) => t.id === filter);
+  const single = feeds.find((f) => f.id === filter);
   const chosen =
-    filter === 'principales' ? feeds.filter((f) => f.principal) : tag ? feeds.filter((f) => f.tagIds.includes(tag.id)) : feeds;
+    filter === 'principales'
+      ? feeds.filter((f) => f.principal)
+      : tag
+        ? feeds.filter((f) => f.tagIds.includes(tag.id))
+        : single
+          ? [single]
+          : feeds;
   const ids = new Set(chosen.map((f) => f.id));
 
   const { news, routine } = splitRoutine(articles);
@@ -78,7 +99,7 @@ export function buildEdition(feeds: Feed[], tags: Tag[], articles: Article[], fi
     ranked: onlyShared ? inSelection.filter(isShared) : inSelection,
     sharedCount: inSelection.filter(isShared).length,
     storyOf,
-    label: filter === 'principales' ? 'principales' : tag ? `#${tag.name}` : 'todas las fuentes',
+    label: filter === 'principales' ? 'principales' : tag ? `#${tag.name}` : single ? single.title : 'todas las fuentes',
   };
 }
 

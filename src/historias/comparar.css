@@ -1,0 +1,73 @@
+/* --- Cómo lo cuenta cada fuente --- */
+.comparar {
+  margin: 0;
+  padding-left: var(--space-1);
+  border-left: 2px solid var(--band);
+  font-size: 13px;
+  line-height: 18px;
+}
+.comparar__titulo {
+  margin: 0 0 2px;
+  color: var(--ink-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.comparar__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+.comparar__fuente {
+  display: block;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.comparar__nota {
+  color: var(--ink);
+}
+a.comparar__nota {
+  text-decoration: none;
+}
+a.comparar__nota:hover {
+  text-decoration: underline;
+}
+.comparar__nota--actual {
+  font-weight: 700;
+}
+.comparar__aca,
+.comparar__mas {
+  color: var(--ink-muted);
+}
+.comparar__mas {
+  margin: 4px 0 0;
+  font-size: 12px;
+}
+
+/* En la hoja de papel, tinta negra. */
+.papel .comparar {
+  border-left-color: var(--ink);
+}
+.papel .comparar__fuente {
+  color: var(--ink);
+}
+
+/* Dentro de la nota abierta, un recuadro arriba del texto. */
+.comparar--nota {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--hash);
+  border-left: 4px solid var(--band);
+  font-size: 15px;
+  line-height: 22px;
+}
+.comparar--nota .comparar__lista {
+  gap: var(--space-1);
+}
+.papel .comparar--nota {
+  border-color: var(--ink);
+}

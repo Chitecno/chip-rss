@@ -1,0 +1,53 @@
+# Publica la app en GitHub Pages cada vez que algo entra a main.
+# Solo publica lo que está en main: la última versión probada.
+name: Publicar la app
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  armar:
+    runs-on: ubuntu-latest
+    env:
+      # La dirección del proxy en Cloudflare. Se configura en GitHub:
+      # Settings → Secrets and variables → Actions → Variables → PROXY_URL
+      VITE_PROXY_URL: ${{ vars.PROXY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Revisar que esté la dirección del proxy
+        run: |
+          if [ -z "$VITE_PROXY_URL" ]; then
+            echo "Falta la variable PROXY_URL (la dirección del proxy en Cloudflare). Sin ella, la app publicada no puede leer feeds."
+            exit 1
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publicar:
+    needs: armar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,10 +1,9 @@
 import { renderBanner } from './banner';
 import { hashFrame } from '../ui/hash-frame';
 import { listFeeds } from '../db/db';
-import { READER_NAME } from '../config';
+import { READER_NAME, VERSION } from '../config';
 import './boot.css';
 
-const VERSION = '0.0.1';
 // Ancho fijo de las líneas de chequeo: entra en un celu angosto sin cortarse.
 const LINE_WIDTH = 36;
 
@@ -59,7 +58,6 @@ export function runBoot(root: HTMLElement): Promise<void> {
 
   return (async () => {
     await print(`CHIP-RSS v${VERSION} · arranque`, 260);
-    await print('sin cuentas · sin vigilancia', 420);
     await print('', 120);
     for (const check of CHECKS) {
       await print(dotted(check.label, await check.run()), 300);

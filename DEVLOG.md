@@ -209,3 +209,103 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 - **Una función puede estar y no verse.** La marca de varias fuentes seguía en el código, pero con medios de tecnología había una sola historia compartida, y quedaba en el puesto 125. Los formatos mostraban solo las primeras, así que nunca aparecía.
 - Filtrar antes de agrupar esconde coincidencias. Hay que agrupar con todo y filtrar después.
 - **Leer desde un lector le saca visitas al sitio.** El feed lo publica el medio a propósito, pero cuando la nota se lee en la app no se cargan sus estadísticas ni su publicidad. Y cuando el feed trae solo un resumen y la app va a buscar la nota completa, va más allá de lo que el medio decidió compartir. Queda como decisión pendiente.
+
+---
+
+## 2026-10-25 · Más fácil de abrir, y lista para publicar
+
+### Qué hicimos
+
+- **Un ícono en el escritorio** que prende la app y la abre en el navegador con doble clic. Sin PowerShell.
+- **El proxy para publicar:** el mismo intermediario que trae los feeds, pero para correr en Cloudflare, gratis. Solo atiende pedidos que vienen de la app.
+- **Publicación automática:** cada vez que algo entra a main, GitHub arma la app y la publica en GitHub Pages.
+- Lo probamos de punta a punta en la compu: la app armada pidió los feeds al proxy nuevo, sin errores.
+
+### Qué aprendimos
+
+- **Una app web se puede publicar casi en cualquier lado,** porque son archivos. Lo único que necesita un servidor es el intermediario que trae los feeds.
+- **Un proxy público tiene que tener reglas,** si no, cualquiera lo puede usar para lo que quiera. El nuestro solo responde a la app, solo lee, y nunca entra a redes internas.
+- **El modo sin conexión funciona,** y hasta demasiado: el navegador siguió mostrando la versión vieja guardada hasta que se actualizó. Es lo esperado en una app instalable, y conviene saberlo al probar.
+
+---
+
+## 2026-10-26 · El proxy, en internet
+
+### Qué hicimos
+
+- Creamos la cuenta de Cloudflare y **publicamos el proxy** en `chip-rss-proxy.chiptecno.workers.dev`.
+- Lo probamos en vivo: trae los feeds cuando el pedido viene de la app y rechaza los pedidos de otros sitios, los que no dicen de dónde vienen y los que apuntan a redes internas.
+- Armamos la app apuntando al proxy real y funcionó: pidió los feeds por Cloudflare, sin errores.
+- Cargamos la dirección del proxy en la configuración de GitHub, para que la publicación automática la use.
+
+### Qué aprendimos
+
+- **Publicar un Worker es rápido:** se inicia sesión una vez desde la terminal (se autoriza en el navegador), se elige un nombre para el espacio en workers.dev y el proxy queda en internet en segundos.
+- **El nombre que se elige en workers.dev es público:** queda en la dirección del proxy.
+- **GitHub pide un permiso aparte** para tocar los archivos de publicación automática. Es una protección: así nada puede cambiar cómo se publica un proyecto sin que alguien lo autorice.
+
+---
+
+## 2026-10-27 · Versión 0.1.0: el archivo, software libre y correcciones
+
+### Qué hicimos
+
+- **El archivo:** cada nota tiene un botón para guardarla. Al tocarlo se elige en qué sección va, o se crea una nueva ahí mismo. En la pestaña **archivo** están todas las notas guardadas, organizadas en secciones que se crean, renombran y borran como carpetas.
+- **Lo guardado entra en el respaldo:** el archivo `.opml` lleva ahora las fuentes, las etiquetas, el formato de lectura y las notas guardadas con sus secciones.
+- **chip-rss es software libre**, con licencia GPL 3.0.
+- **Versión 0.1.0**, la primera demo para probar con la comunidad. El número vive en un solo lugar y la app lo muestra en el arranque y en "Acerca de".
+- **"Acerca de" con texto de Chip:** por qué existe, qué es RSS, cómo se usa, qué pasa con los datos, y cómo apoyar a Chip Tecno.
+- **Correcciones:** la app usa todo el ancho de la pantalla en compu, las fotos del diario van originales y sin filtro, exportar e importar pasaron a la pantalla de fuentes, y el arranque perdió una línea que sobraba.
+
+### Qué aprendimos
+
+- **Guardar una nota es guardar una copia.** Si solo se guardara un puntero a la nota, se perdería cuando la fuente se quita o el medio la saca de su feed.
+- **"Libre" es una palabra con contenido legal:** sin una licencia, un código publicado se puede mirar pero no reutilizar. La GPL deja usarlo, estudiarlo y modificarlo, con una condición: las versiones modificadas que se distribuyan también tienen que ser libres.
+- **RSS es de 1999,** y en su versión 1.0 participó Aaron Swartz. No hace falta inventar nada nuevo para informarse mejor: muchas veces alcanza con recuperar herramientas que ya existen.
+
+---
+
+## 2026-10-27 · Compartir, y un disquete
+
+### Qué hicimos
+
+- **Compartir:** al lado de guardar, cada nota tiene un botón para copiar el link, mandarla por WhatsApp o por mail, y en el celu, abrir el menú de compartir del sistema. Siempre se comparte el link al sitio original.
+- **Íconos en pixel art:** un disquete para guardar y una flecha saliendo de una bandeja para compartir. Están dibujados con cuadraditos y toman el color del texto, así funcionan en cualquier tema.
+- Guardar y compartir usan el mismo menú chico, que se cierra al tocar afuera o con Escape. Nunca quedan dos abiertos a la vez.
+
+### Qué aprendimos
+
+- **El sistema de diseño de Chip Tecno no usa emoji:** el guiño es ASCII o pixel. Por eso el disquete no es 💾 sino un dibujito de 12 × 12 cuadraditos, que se ve igual en cualquier compu y en cualquier celu.
+- **Para compartir por WhatsApp o mail no hace falta ninguna conexión especial:** alcanza con un link armado de una forma particular (`wa.me/?text=…` o `mailto:…`), y la compu o el celu abren la app que corresponde.
+
+---
+
+## 2026-10-27 · Revista, teletipo y la nota en papel
+
+### Qué hicimos
+
+- **Revista:** en pantallas anchas las fotos quedaban enormes y la letra chiquita. Ahora la página tiene un ancho máximo y queda centrada, la foto ocupa un poco más de la mitad, y el título y el resumen tienen letra más grande. En el celu, foto arriba y texto abajo.
+- **Teletipo:** la marca "N fuentes" se cortaba al final de la línea. Ahora va junto a guardar y compartir, y nunca se parte.
+- **Diario:** al entrar a una nota desde el diario, la nota se abre también en papel, con la misma tipografía y el mismo fondo claro.
+
+### Qué aprendimos
+
+- **Una pantalla de compu ancha no es una hoja más grande.** Si todo se estira al ancho, las fotos crecen y el texto queda perdido. Las revistas de papel tienen un tamaño fijo por algo: hay que poner un límite.
+- **El texto justificado en el celu deja huecos grandes** entre palabras. En pantallas chicas va alineado a la izquierda.
+
+---
+
+## 2026-10-27 · Portada en tres columnas y comparar fuentes
+
+### Qué hicimos
+
+- **Portada del diario:** la nota principal va al centro y hay una columna de noticias a cada lado. Debajo, dos filas de recuadros. La foto principal es más apaisada y tiene un alto máximo, así la primera pantalla muestra varias noticias sin bajar. En el diario se esconde la franja rosa de arriba, porque el folio de la hoja ya dice lo mismo.
+- **Leer una sola fuente:** en el menú de fuentes de cada formato hay un **fuentes ▾** para elegir un feed suelto. Cuando filtrás, cada historia se encabeza con la nota de las fuentes elegidas.
+- **Comparar fuentes:** donde antes decía "También lo cuentan: Xataka, Xataka, Hipertextual" ahora va una línea por medio, sin repetir, con su título. Al abrir la nota, un recuadro muestra cómo la cuenta cada fuente.
+- **La nota abierta** es más ancha (unos 90 caracteres por línea) y va centrada.
+- **Fuentes en dos pestañas:** fuentes y etiquetas. El respaldo pasó arriba, en un recuadro al lado de la caja para agregar.
+
+### Qué aprendimos
+
+- **En una pantalla de compu, lo que se ve sin bajar es poco:** el menú de la app, la franja y el cabezal del diario se comían más de la mitad. Para que entre la portada hubo que achicar todo lo de arriba, no solo la foto.
+- **Comparar títulos dice mucho:** la misma noticia puede ser "advierte un riesgo catastrófico" en un medio y "sale a la bolsa" en otro. Ver los títulos juntos es una forma simple de leer cómo encuadra cada medio.

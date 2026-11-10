@@ -1,0 +1,5 @@
+# Configuración del proxy de chip-rss en Cloudflare Workers.
+# Cómo publicarlo: ver worker/README.md
+name = "chip-rss-proxy"
+main = "src/index.js"
+compatibility_date = "2026-09-01"

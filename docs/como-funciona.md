@@ -15,7 +15,11 @@ El proxy tiene reglas para que nadie pueda usarlo para otra cosa:
 - solo va a direcciones públicas de internet, nunca a la red de tu casa, ni siquiera si un sitio lo redirige ahí;
 - lee hasta 5 MB y espera hasta 10 segundos.
 
-Hoy el proxy funciona dentro del servidor local de la app. Para publicarla, va a pasar a un Cloudflare Worker, un servicio gratuito.
+Mientras la app se usa en la compu, el proxy funciona dentro de su servidor local. Para la app publicada, el mismo proxy corre en un Cloudflare Worker, un servicio gratuito (está en la carpeta `worker`). Ahí suma una regla más: solo atiende pedidos que vienen de la app, por su dirección de origen.
+
+## Publicación
+
+La app es un conjunto de archivos que se pueden publicar en cualquier lado. Cada vez que algo entra a main, GitHub la arma y la publica sola en GitHub Pages. Solo se publica lo que está en main: la última versión probada.
 
 ## Cómo encuentra los feeds
 
@@ -97,6 +101,10 @@ Las fotos salen en blanco y negro con una trama de puntos encima, para que parez
 
 Si elegís una etiqueta, como `#tecnología`, se muestran las historias de esas fuentes y los temas salen de ellas. Pero las historias se arman con todas tus fuentes: si una nota de la etiqueta también la cuenta una fuente que no la tiene, la historia muestra las dos. Si publican poco, la ventana de tiempo se agranda sola: una historia puede tardar días en llegar a varios medios chicos.
 
+## El archivo
+
+Las notas guardadas se guardan aparte de las notas de las fuentes, como una copia: título, texto, foto, link, fuente y fecha. Así no se pierden aunque se quite la fuente o el medio las saque de su feed. Cada nota guardada puede estar en una sección (como una carpeta) o sin sección.
+
 ## Exportar e importar
 
 Las fuentes se exportan en OPML, el formato que entienden casi todos los lectores de RSS. Cada fuente lleva su nombre, la dirección del feed y la del sitio, y sus etiquetas: como carpetas, para los otros lectores, y como "category".
@@ -105,7 +113,8 @@ Lo propio de chip-rss va en atributos con el prefijo `chip:`. Los otros lectores
 - los identificadores únicos de cada fuente y etiqueta;
 - si la fuente es principal;
 - todas las etiquetas, también las que no se usan;
-- el formato de lectura elegido.
+- el formato de lectura elegido;
+- las secciones del archivo y las notas guardadas, con su texto.
 
 Al importar, si una fuente ya está, vale lo que dice el archivo. Si el archivo viene de otro lector y no dice qué fuentes son principales, se respeta lo que ya estaba.
 
