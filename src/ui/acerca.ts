@@ -12,7 +12,7 @@ export function createAcerca(): HTMLElement {
 
     <h2 class="section-title">por qué</h2>
     <p>La idea de crear un administrador de noticias surge de la pregunta: <strong>¿cómo podemos informarnos mejor en este contexto horrible?</strong></p>
-    <p>Las redes sociales nos acostumbraron a una información recortada y mediada por algoritmos, que generan <strong>burbujas informativas y cámaras de eco</strong>. A eso se suman las <strong>campañas de fake news</strong>, cada vez más frecuentes, y los <strong>resúmenes de IA, que alucinan y amplian el margen de desinformación</strong>.</p>
+    <p>Las redes sociales nos acostumbraron a una información recortada y mediada por algoritmos, que generan <strong>burbujas informativas y cámaras de eco</strong>. A eso se suman las <strong>campañas de fake news</strong>, cada vez más frecuentes, y los <strong>resúmenes de IA, que alucinan y amplían el margen de desinformación</strong>.</p>
     <p><strong>Por eso es necesario recuperar el control del acceso a la información</strong>.</p>
 
     <h2 class="section-title">qué es</h2>
