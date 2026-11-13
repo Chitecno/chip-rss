@@ -1,8 +1,8 @@
 # chip-rss
 
-Lector de feeds RSS gratuito, local-first y con estética terminal. Un proyecto de [Chip Tecno](https://chiptecno.ar).
+Lector de feeds RSS gratuito, local-first. Un proyecto de [Chip Tecno](https://chiptecno.ar).
 
-> Nombre provisorio. La app está en desarrollo: todavía no está publicada y se usa desde el código, en la propia computadora.
+
 
 ## Por qué existe
 
