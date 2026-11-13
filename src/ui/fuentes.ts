@@ -250,6 +250,9 @@ export function createFuentes(onChange: () => void, tab: FuentesTab = 'fuentes')
     }
     const name = el('span', undefined, `#${tag.name} `);
     name.append(el('span', 'muted', `(${plural(count, 'fuente', 'fuentes')})`));
+    if (tag.list) {
+      name.append(el('span', 'tag-row__lista web-small', tag.list.author ? ` · lista de ${tag.list.author}` : ' · lista importada'));
+    }
     const actions = el('span', 'fuente__actions web-small');
     const rename = button('[ renombrar ]', 'term-button', `tag-rename-${tag.id}`);
     rename.addEventListener('click', () => {

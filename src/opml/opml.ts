@@ -85,6 +85,10 @@ export async function exportOpml(): Promise<{ text: string; feeds: number; tags:
     item.setAttribute('id', t.id);
     item.setAttribute('name', t.name);
     item.setAttribute('createdAt', String(t.createdAt));
+    if (t.list) {
+      item.setAttribute('listaAutor', t.list.author);
+      item.setAttribute('listaImportada', String(t.list.importedAt));
+    }
     tagList.append(item);
   }
   head.append(tagList);
@@ -149,7 +153,15 @@ export async function exportOpml(): Promise<{ text: string; feeds: number; tags:
   return { text, feeds: feeds.length, tags: tags.length, saved: saved.length };
 }
 
-export type ImportResult = { added: number; updated: number; tags: number; saved: number; failed: string[] };
+export type ImportResult = {
+  added: number;
+  updated: number;
+  tags: number;
+  saved: number;
+  failed: string[];
+  /** Si el archivo era una lista para compartir: su nombre, quién la armó y la etiqueta donde quedó. */
+  list?: { name: string; author: string; tag: string };
+};
 
 /**
  * Carga un OPML. Si una fuente ya está, vale lo que dice el archivo (sirve para restaurar):
@@ -160,6 +172,8 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
   if (doc.getElementsByTagName('parsererror').length || doc.documentElement.localName !== 'opml') {
     throw new OpmlError('el archivo no es un OPML válido');
   }
+  const listInfo = doc.getElementsByTagNameNS(CHIP_NS, 'lista')[0];
+  if (listInfo) return importList(doc, listInfo, onStep);
 
   // 1. Etiquetas guardadas por chip-rss, con sus id, para que las fuentes las encuentren.
   const tagIdMap = new Map<string, string>(); // id del archivo → id en esta app
@@ -185,7 +199,10 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
     }
     // Si el id ya lo usa otra etiqueta, le damos uno nuevo.
     const useId = id && !(await getTag(id)) ? id : crypto.randomUUID();
-    await saveTag({ id: useId, name, createdAt: Number(item.getAttribute('createdAt')) || Date.now() });
+    const tag: Tag = { id: useId, name, createdAt: Number(item.getAttribute('createdAt')) || Date.now() };
+    const importedAt = item.getAttribute('listaImportada');
+    if (importedAt !== null) tag.list = { author: item.getAttribute('listaAutor') ?? '', importedAt: Number(importedAt) || Date.now() };
+    await saveTag(tag);
     tagIdMap.set(id, useId);
     tagsTouched++;
   }
@@ -301,11 +318,136 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
   if (isFormat(formato)) saveFormat(formato);
 
   // 5. Bajar las notas de las fuentes nuevas, de a tres por vez.
-  for (let i = 0; i < toFetch.length; i += 3) {
-    onStep?.(`bajando notas: ${Math.min(i + 3, toFetch.length)} de ${toFetch.length} fuentes`);
-    await Promise.all(toFetch.slice(i, i + 3).map(refreshFeed));
-  }
+  await fetchNew(toFetch, onStep);
 
   result.tags = tagsTouched;
+  return result;
+}
+
+// --- Listas para compartir ---
+
+/** Las fuentes de una lista, sueltas o dentro de carpetas. */
+function listOutlines(doc: XMLDocument): Element[] {
+  return Array.from(doc.getElementsByTagName('outline')).filter((o) => o.getAttribute('xmlUrl'));
+}
+
+async function fetchNew(feeds: Feed[], onStep?: (msg: string) => void): Promise<void> {
+  for (let i = 0; i < feeds.length; i += 3) {
+    onStep?.(`bajando notas: ${Math.min(i + 3, feeds.length)} de ${feeds.length} fuentes`);
+    await Promise.all(feeds.slice(i, i + 3).map(refreshFeed));
+  }
+}
+
+/**
+ * Una lista para compartir: las fuentes de una etiqueta, con el nombre que le ponga quien la arma.
+ * Va solo lo que sirve a otra persona (nombre y dirección de cada fuente), sin nada personal:
+ * ni principales, ni las otras etiquetas, ni notas guardadas. Es un OPML común: lo abre cualquier lector.
+ */
+export async function exportList(
+  tagId: string,
+  rawName: string,
+  rawAuthor: string,
+): Promise<{ text: string; feeds: number; name: string }> {
+  const tag = await getTag(tagId);
+  if (!tag) throw new OpmlError('esa etiqueta ya no existe');
+  const feeds = (await listFeeds()).filter((f) => f.tagIds.includes(tagId));
+  if (feeds.length === 0) throw new OpmlError(`#${tag.name} no tiene fuentes`);
+  const name = rawName.trim() || tag.name;
+  const author = rawAuthor.trim();
+
+  const doc = document.implementation.createDocument(null, 'opml', null);
+  const root = doc.documentElement;
+  root.setAttribute('version', '2.0');
+  root.setAttributeNS(XMLNS, 'xmlns:chip', CHIP_NS);
+  const head = doc.createElement('head');
+  const title = doc.createElement('title');
+  title.textContent = name;
+  const created = doc.createElement('dateCreated');
+  created.textContent = new Date().toUTCString();
+  head.append(title, created);
+  if (author) {
+    const owner = doc.createElement('ownerName');
+    owner.textContent = author;
+    head.append(owner);
+  }
+  const info = doc.createElementNS(CHIP_NS, 'chip:lista');
+  info.setAttribute('nombre', name);
+  if (author) info.setAttribute('autor', author);
+  head.append(info);
+  root.append(head);
+
+  // Todas las fuentes dentro de una carpeta con el nombre de la lista: así la ven los otros lectores.
+  const body = doc.createElement('body');
+  const folder = doc.createElement('outline');
+  folder.setAttribute('text', name);
+  folder.setAttribute('title', name);
+  for (const feed of feeds) {
+    const o = doc.createElement('outline');
+    o.setAttribute('type', 'rss');
+    o.setAttribute('text', feed.title);
+    o.setAttribute('title', feed.title);
+    o.setAttribute('xmlUrl', feed.url);
+    if (feed.siteUrl) o.setAttribute('htmlUrl', feed.siteUrl);
+    folder.append(o);
+  }
+  body.append(folder);
+  root.append(body);
+
+  const text = `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(doc)}`;
+  return { text, feeds: feeds.length, name };
+}
+
+/**
+ * Importar una lista: sus fuentes se suman con una etiqueta que lleva el nombre de la lista.
+ * Si una fuente ya estaba, no se duplica ni se toca nada de ella: solo gana esa etiqueta.
+ */
+async function importList(doc: XMLDocument, info: Element, onStep?: (msg: string) => void): Promise<ImportResult> {
+  const name = (info.getAttribute('nombre') ?? '').trim() || 'lista';
+  const author = (info.getAttribute('autor') ?? '').trim();
+  const outlines = listOutlines(doc);
+  if (outlines.length === 0) throw new OpmlError('la lista no tiene fuentes');
+
+  const result: ImportResult = { added: 0, updated: 0, tags: 0, saved: 0, failed: [] };
+  let tag = await getTagByName(name);
+  if (!tag) {
+    tag = { id: crypto.randomUUID(), name: normalizeTagName(name), createdAt: Date.now() };
+    result.tags = 1;
+  }
+  // La etiqueta recuerda que vino de una lista y de quién (si ya existía, la marca igual).
+  tag = { ...tag, list: { author, importedAt: Date.now() } };
+  await saveTag(tag);
+  result.list = { name, author, tag: tag.name };
+
+  const toFetch: Feed[] = [];
+  for (const [i, el] of outlines.entries()) {
+    const url = resolveUrl(el.getAttribute('xmlUrl') ?? '', 'https://invalid/');
+    const title = el.getAttribute('title') || el.getAttribute('text') || url;
+    if (!url) {
+      result.failed.push(title);
+      continue;
+    }
+    onStep?.(`fuente ${i + 1} de ${outlines.length}: ${title}`);
+    const existing = await findFeedByUrl(url);
+    if (existing) {
+      if (!existing.tagIds.includes(tag.id)) await saveFeed({ ...existing, tagIds: [...existing.tagIds, tag.id] });
+      result.updated++;
+      continue;
+    }
+    const now = Date.now();
+    const feed: Feed = {
+      id: crypto.randomUUID(),
+      url,
+      title,
+      siteUrl: resolveUrl(el.getAttribute('htmlUrl') ?? '', url) || url,
+      principal: false,
+      tagIds: [tag.id],
+      addedAt: now,
+      lastFetchedAt: 0,
+    };
+    await saveFeed(feed);
+    toFetch.push(feed);
+    result.added++;
+  }
+  await fetchNew(toFetch, onStep);
   return result;
 }

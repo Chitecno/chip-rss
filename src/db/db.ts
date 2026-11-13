@@ -20,6 +20,8 @@ export type Tag = {
   id: string;
   name: string;
   createdAt: number;
+  /** Si la etiqueta llegó al importar una lista de otra persona: de quién y cuándo. */
+  list?: { author: string; importedAt: number };
 };
 
 export type Article = {
