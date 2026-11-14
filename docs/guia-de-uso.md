@@ -129,11 +129,13 @@ Cuando hay cambios nuevos en GitHub:
 
 - Arriba de todo elegís el **formato**:
   - **timeline:** todas las notas en tarjetas, de la más nueva a la más vieja;
+  - **mosaico:** tarjetas con la foto entera, de alto libre, estilo Pinterest;
   - **diario:** una hoja de papel, como un diario impreso. Arriba tiene el nombre, los temas del día y la rutina; abajo, la nota principal al centro con una columna de noticias a cada lado, dos filas de recuadros, secciones y breves;
   - **revista:** las historias con fotos grandes;
   - **teletipo:** una línea por historia, para pasar rápido.
 - Adentro de cada formato está el menú de fuentes: **todo**, **principales** o cualquier **#etiqueta**. En el diario aparece como la barra de secciones, debajo del cabezal.
 - Para leer **una sola fuente**, tocá **fuentes ▾** en ese mismo menú y elegila.
+- **Nombre propio:** en el diario, tocá el nombre y ponele el tuyo.
 - En diario, revista y teletipo, las notas que cuentan lo mismo se juntan en una sola historia. La rutina (clima, dólar, horóscopo…) va aparte.
 - **Cuando dos o más fuentes cuentan lo mismo**, aparece una marca rosa con cuántas son ("2 fuentes") y, debajo, **"También lo cuentan"**: cada una de las otras fuentes con su título, para comparar cómo lo cuenta cada una. En el teletipo está plegado en **[ comparar las N fuentes ]**. Se ve en todos los formatos, también en el timeline. Esas historias van primero si son de la última semana.
 - Al abrir una de esas notas, arriba del texto está el recuadro **"Cómo lo cuenta cada fuente"**, con todos los títulos. Tocá otro para leer esa versión.
@@ -141,8 +143,7 @@ Cuando hay cambios nuevos en GitHub:
 - Con una etiqueta elegida, las historias se arman igual con todas tus fuentes: si una nota de `#tecnología` también la cuenta una fuente sin esa etiqueta, la ves con las dos.
 - **Se muestra todo, en páginas.** Abajo de cada formato están los números de página y **[ siguiente > ]**. En el diario, desde la página 2 el cabezal es más chico, como en las páginas interiores de un diario.
 - El formato que elijas queda guardado para la próxima vez.
-- Tocá un título para abrir la nota completa dentro de la app. **[ < volver ]** te deja en el mismo lugar.
-- Al final de cada nota está el link al sitio original.
+- Tocá un título para abrir la nota dentro de la app. Arriba de cada nota hay un recuadro para leerla en el sitio original: si el RSS trae solo un resumen, te avisa que la nota completa está allá. **[ < volver ]** te deja en el mismo lugar.
 
 ### Compartir una nota
 
@@ -177,6 +178,10 @@ El archivo lleva tus fuentes con el nombre que les pusiste, si son principales o
 3. Si una fuente o una nota guardada ya estaba, queda como dice el archivo.
 
 Sirve también con archivos de otros lectores de RSS (como Feedly o Inoreader). Sus carpetas pasan a ser etiquetas.
+
+### Listas para compartir
+
+Exportá las fuentes de una etiqueta con un nombre y compartí el archivo; quien lo importa suma esas fuentes con una etiqueta propia.
 
 ## Tus datos
 

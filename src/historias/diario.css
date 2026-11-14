@@ -29,6 +29,47 @@
   margin: 0;
   --available: min(52vw, 640px);
 }
+/* El nombre se toca para cambiarlo: un botón que no parece botón. */
+.diario__name {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.diario__name:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+/* La firma: "hecho con chip rss" y el botón para cambiar el nombre. */
+.diario__credit {
+  margin: 6px 0 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+.diario__credit .term-button {
+  padding: 0;
+  font-size: inherit;
+  letter-spacing: inherit;
+  color: var(--ink-muted);
+}
+.diario__name-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+.diario__name-form .text-input {
+  min-width: 0;
+  width: min(100%, 28ch);
+}
 .diario .glitch__a,
 .diario .glitch__b {
   display: none;

@@ -24,13 +24,27 @@ function asciiArt(text: string): string {
   return lines.join('\n');
 }
 
+// Un nombre largo ("La Gaceta de Juana") va en dos renglones para que no quede diminuto.
+const MAX_LINE = 12;
+
+/** Junta palabras en renglones de hasta `max` letras. */
+function lines(text: string, max: number): string[] {
+  const out: string[] = [];
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const last = out[out.length - 1];
+    if (last && last.length + 1 + word.length <= max) out[out.length - 1] = `${last} ${word}`;
+    else out.push(word);
+  }
+  return out.length ? out : [text];
+}
+
 /**
  * Banner con el nombre del lector y la capa glitch: un fantasma rosa y otro cian corridos.
  * En pantallas angostas cada palabra va en su renglón.
  */
 export function renderBanner(name: string, narrow: boolean): HTMLElement {
   const text = toBannerText(name);
-  const art = (narrow ? text.split(/\s+/) : [text]).map(asciiArt).join('\n');
+  const art = (narrow ? text.split(/\s+/) : lines(text, MAX_LINE)).map(asciiArt).join('\n');
   const cols = Math.max(...art.split('\n').map((line) => line.length));
 
   const banner = document.createElement('div');

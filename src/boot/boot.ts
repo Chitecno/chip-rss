@@ -1,7 +1,8 @@
 import { renderBanner } from './banner';
 import { hashFrame } from '../ui/hash-frame';
 import { listFeeds } from '../db/db';
-import { READER_NAME, VERSION } from '../config';
+import { VERSION } from '../config';
+import { loadReaderName } from '../ui/preferencias';
 import './boot.css';
 
 // Ancho fijo de las líneas de chequeo: entra en un celu angosto sin cortarse.
@@ -65,7 +66,7 @@ export function runBoot(root: HTMLElement): Promise<void> {
     await print('', 120);
     await print('// un proyecto chip tecno', 500);
 
-    screen.append(renderBanner(READER_NAME, window.innerWidth < 640));
+    screen.append(renderBanner(loadReaderName(), window.innerWidth < 640));
     await sleep(400);
 
     document.removeEventListener('keydown', hurry);

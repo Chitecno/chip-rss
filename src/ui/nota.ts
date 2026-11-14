@@ -1,11 +1,12 @@
-import { getArticle, getFeed, getSaved, listSections, removeSaved, type Article } from '../db/db';
+import { getArticle, getFeed, getSaved, listSections, removeSaved, type Article, type Feed } from '../db/db';
 import { compareList, type StoryLike } from '../historias/comparar';
-import { loadReadable } from '../reader/content';
+import { feedContent, isComplete } from '../reader/content';
 import { sanitizeArticle } from '../reader/sanitize';
 import { button, el, longDate } from './dom';
 import { loadSaveState } from './guardar';
 import { noteActions } from './acciones';
 import { shareButton } from './compartir';
+import { sourcesColumn, tagColumn } from './nota-margenes';
 import './nota.css';
 
 function hero(src: string): HTMLImageElement {
@@ -32,6 +33,26 @@ function originalLink(link: string): HTMLElement {
   return original;
 }
 
+/**
+ * El recuadro del comienzo: siempre invita a leer la nota en el sitio del medio.
+ * Si el RSS trae solo un resumen, avisa que la nota completa está allá.
+ */
+function sourceBox(link: string, complete: boolean): HTMLElement {
+  const box = el('p', complete ? 'nota__fuente-original' : 'nota__fuente-original nota__fuente-original--resumen');
+  const a = el(
+    'a',
+    undefined,
+    complete
+      ? 'Podés apoyar a este medio leyendo este artículo en su sitio original ↗'
+      : 'Este RSS no trae la nota completa, pero la podés leer en el sitio original ↗',
+  );
+  a.href = link;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  box.append(a);
+  return box;
+}
+
 function topBar(goBack: () => void): HTMLElement {
   const bar = el('div', 'nota__bar');
   const back = button('[ < volver ]', 'term-button nota__back');
@@ -56,7 +77,7 @@ export function renderNota(
   const view = el('article', paper ? 'nota nota--papel papel' : 'nota');
   const bar = topBar(goBack);
   view.append(bar);
-  void fill(view, bar, id, onSavedChange, storyFor);
+  void fill(view, id, onSavedChange, storyFor, paper);
   return view;
 }
 
@@ -67,12 +88,26 @@ async function comparison(article: Article, storyFor: StoryLookup): Promise<HTML
   return compareList(found.story, article, found.feedTitle, { markShown: true, className: 'comparar--nota' });
 }
 
+/**
+ * En papel, la hoja mide lo mismo que la portada: la nota a la izquierda y dos columnas a la derecha.
+ * Devuelve la columna de la nota.
+ */
+async function paperSheet(view: HTMLElement, article: Article, feed: Feed | undefined, storyFor: StoryLookup): Promise<HTMLElement> {
+  const sheet = el('div', 'nota__hoja');
+  const main = el('div', 'nota__main');
+  const found = await storyFor(article.id);
+  const [sources, related] = await Promise.all([sourcesColumn(article, feed, found?.story), tagColumn(article, feed)]);
+  sheet.append(main, sources, related);
+  view.append(sheet);
+  return main;
+}
+
 async function fill(
   view: HTMLElement,
-  bar: HTMLElement,
   id: string,
   onSavedChange: () => void,
   storyFor: StoryLookup,
+  paper: boolean,
 ): Promise<void> {
   const article = await getArticle(id);
   if (!article) {
@@ -81,39 +116,31 @@ async function fill(
   }
   const feed = await getFeed(article.feedId);
   const isVideo = /youtube\.com|youtu\.be/i.test(article.link);
-  bar.append(noteActions(article, feed?.title ?? '', await loadSaveState(onSavedChange)));
-
-  const meta = el('p', 'nota__meta web-small', `${feed?.title ?? ''} · ${longDate.format(article.published)}`);
+  // Debajo del título: el medio, la fecha y, en la misma línea, guardar y compartir esta nota.
+  const meta = el('div', 'nota__meta-row');
+  meta.append(
+    el('p', 'nota__meta web-small', `${feed?.title ?? ''} · ${longDate.format(article.published)}`),
+    noteActions(article, feed?.title ?? '', await loadSaveState(onSavedChange)),
+  );
   const title = el('h1', 'nota__title', article.title);
   title.tabIndex = -1;
-  const status = el('p', 'nota__status web-small', 'trayendo la nota completa…');
-  status.setAttribute('role', 'status');
   const body = el('div', 'nota__body');
-  view.append(meta, title);
-  const compare = await comparison(article, storyFor);
-  if (compare) view.append(compare);
-  view.append(status, body);
-  if (article.link) view.append(originalLink(article.link));
+  const column = paper ? await paperSheet(view, article, feed, storyFor) : view;
+  column.append(title, meta);
+  // Solo lo que trae el RSS. Arriba, la invitación al sitio original (los videos ya llevan a YouTube).
+  const readable = feedContent(article);
+  if (article.link && !isVideo) column.append(sourceBox(article.link, Boolean(readable?.complete)));
+  // En papel, las otras fuentes van en el costado derecho.
+  const compare = paper ? '' : await comparison(article, storyFor);
+  if (compare) column.append(compare);
+  column.append(body);
+  // El link de abajo queda solo para los videos: las notas ya tienen el recuadro arriba.
+  if (article.link && isVideo) column.append(originalLink(article.link));
   title.focus({ preventScroll: true });
 
-  try {
-    const readable = await loadReadable(article);
-    if (article.image && (isVideo || !readable)) body.append(hero(article.image));
-    if (!readable) {
-      body.append(summaryOf(article.summary));
-      if (isVideo) status.remove();
-      else status.textContent = 'Esta fuente solo trae un resumen.';
-      return;
-    }
-    showContent(body, readable.html, readable.baseUrl, isVideo ? undefined : article.image);
-    if (readable.from === 'sitio') status.textContent = 'traída del sitio · queda guardada para leerla sin conexión';
-    else status.remove();
-  } catch (err) {
-    status.textContent = `No pude traer la nota completa (${err instanceof Error ? err.message : 'error'}).`;
-    status.dataset.kind = 'error';
-    if (article.image) body.append(hero(article.image));
-    body.append(summaryOf(article.summary));
-  }
+  if (article.image && (isVideo || !readable)) body.append(hero(article.image));
+  if (readable) showContent(body, readable.html, article.link || location.href, isVideo ? undefined : article.image);
+  else body.append(summaryOf(article.summary));
 }
 
 function showContent(body: HTMLElement, html: string, baseUrl: string, image?: string): void {
@@ -155,13 +182,15 @@ export function renderGuardada(id: string, goBack: () => void, onSavedChange: ()
     const title = el('h1', 'nota__title', saved.title);
     title.tabIndex = -1;
     const body = el('div', 'nota__body');
-    view.append(meta, title, body);
+    view.append(meta, title);
+    if (saved.link && !/youtube\.com|youtu\.be/i.test(saved.link)) view.append(sourceBox(saved.link, isComplete(saved.content)));
+    view.append(body);
     if (saved.content) showContent(body, saved.content, saved.link || location.href, saved.image);
     else {
       if (saved.image) body.append(hero(saved.image));
       body.append(summaryOf(saved.summary));
     }
-    if (saved.link) view.append(originalLink(saved.link));
+    if (saved.link && /youtube\.com|youtu\.be/i.test(saved.link)) view.append(originalLink(saved.link));
     title.focus({ preventScroll: true });
   })();
   return view;

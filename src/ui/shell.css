@@ -416,6 +416,36 @@ a.term-button {
   font-size: 14px;
   line-height: 20px;
 }
+/* Exportar una lista: tres campos y el botón. */
+.respaldo__lista {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px dotted var(--hash);
+}
+.respaldo__lista[hidden] {
+  display: none;
+}
+.respaldo__campo {
+  display: grid;
+  gap: 2px;
+  color: var(--ink-muted);
+}
+.respaldo__campo .text-input {
+  width: 100%;
+  min-width: 0;
+}
+.respaldo__lista select.text-input {
+  font: inherit;
+  color: var(--ink);
+  background: var(--ground);
+}
+.respaldo__lista .term-button {
+  justify-self: start;
+}
+.tag-row__lista {
+  color: var(--accent);
+}
 .respaldo__more summary {
   cursor: pointer;
   color: var(--accent);
