@@ -13,9 +13,10 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
 - **Agregar fuentes pegando la dirección de un medio.** La app busca sola su feed, también el de una sección (por ejemplo, la de tecnología de un diario) o el de un canal de YouTube.
 - **Fuentes principales y secundarias, y etiquetas** para agrupar. El timeline se filtra por etiqueta o por principales.
 - **Tarjetas con la foto real** de cada nota cuando el feed la trae. Si no la trae, un dibujo ASCII.
-- **Leer la nota completa dentro de la app,** sin salir al sitio. Queda guardada para leerla sin conexión.
+- **Leer las notas dentro de la app,** con lo que trae cada RSS. Cuando el RSS trae solo un resumen, la app lo avisa y te lleva al sitio original.
 - **Elegir el formato de lectura:**
   - **timeline:** la lista de siempre;
+  - **mosaico:** tarjetas con la foto entera, de alto libre, estilo Pinterest;
   - **diario:** una hoja de papel con cabezal, columnas, fotos y breves;
   - **revista:** fotos grandes;
   - **teletipo:** una línea por historia.
@@ -24,6 +25,8 @@ RSS como herramienta contra la desinformación: cada persona elige y cura sus fu
 - **Compartir** cualquier nota: copiar el link, mandarla por WhatsApp o por mail.
 - **Guardar notas** para leerlas después, organizadas en secciones, en la pestaña **archivo**. Se guarda una copia: no se pierden aunque quites la fuente.
 - **Exportar e importar** en un archivo `.opml` tus fuentes, con toda tu configuración (nombres, principales y etiquetas), y tus notas guardadas.
+- **Listas para compartir:** exportá las fuentes de una etiqueta con un nombre y compartí el archivo; quien lo importa suma esas fuentes con una etiqueta propia.
+- **Nombre propio:** en el diario, tocá el nombre y ponele el tuyo.
 - **Todo queda en tu dispositivo.** No hay cuentas ni servidor que guarde tus datos.
 
 ## Cómo probarla
@@ -57,7 +60,7 @@ src/
   themes/    temas de color
   ui/        pantallas: leer, archivo, fuentes, nota, acerca de, menú
   feeds/     buscar, leer y entender feeds
-  reader/    traer y limpiar la nota completa
+  reader/    limpiar lo que trae el RSS
   historias/ agrupar historias, rutina, temas del día y los formatos diario, revista y teletipo
   opml/      exportar e importar las fuentes
   db/        guardado local (IndexedDB)
@@ -70,7 +73,7 @@ docs/        documentación
 
 Vite y TypeScript, sin framework. La app es una PWA, es decir, una página web que se instala como aplicación. También usa:
 - [idb](https://github.com/jakearchibald/idb) para el guardado local;
-- [Readability](https://github.com/mozilla/readability) y [DOMPurify](https://github.com/cure53/DOMPurify) para leer y limpiar las notas;
+- [DOMPurify](https://github.com/cure53/DOMPurify) para limpiar las notas;
 - [figlet](https://github.com/patorjk/figlet.js) para el banner ASCII;
 - la tipografía [Anonymous Pro](https://fonts.google.com/specimen/Anonymous+Pro).
 

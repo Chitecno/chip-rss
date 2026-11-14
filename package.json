@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@fontsource/anonymous-pro": "^5.2.0",
-    "@mozilla/readability": "^0.6.0",
     "dompurify": "^3.4.17",
     "figlet": "^1.8.0",
     "idb": "^8.0.4"

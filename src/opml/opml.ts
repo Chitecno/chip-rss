@@ -20,7 +20,7 @@ import {
 } from '../db/db';
 import { resolveUrl } from '../feeds/parse';
 import { refreshFeed } from '../feeds/refresh';
-import { isFormat, loadFormat, saveFormat } from '../ui/preferencias';
+import { hasOwnName, isFormat, loadFormat, loadReaderName, saveFormat, saveReaderName } from '../ui/preferencias';
 
 /**
  * Exportar e importar las fuentes en OPML, el formato que entienden casi todos los lectores de RSS.
@@ -78,6 +78,7 @@ export async function exportOpml(): Promise<{ text: string; feeds: number; tags:
   head.append(title, created);
   const prefs = doc.createElementNS(CHIP_NS, 'chip:preferencias');
   prefs.setAttribute('formato', loadFormat());
+  if (hasOwnName()) prefs.setAttribute('nombre', loadReaderName());
   head.append(prefs);
   const tagList = doc.createElementNS(CHIP_NS, 'chip:etiquetas');
   for (const t of tags) {
@@ -316,6 +317,8 @@ export async function importOpml(text: string, onStep?: (msg: string) => void): 
   const prefs = doc.getElementsByTagNameNS(CHIP_NS, 'preferencias')[0];
   const formato = prefs?.getAttribute('formato');
   if (isFormat(formato)) saveFormat(formato);
+  const nombre = prefs?.getAttribute('nombre');
+  if (nombre) saveReaderName(nombre);
 
   // 5. Bajar las notas de las fuentes nuevas, de a tres por vez.
   await fetchNew(toFetch, onStep);

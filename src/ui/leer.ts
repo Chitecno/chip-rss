@@ -1,3 +1,4 @@
+import { mosaic } from './mosaico';
 import { listArticles, listFeeds, listTags, type Article, type Feed, type Tag } from '../db/db';
 import { buildEdition, isShared, sectionsFor, type Edition } from '../historias/edition';
 import { compareList } from '../historias/comparar';
@@ -26,7 +27,7 @@ export type LeerView = {
 };
 
 // Cuántas cosas entran en cada página, según el formato. Todo se muestra: lo que no entra, va a la página siguiente.
-const PAGE_SIZE: Record<Format, number> = { timeline: 48, diario: 40, revista: 16, teletipo: 60 };
+const PAGE_SIZE: Record<Format, number> = { timeline: 48, mosaico: 48, diario: 40, revista: 16, teletipo: 60 };
 
 export function leerHref(route: LeerRoute): string {
   const params = new URLSearchParams();
@@ -275,14 +276,16 @@ export function createLeer(): LeerView {
         return story ? isShared(story) : false;
       };
       const notes = articles.filter((a) => ids.has(a.feedId) && (!route.shared || inSharedStory(a)));
-      const total = format === 'timeline' ? notes.length : edition.ranked.length;
+      // Timeline y mosaico muestran notas sueltas; los demás formatos, historias.
+      const byNote = format === 'timeline' || format === 'mosaico';
+      const total = byNote ? notes.length : edition.ranked.length;
       const size = PAGE_SIZE[format];
       const pages = Math.max(1, Math.ceil(total / size));
       const page = Math.min(Math.max(1, route.page), pages);
       const from = (page - 1) * size;
       const pageRoute = { ...route, page };
 
-      const unit = format === 'timeline' ? ['artículo', 'artículos'] : ['historia', 'historias'];
+      const unit = byNote ? ['artículo', 'artículos'] : ['historia', 'historias'];
       band.textContent =
         `${plural(total, unit[0], unit[1])} · ${label}` +
         (edition.sharedCount ? ` · ${plural(edition.sharedCount, 'contada por varias fuentes', 'contadas por varias fuentes')}` : '') +
@@ -296,9 +299,14 @@ export function createLeer(): LeerView {
         return;
       }
 
-      if (format === 'timeline') {
-        const list = el('div', 'timeline__list');
-        list.append(...notes.slice(from, from + size).map((a) => card(a, feedTitle, edition.storyOf.get(a.id), actions)));
+      if (format === 'timeline' || format === 'mosaico') {
+        const cards = notes.slice(from, from + size).map((a) => card(a, feedTitle, edition.storyOf.get(a.id), actions));
+        let list: HTMLElement;
+        if (format === 'mosaico') list = mosaic(cards);
+        else {
+          list = el('div', 'timeline__list');
+          list.append(...cards);
+        }
         content.replaceChildren(filters, list, pager(pageRoute, pages));
         return;
       }

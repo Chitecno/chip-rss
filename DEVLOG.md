@@ -309,3 +309,13 @@ Bitácora de construcción de chip-rss. Cada etapa importante: fecha, qué hicim
 
 - **En una pantalla de compu, lo que se ve sin bajar es poco:** el menú de la app, la franja y el cabezal del diario se comían más de la mitad. Para que entre la portada hubo que achicar todo lo de arriba, no solo la foto.
 - **Comparar títulos dice mucho:** la misma noticia puede ser "advierte un riesgo catastrófico" en un medio y "sale a la bolsa" en otro. Ver los títulos juntos es una forma simple de leer cómo encuadra cada medio.
+
+---
+
+## 2026-11-13 · Listas para compartir y chau a traer notas del sitio
+
+Ahora se puede exportar una etiqueta como lista (“Tecnología by Chip”) e importar las listas de otras personas: sus fuentes llegan con una etiqueta que dice de quién vienen.
+
+En el proceso de crear el RSS con vibecoding Claude tomó la decisión de scrapear los sitios y traer las notas completas cuando estas no estaban disponibles en el RSS. Sacamos esa "feature" porque no queremos robar tráfico, mostramos lo que el medio eligió compartir. Además ahora en cada nota sumamos un recuadro más visible que invita a leer la información en el sitio original.
+
+También sumamos el formato mosaico (tarjetas estilo Pinterest), la opción de ponerle nombre propio al diario y una nueva hoja para la nota del diario: la nota a la izquierda y dos columnas a la derecha, con cómo la cuentan otras fuentes y más notas del mismo tema.

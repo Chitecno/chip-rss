@@ -1,7 +1,7 @@
 import type { Article } from '../db/db';
 import { renderBanner } from '../boot/banner';
-import { READER_NAME } from '../config';
-import { el } from '../ui/dom';
+import { button, el } from '../ui/dom';
+import { hasOwnName, loadReaderName, MAX_NAME, saveReaderName } from '../ui/preferencias';
 import type { Ranked } from './relevance';
 import type { LayoutContext } from './layouts';
 import { isShared, leadOf } from './edition';
@@ -115,6 +115,56 @@ function ears(ctx: LayoutContext): [HTMLElement, HTMLElement] {
   return [left, right];
 }
 
+/**
+ * El nombre del diario en el cabezal. Tocándolo (o con [ cambiar nombre ]) cada persona le pone el suyo.
+ * Si tiene nombre propio, abajo queda la firma "hecho con chip rss".
+ */
+function nameplate(): HTMLElement {
+  const plate = el('div', 'diario__plate');
+
+  const show = () => {
+    const name = loadReaderName();
+    const banner = el('button', 'diario__name');
+    banner.type = 'button';
+    banner.title = 'cambiar el nombre del diario';
+    banner.append(renderBanner(name, window.innerWidth < 640));
+    banner.addEventListener('click', edit);
+
+    const credit = el('p', 'diario__credit');
+    if (hasOwnName()) credit.append('hecho con chip rss · ');
+    const change = button('[ cambiar nombre ]', 'term-button diario__rename');
+    change.addEventListener('click', edit);
+    credit.append(change);
+    plate.replaceChildren(banner, credit);
+  };
+
+  const edit = () => {
+    const form = el('form', 'diario__name-form');
+    const input = el('input', 'text-input');
+    input.type = 'text';
+    input.value = hasOwnName() ? loadReaderName() : '';
+    input.placeholder = 'La Gaceta de Juana';
+    input.maxLength = MAX_NAME;
+    input.autocomplete = 'off';
+    input.setAttribute('aria-label', 'Nombre del diario');
+    const save = el('button', 'term-button', '[ guardar ]');
+    save.type = 'submit';
+    const cancel = button('[ cancelar ]', 'term-button');
+    cancel.addEventListener('click', show);
+    form.append(input, save, cancel);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveReaderName(input.value);
+      show();
+    });
+    plate.replaceChildren(plate.firstElementChild ?? '', form);
+    input.focus();
+  };
+
+  show();
+  return plate;
+}
+
 export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   const page = el('div', 'diario papel');
   const number = ctx.page ?? 1;
@@ -124,14 +174,12 @@ export function diario(stories: Ranked[], ctx: LayoutContext): HTMLElement {
   if (number === 1) {
     const head = el('header', 'diario__head');
     const [left, right] = ears(ctx);
-    const plate = el('div', 'diario__plate');
-    plate.append(renderBanner(READER_NAME, window.innerWidth < 640));
-    head.append(left, plate, right);
+    head.append(left, nameplate(), right);
     page.append(head);
   } else {
     // Las páginas interiores llevan un cabezal chico, como en un diario.
     const head = el('header', 'diario__head diario__head--inner');
-    head.append(el('p', 'diario__inner-name', READER_NAME));
+    head.append(el('p', 'diario__inner-name', loadReaderName()));
     page.append(head);
   }
   const folio = el(

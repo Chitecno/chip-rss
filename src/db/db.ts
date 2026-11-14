@@ -33,9 +33,6 @@ export type Article = {
   summary: string;
   /** HTML que trae el propio feed (sin limpiar: se limpia al mostrarlo). */
   content?: string;
-  /** HTML de la nota traída del sitio, guardado para leerla sin conexión. */
-  fullContent?: string;
-  fullContentVersion?: number;
   image?: string;
   published: number;
   fetchedAt: number;
@@ -323,7 +320,7 @@ export async function removeSaved(id: string): Promise<void> {
 
 /** Guarda una copia de la nota en una sección (o sin sección). Si ya estaba guardada, la mueve. */
 export async function saveArticleCopy(original: Article, feedTitle: string, sectionId: string | null): Promise<Saved> {
-  // La versión más nueva de la nota (por si se completó después de abrirla).
+  // La versión más nueva de la nota.
   const article = (await getArticle(original.id)) ?? original;
   const existing = await findSavedByArticle(article.id);
   const saved: Saved = existing
@@ -335,7 +332,7 @@ export async function saveArticleCopy(original: Article, feedTitle: string, sect
         title: article.title,
         link: article.link,
         summary: article.summary,
-        content: article.fullContent ?? article.content,
+        content: article.content,
         image: article.image,
         published: article.published,
         savedAt: Date.now(),

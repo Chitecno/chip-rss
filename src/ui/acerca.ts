@@ -24,7 +24,8 @@ export function createAcerca(): HTMLElement {
     <ul class="acerca__list">
       <li>En <a href="#/fuentes">fuentes</a>, <strong>pegá la dirección de un sitio</strong> y la app busca su feed. Funciona con medios y blogs, y en muchos casos también con una <strong>sección</strong> de un medio (por ejemplo, solo tecnología). También podés sumar <strong>canales de YouTube</strong>, autores de <strong>Medium</strong>, newsletters de <strong>Substack</strong> y novedades de proyectos en <strong>GitHub</strong>.</li>
       <li>Para cada fuente podés elegir si es <strong>principal o secundaria</strong>, ponerle <strong>etiquetas</strong> y organizarlas.</li>
-      <li>En <a href="#/leer">leer</a> elegís el formato (<strong>timeline, diario, revista o teletipo</strong>) y, adentro de cada uno, tus filtros.</li>
+      <li>En <a href="#/leer">leer</a> elegís el formato (<strong>timeline, mosaico, diario, revista o teletipo</strong>) y, adentro de cada uno, tus filtros.</li>
+      <li>En el diario podés <strong>ponerle tu propio nombre</strong>: tocá el nombre arriba de la portada.</li>
       <li>Las notas se abren dentro de la app. Podés <strong>guardarlas para leerlas después</strong> y organizarlas en la pestaña <a href="#/archivo">archivo</a>.</li>
     </ul>
 

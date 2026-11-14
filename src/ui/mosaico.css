@@ -1,0 +1,53 @@
+/* --- Mosaico: columnas de tarjetas de alto libre --- */
+.mosaico {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.mosaico__col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* La foto entera, con su forma original: es lo que hace que cada tarjeta mida distinto. */
+.mosaico .card__media {
+  aspect-ratio: auto;
+}
+.mosaico .card__media img {
+  height: auto;
+  object-fit: initial;
+}
+/* Sin foto, el dibujo ASCII mantiene su caja apaisada. */
+.mosaico .card__media:has(.ascii-placeholder) {
+  aspect-ratio: 16 / 9;
+}
+
+/* El resumen, corto: el mosaico es para mirar de un vistazo. */
+.mosaico .card__summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* En el celu: dos columnas angostas, con menos espacio y letra un poco más chica. */
+@media (max-width: 640px) {
+  .mosaico {
+    gap: 12px;
+  }
+  .mosaico__col {
+    gap: var(--space-3);
+  }
+  .mosaico .card__title {
+    font-size: 15px;
+    line-height: 20px;
+  }
+  .mosaico .card__summary {
+    display: none;
+  }
+  .mosaico .card__media {
+    padding: 4px;
+  }
+}
